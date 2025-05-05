@@ -1,0 +1,1857 @@
+/* Resetovací styly */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+#__next {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+/* Styly pro načítací obrazovku */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #38240c, #4a2b10, #3b2813);
+  background-size: 600% 600%;
+  animation: gradientBackground 10s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+@keyframes gradientBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 80%;
+}
+
+.loading-adventure-elements {
+  position: relative;
+  width: 280px;
+  height: 180px;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Kompas */
+.compass {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, #f9d9aa, #cb9c64);
+  box-shadow: 0 0 20px rgba(244, 207, 151, 0.6), inset 0 0 20px rgba(74, 43, 16, 0.4);
+  z-index: 3;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #8b5432;
+}
+
+.compass:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80%;
+  height: 80%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at center, #f1c27d, #d4a76a);
+  border-radius: 50%;
+  box-shadow: inset 0 0 10px rgba(74, 43, 16, 0.5);
+}
+
+.compass:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 70%;
+  background: linear-gradient(to bottom, #c22525 50%, #3a3a3a 50%);
+  animation: compassNeedle 6s ease-in-out infinite;
+  z-index: 2;
+}
+
+/* Přidání kardinálních bodů kompasu */
+.compass::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80%;
+  height: 80%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at center, #f1c27d, #d4a76a);
+  border-radius: 50%;
+  box-shadow: inset 0 0 10px rgba(74, 43, 16, 0.5);
+}
+
+.compass::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: 
+    linear-gradient(to bottom, transparent 49%, #8b5432 49%, #8b5432 51%, transparent 51%),
+    linear-gradient(to right, transparent 49%, #8b5432 49%, #8b5432 51%, transparent 51%);
+  z-index: 1;
+  opacity: 0.7;
+}
+
+/* Kompasová střelka */
+.compass::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80%;
+  height: 80%;
+  transform: translate(-50%, -50%);
+  background: 
+    radial-gradient(circle at center, #f1c27d, #d4a76a),
+    conic-gradient(
+      from 0deg, 
+      rgba(0,0,0,0) 5deg, 
+      rgba(0,0,0,0.05) 15deg,
+      rgba(0,0,0,0) 25deg,
+      rgba(0,0,0,0) 95deg,
+      rgba(0,0,0,0.05) 105deg,
+      rgba(0,0,0,0) 115deg,
+      rgba(0,0,0,0) 185deg,
+      rgba(0,0,0,0.05) 195deg,
+      rgba(0,0,0,0) 205deg,
+      rgba(0,0,0,0) 275deg,
+      rgba(0,0,0,0.05) 285deg,
+      rgba(0,0,0,0) 295deg
+    );
+  border-radius: 50%;
+  box-shadow: inset 0 0 10px rgba(74, 43, 16, 0.5);
+  z-index: 1;
+}
+
+/* Střelka kompasu */
+.compass .needle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 70%;
+  z-index: 2;
+  animation: compassNeedle 10s ease-in-out infinite;
+}
+
+.compass .needle::before,
+.compass .needle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 10px;
+  height: 50%;
+  transform: translateX(-50%);
+}
+
+.compass .needle::before {
+  top: 0;
+  background: linear-gradient(to top, transparent 20%, #c22525 20%);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.compass .needle::after {
+  bottom: 0;
+  background: linear-gradient(to bottom, transparent 20%, #3a3a3a 20%);
+  clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+}
+
+@keyframes compassNeedle {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  20% { transform: translate(-50%, -50%) rotate(30deg); }
+  30% { transform: translate(-50%, -50%) rotate(20deg); }
+  40% { transform: translate(-50%, -50%) rotate(40deg); }
+  50% { transform: translate(-50%, -50%) rotate(180deg); }
+  60% { transform: translate(-50%, -50%) rotate(160deg); }
+  70% { transform: translate(-50%, -50%) rotate(200deg); }
+  80% { transform: translate(-50%, -50%) rotate(190deg); }
+  90% { transform: translate(-50%, -50%) rotate(320deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Svitek mapy */
+.map-scroll {
+  position: absolute;
+  width: 180px;
+  height: 140px;
+  background: linear-gradient(to bottom, #e7dbc9, #d2c4a8);
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  overflow: hidden;
+  transform: rotate(-5deg);
+}
+
+.map-scroll:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(ellipse at 30% 40%, rgba(139, 69, 19, 0.1) 0%, rgba(139, 69, 19, 0) 60%),
+    radial-gradient(ellipse at 70% 60%, rgba(139, 69, 19, 0.1) 0%, rgba(139, 69, 19, 0) 60%);
+  background-size: 100% 100%;
+}
+
+.map-scroll:after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border: 1px dashed rgba(139, 69, 19, 0.3);
+  border-radius: 4px;
+}
+
+/* Planeta */
+.planet {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: 
+    radial-gradient(circle at 30% 30%, 
+      rgba(90, 155, 219, 1) 0%, 
+      rgba(47, 82, 150, 0.8) 40%, 
+      rgba(25, 43, 99, 1) 80%);
+  box-shadow: 0 0 25px rgba(74, 137, 220, 0.8), 
+    inset 0 0 30px rgba(0, 0, 0, 0.5);
+  z-index: 4;
+  animation: planetFloat 6s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Prstence planety */
+.planet:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 20px;
+  transform: translate(-50%, -50%) rotate(-20deg);
+  background-color: rgba(230, 215, 190, 0.5);
+  border: 1px solid rgba(255, 230, 180, 0.6);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+}
+
+/* Detaily povrchu planety */
+.planet:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: 
+    radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 15%),
+    radial-gradient(circle at 30% 60%, rgba(132, 196, 232, 0.6) 0%, rgba(132, 196, 232, 0) 20%),
+    radial-gradient(circle at 60% 80%, rgba(77, 119, 182, 0.6) 0%, rgba(77, 119, 182, 0) 25%),
+    radial-gradient(circle at 20% 30%, rgba(52, 86, 139, 0.7) 0%, rgba(52, 86, 139, 0) 15%);
+  opacity: 0.8;
+}
+
+/* Kontinenty na povrchu planety */
+.planet::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(ellipse at 20% 30%, rgba(67, 143, 36, 0.6) 0%, rgba(67, 143, 36, 0) 20%),
+    radial-gradient(ellipse at 60% 40%, rgba(67, 143, 36, 0.5) 0%, rgba(67, 143, 36, 0) 18%),
+    radial-gradient(ellipse at 30% 70%, rgba(67, 143, 36, 0.4) 0%, rgba(67, 143, 36, 0) 15%);
+  border-radius: 50%;
+  animation: rotatePlanet 20s linear infinite;
+}
+
+@keyframes planetFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(5deg); }
+}
+
+@keyframes rotatePlanet {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Styly pro text a progressbar */
+.loading-text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.loading-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #f9d9aa;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  font-family: 'Georgia', serif;
+  letter-spacing: 1px;
+}
+
+.loading-quote {
+  color: #e7dbc9;
+  font-size: 16px;
+  font-style: italic;
+  margin-bottom: 20px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  min-height: 48px; /* Zajistí, že výška se nemění při změně citátů */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-progress-container {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.loading-progress-bar {
+  width: 100%;
+  height: 10px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), inset 0 0 5px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.loading-progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, #e7b75c, #f9d9aa);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-progress-fill:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: progressShine 2s ease-in-out infinite;
+}
+
+@keyframes progressShine {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+.loading-percentage {
+  text-align: right;
+  color: #f9d9aa;
+  font-size: 14px;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+.loading-text {
+  margin-top: 10px;
+  color: #e7dbc9;
+  font-size: 16px;
+  letter-spacing: 1px;
+  animation: pulse 1.5s infinite ease-in-out;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 10px rgba(249, 217, 170, 0.5);
+  }
+  50% {
+    opacity: 0.7;
+    text-shadow: 0 0 15px rgba(249, 217, 170, 0.8);
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotate-reverse {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+/* Responsivní design načítací obrazovky */
+@media (max-width: 768px) {
+  .loading-adventure-elements {
+    width: 240px;
+    height: 160px;
+  }
+  
+  .compass {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .map-scroll {
+    width: 150px;
+    height: 120px;
+  }
+  
+  .planet {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .loading-title {
+    font-size: 20px;
+  }
+  
+  .loading-quote {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .loading-adventure-elements {
+    width: 200px;
+    height: 140px;
+  }
+  
+  .compass {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .map-scroll {
+    width: 130px;
+    height: 100px;
+  }
+  
+  .planet {
+    width: 50px;
+    height: 50px;
+    top: -10px;
+    right: -10px;
+  }
+  
+  .loading-title {
+    font-size: 18px;
+  }
+  
+  .loading-quote {
+    font-size: 13px;
+    min-height: 40px;
+  }
+}
+
+/* Zachování ostatních stylů */
+
+/* Styly pro mapu */
+.map-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.map-loading, .map-error {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 15px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 4px;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.map-error {
+  background-color: rgba(255, 200, 200, 0.9);
+  color: #d32f2f;
+}
+
+/* Styly pro herní ovládací prvky */
+.game-controls {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  padding: 10px 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 50px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Vylepšené styly pro herní tlačítka */
+.game-button {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  min-width: 180px;
+  display: block;
+  margin: 0 auto;
+}
+
+.start-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.start-button:hover {
+  background-color: #388E3C;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.stop-button {
+  background-color: #F44336;
+  color: white;
+}
+
+.stop-button:hover {
+  background-color: #D32F2F;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Styly pro modální okno s hádankami */
+.puzzle-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  z-index: 20;
+  max-width: 90%;
+  width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -45%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.puzzle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f5f5f5;
+  border-radius: 12px 12px 0 0;
+}
+
+.puzzle-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+  flex: 1;
+}
+
+.puzzle-stats {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.puzzle-points {
+  background-color: #4CAF50;
+  color: white;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.puzzle-timer {
+  font-family: monospace;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #555;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  margin-left: 10px;
+}
+
+.close-button:hover {
+  color: #333;
+}
+
+.puzzle-image-container {
+  width: 100%;
+  max-height: 250px;
+  overflow: hidden;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.puzzle-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.puzzle-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.puzzle-description {
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.puzzle-question-container {
+  background-color: #f0f4f8;
+  border-left: 4px solid #3f51b5;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.puzzle-question {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+.hints-container {
+  background-color: #fff8e1;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ffe082;
+}
+
+.hint {
+  color: #8d6e63;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+.hint-button {
+  background-color: #ffb74d;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.hint-button:hover {
+  background-color: #ff9800;
+}
+
+.answer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.answer-form label {
+  font-weight: bold;
+  color: #333;
+}
+
+.answer-form input {
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.answer-form input:focus {
+  border-color: #3f51b5;
+  outline: none;
+}
+
+.submit-button {
+  background-color: #3f51b5;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 5px;
+}
+
+.submit-button:hover {
+  background-color: #303f9f;
+}
+
+.feedback {
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.feedback.correct {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+.feedback.incorrect {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ef9a9a;
+}
+
+.success-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  background-color: #e8f5e9;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.success-message h3 {
+  color: #2e7d32;
+  margin: 0;
+}
+
+.confetti {
+  font-size: 2rem;
+  animation: bounce 0.5s ease infinite alternate;
+}
+
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-10px); }
+}
+
+/* Responsivní styly pro modální okno */
+@media (max-width: 500px) {
+  .puzzle-modal {
+    max-width: 95%;
+    width: 95%;
+  }
+  
+  .puzzle-header {
+    padding: 10px 15px;
+    flex-wrap: wrap;
+  }
+  
+  .puzzle-header h2 {
+    font-size: 1.2rem;
+    width: 100%;
+    margin-bottom: 5px;
+  }
+  
+  .puzzle-stats {
+    gap: 10px;
+  }
+  
+  .puzzle-content {
+    padding: 15px;
+    gap: 15px;
+  }
+}
+
+/* Landscape orientace */
+@media (max-height: 500px) and (orientation: landscape) {
+  .puzzle-modal {
+    max-height: 90vh;
+  }
+  
+  .puzzle-image-container {
+    max-height: 150px;
+  }
+  
+  .puzzle-content {
+    gap: 10px;
+  }
+}
+
+/* Styly pro markery na mapě */
+.location-marker {
+  cursor: pointer;
+}
+
+/* Styly pro menu aplikace - přesunuto z pravé strany na levou */
+.app-menu {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 50;
+}
+
+.menu-button {
+  background-color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  padding: 0;
+}
+
+.menu-button .avatar-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+
+.menu-dropdown {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 16px;
+  width: 300px;
+  z-index: 100;
+}
+
+.menu-dropdown h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 16px;
+  text-align: center;
+  color: #333;
+}
+
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.avatar-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.avatar-option:hover {
+  background-color: #f5f5f5;
+}
+
+.avatar-option.selected {
+  background-color: #e3f2fd;
+}
+
+.avatar-option img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-option span {
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+}
+
+/* Styl pro avatara na mapě */
+.user-location-marker {
+  width: 44px;
+  height: 44px;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-location-marker img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #3f51b5;
+  box-shadow: 0 0 0 2px white, 0 3px 8px rgba(0, 0, 0, 0.4);
+}
+
+.user-location-marker svg {
+  width: 30px;
+  height: 30px;
+}
+
+/* Přidané styly pro SVG avatary */
+.avatar-icon, .avatar-svg {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.avatar-svg svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Styly pro úvodní menu */
+.start-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(to bottom right, #303f9f, #1a237e);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  color: white;
+  z-index: 1000;
+  transition: background-image 0.5s ease;
+}
+
+.start-menu h1 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: font-family 0.3s ease;
+}
+
+.start-container {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 30px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  color: #333;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Tematická zpráva */
+.theme-message {
+  font-size: 1.2rem;
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.05);
+  font-style: italic;
+}
+
+/* Avatar wrapper s dekoracemi */
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Bivoj theme */
+.bivoj-theme {
+  background: rgba(250, 240, 230, 0.9);
+  border: 3px solid #8b4513;
+  box-shadow: 0 8px 20px rgba(139, 69, 19, 0.4);
+  position: relative;
+}
+
+.bivoj-theme::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='%238b4513' fill-opacity='0.05' d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/svg%3E");
+  z-index: -1;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.bivoj-theme::after {
+  content: "";
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  top: -20px;
+  right: -20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%238b4513' fill-opacity='0.15' d='M25,30 C35,15 45,10 65,10 C75,15 85,30 85,50 C85,70 75,85 65,90 C45,90 35,85 25,70 C15,50 15,45 25,30 Z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.bivoj-theme input {
+  background-color: rgba(255, 248, 240, 0.9);
+  border: 2px solid #a0522d;
+}
+
+.bivoj-theme input:focus {
+  border-color: #8b4513;
+  box-shadow: 0 0 0 3px rgba(160, 82, 45, 0.3);
+}
+
+.bivoj-theme .theme-message {
+  background-color: rgba(160, 82, 45, 0.1);
+  border-left: 4px solid #a0522d;
+  font-family: 'Almendra', serif;
+  font-weight: bold;
+}
+
+.bivoj-theme .avatar-option.selected .avatar-decoration {
+  box-shadow: 0 0 0 4px #a0522d, 0 0 15px rgba(160, 82, 45, 0.7);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23a0522d' fill-opacity='0.1' d='M25,30 C35,15 45,10 65,10 C75,15 85,30 85,50 C85,70 75,85 65,90 C45,90 35,85 25,70 C15,50 15,45 25,30 Z'/%3E%3C/svg%3E");
+  animation: pulseBivoj 2s infinite;
+}
+
+@keyframes pulseBivoj {
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.05); opacity: 0.9; }
+  100% { transform: scale(1); opacity: 0.7; }
+}
+
+/* Princezna theme */
+.princezna-theme {
+  background: rgba(253, 242, 248, 0.9);
+  border: 3px solid #e91e63;
+  box-shadow: 0 8px 20px rgba(233, 30, 99, 0.4);
+}
+
+.princezna-theme::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M14 16H9v-2h5V9.87a4 4 0 1 1 2 0V14h5v2h-5v15.95A10 10 0 0 0 23.66 27l-3.88-3.88a1 1 0 0 1 1.41-1.41l4.24 4.24a1 1 0 0 1 0 1.41l-4.24 4.24a1 1 0 0 1-1.41-1.41l3.88-3.88A10 10 0 0 0 16 31.95V16zm40 40h-5v-2h5v-4.13a4 4 0 1 1 2 0V54h5v2h-5v15.95A10 10 0 0 0 63.66 67l-3.88-3.88a1 1 0 0 1 1.41-1.41l4.24 4.24a1 1 0 0 1 0 1.41l-4.24 4.24a1 1 0 0 1-1.41-1.41l3.88-3.88A10 10 0 0 0 56 71.95V56zm-39 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm40-40a2 2 0 1 1 0-4 2 2 0 0 1 0 4zM15 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm40 40a2 2 0 1 0 0-4 2 2 0 0 0 0 4z' fill='%23e91e63' fill-opacity='0.12'/%3E%3C/svg%3E");
+  z-index: -1;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.princezna-theme::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  width: 80px;
+  height: 80px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23e91e63' fill-opacity='0.2' d='M50 5 L60 20 L80 25 L65 40 L70 60 L50 50 L30 60 L35 40 L20 25 L40 20 Z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
+}
+
+.princezna-theme input {
+  background-color: rgba(255, 240, 250, 0.9);
+  border: 2px solid #ff4081;
+  border-radius: 20px;
+}
+
+.princezna-theme input:focus {
+  border-color: #e91e63;
+  box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.3);
+}
+
+.princezna-theme .theme-message {
+  background-color: rgba(233, 30, 99, 0.1);
+  border-radius: 20px;
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.4rem;
+}
+
+.princezna-theme .avatar-option.selected .avatar-decoration {
+  box-shadow: 0 0 0 4px #ff4081, 0 0 15px rgba(233, 30, 99, 0.7);
+  background: radial-gradient(circle at center, rgba(255, 64, 129, 0.2) 0%, rgba(255, 64, 129, 0) 70%);
+  animation: pulsePrincezna 2s infinite alternate;
+}
+
+.princezna-theme .start-game-button {
+  border-radius: 20px;
+}
+
+@keyframes pulsePrincezna {
+  0% { box-shadow: 0 0 0 4px #ff4081, 0 0 15px rgba(233, 30, 99, 0.7); }
+  100% { box-shadow: 0 0 0 6px #ff4081, 0 0 20px rgba(233, 30, 99, 0.9); }
+}
+
+/* Ninja theme */
+.ninja-theme {
+  background: rgba(30, 30, 30, 0.85);
+  border: 3px solid #37474f;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  color: #e0e0e0;
+}
+
+.ninja-theme::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23546e7a' fill-opacity='0.2' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+  z-index: -1;
+  pointer-events: none;
+}
+
+.ninja-theme::after {
+  content: "";
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 100px;
+  height: 100px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23546e7a' fill-opacity='0.15' d='M50,10 L90,50 L50,90 L10,50 Z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.ninja-theme input {
+  background-color: rgba(40, 40, 40, 0.9);
+  border: 2px solid #546e7a;
+  color: #e0e0e0;
+}
+
+.ninja-theme input:focus {
+  border-color: #607d8b;
+  box-shadow: 0 0 0 3px rgba(84, 110, 122, 0.3);
+}
+
+.ninja-theme .theme-message {
+  background-color: rgba(84, 110, 122, 0.2);
+  border-left: 4px solid #546e7a;
+  color: #bdbdbd;
+}
+
+.ninja-theme label, .ninja-theme h3 {
+  color: #e0e0e0;
+}
+
+.ninja-theme .avatar-option span {
+  color: #bdbdbd;
+}
+
+.ninja-theme .avatar-option.selected .avatar-decoration {
+  box-shadow: 0 0 0 4px #546e7a, 0 0 15px rgba(84, 110, 122, 0.7);
+  background: radial-gradient(circle at center, rgba(84, 110, 122, 0.3) 0%, rgba(84, 110, 122, 0) 70%);
+  animation: pulseNinja 1.5s infinite alternate;
+}
+
+@keyframes pulseNinja {
+  0% { opacity: 0.5; }
+  100% { opacity: 0.9; }
+}
+
+/* Detective theme */
+.detective-theme {
+  background: rgba(255, 255, 255, 0.9);
+  border: 3px solid #1976d2;
+  box-shadow: 0 8px 20px rgba(25, 118, 210, 0.4);
+}
+
+.detective-theme::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231976d2' fill-opacity='0.08' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+  z-index: -1;
+  pointer-events: none;
+}
+
+.detective-theme .theme-message {
+  background-color: rgba(25, 118, 210, 0.1);
+  border-left: 4px solid #1976d2;
+  font-family: 'Roboto Slab', serif;
+}
+
+.detective-theme input {
+  background-color: rgba(240, 248, 255, 0.9);
+  border: 2px solid #2196F3;
+}
+
+.detective-theme input:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.3);
+}
+
+.detective-theme .avatar-option.selected .avatar-decoration {
+  box-shadow: 0 0 0 4px #2196F3, 0 0 15px rgba(25, 118, 210, 0.7);
+  background: radial-gradient(circle at center, rgba(33, 150, 243, 0.2) 0%, rgba(33, 150, 243, 0) 70%);
+}
+
+/* Explorer theme */
+.explorer-theme {
+  background: rgba(255, 255, 255, 0.9);
+  border: 3px solid #43a047;
+  box-shadow: 0 8px 20px rgba(67, 160, 71, 0.4);
+}
+
+.explorer-theme::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2343a047' fill-opacity='0.1'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  z-index: -1;
+  pointer-events: none;
+}
+
+.explorer-theme .theme-message {
+  background-color: rgba(67, 160, 71, 0.1);
+  border-left: 4px solid #43a047;
+}
+
+.explorer-theme input {
+  background-color: rgba(240, 255, 240, 0.9);
+  border: 2px solid #4CAF50;
+}
+
+.explorer-theme input:focus {
+  border-color: #43a047;
+  box-shadow: 0 0 0 3px rgba(67, 160, 71, 0.3);
+}
+
+.explorer-theme .avatar-option.selected .avatar-decoration {
+  box-shadow: 0 0 0 4px #4CAF50, 0 0 15px rgba(67, 160, 71, 0.7);
+  background: radial-gradient(circle at center, rgba(76, 175, 80, 0.2) 0%, rgba(76, 175, 80, 0) 70%);
+}
+
+/* Responsivní styly */
+@media (max-width: 768px) {
+  .game-controls {
+    width: 90%;
+  }
+
+  .start-menu h1 {
+    font-size: 2rem;
+  }
+  
+  .start-menu .avatar-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .start-container {
+    padding: 20px;
+  }
+  
+  .start-menu .avatar-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .theme-message {
+    font-size: 1rem;
+    padding: 8px;
+  }
+}
+
+/* Landscape orientace (naklonění telefonu na šířku) */
+@media (max-width: 950px) and (orientation: landscape) {
+  /* Úpravy pro úvodní menu v landscape orientaci */
+  .start-menu {
+    padding: 10px;
+  }
+
+  .start-menu h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .start-container {
+    padding: 15px;
+    display: flex;
+    flex-direction: row;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .player-info-section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  .player-name-input {
+    margin-bottom: 10px;
+  }
+
+  .avatar-selection-section {
+    flex: 1;
+  }
+
+  .avatar-selection-section h3 {
+    margin-bottom: 8px;
+  }
+
+  .start-menu .avatar-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .start-menu .avatar-option img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .start-game-button {
+    padding: 10px;
+    font-size: 1rem;
+  }
+
+  /* Úpravy pro herní obrazovku v landscape orientaci */
+  .app-menu {
+    top: 10px;
+    left: 10px;
+  }
+
+  .game-controls {
+    bottom: 15px;
+    padding: 8px 16px;
+  }
+
+  .game-button {
+    padding: 8px 16px;
+    font-size: 14px;
+    min-width: 150px;
+  }
+
+  /* Úprava pozice tlačítek pro zoom, aby nepřekážela */
+  .maplibregl-ctrl-top-right {
+    top: 10px;
+    right: 10px;
+  }
+}
+
+/* Speciální styly pro velmi malé displeje v landscape orientaci */
+@media (max-height: 450px) and (orientation: landscape) {
+  .start-menu h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .start-container {
+    padding: 10px;
+  }
+
+  .player-name-input label {
+    font-size: 1rem;
+    margin-bottom: 5px;
+  }
+
+  .player-name-input input {
+    padding: 8px;
+  }
+
+  .avatar-selection-section h3 {
+    font-size: 1rem;
+  }
+
+  .start-menu .avatar-option img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .start-menu .avatar-option span {
+    font-size: 10px;
+  }
+}
+
+/* PuzzleModal styly */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.puzzle-modal {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px;
+  position: relative;
+  animation: modalAppear 0.3s ease-out;
+}
+
+@keyframes modalAppear {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #555;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.close-button:hover {
+  background-color: #f0f0f0;
+}
+
+.puzzle-header {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.puzzle-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.puzzle-difficulty {
+  display: flex;
+  align-items: center;
+}
+
+.difficulty {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.difficulty.easy {
+  background-color: #e4f7e1;
+  color: #2e8b24;
+}
+
+.difficulty.medium {
+  background-color: #fff6e5;
+  color: #e69b00;
+}
+
+.difficulty.hard {
+  background-color: #fde9e9;
+  color: #d93025;
+}
+
+.puzzle-image {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.puzzle-image img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 4px;
+}
+
+.puzzle-content {
+  margin-bottom: 25px;
+}
+
+.puzzle-description {
+  margin-bottom: 15px;
+  color: #444;
+  line-height: 1.5;
+}
+
+.puzzle-question {
+  font-weight: 600;
+  color: #333;
+  font-size: 1.1rem;
+  margin-top: 10px;
+}
+
+.answer-section {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.answer-input {
+  flex-grow: 1;
+  padding: 12px 15px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-right: 10px;
+  transition: border-color 0.2s;
+}
+
+.answer-input:focus {
+  border-color: #4c84ff;
+  outline: none;
+}
+
+.submit-button {
+  background-color: #4c84ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-button:hover {
+  background-color: #3a70e3;
+}
+
+.submit-button:disabled {
+  background-color: #d0d0d0;
+  cursor: not-allowed;
+}
+
+.feedback {
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.feedback.correct {
+  background-color: #e4f7e1;
+  color: #2e8b24;
+  border-left: 4px solid #2e8b24;
+}
+
+.feedback.incorrect {
+  background-color: #fde9e9;
+  color: #d93025;
+  border-left: 4px solid #d93025;
+}
+
+.hints-section {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.hint-button {
+  background-color: transparent;
+  color: #5c6bc0;
+  border: 1px solid #5c6bc0;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.hint-button:hover {
+  background-color: #5c6bc0;
+  color: white;
+}
+
+.hint-container {
+  animation: fadeIn 0.3s;
+}
+
+.hint-label {
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.hint-text {
+  color: #333;
+  margin-bottom: 10px;
+  line-height: 1.4;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 4px;
+  border-left: 3px solid #5c6bc0;
+}
+
+.next-hint-button {
+  background-color: #5c6bc0;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.next-hint-button:hover {
+  background-color: #4a58a3;
+}
+
+.puzzle-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.stat {
+  text-align: center;
+  flex: 1;
+}
+
+.stat-label {
+  display: block;
+  color: #777;
+  font-size: 0.85rem;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-weight: 600;
+  color: #333;
+}
+
+.puzzle-solved {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.success-message {
+  color: #2e8b24;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.continue-button {
+  background-color: #4c84ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 15px;
+}
+
+.continue-button:hover {
+  background-color: #3a70e3;
+}
+
+.already-solved {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  color: #666;
+  font-style: italic;
+  text-align: center;
+}
+
+/* Responzivní styly pro PuzzleModal */
+@media (max-width: 480px) {
+  .puzzle-modal {
+    padding: 16px;
+    width: 95%;
+  }
+  
+  .puzzle-header h2 {
+    font-size: 1.3rem;
+  }
+  
+  .answer-section {
+    flex-direction: column;
+  }
+  
+  .submit-button {
+    margin-left: 0;
+    margin-top: 8px;
+    height: 40px;
+  }
+  
+  .puzzle-stats {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .stat {
+    margin-bottom: 8px;
+    text-align: left;
+  }
+}
+
+/* Styly pro landscape orientaci */
+@media (max-width: 850px) and (orientation: landscape) {
+  .puzzle-modal {
+    max-height: 85vh;
+    max-width: 90%;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .puzzle-header {
+    width: 100%;
+  }
+  
+  .puzzle-image {
+    width: 45%;
+    margin-right: 5%;
+  }
+  
+  .puzzle-content {
+    width: 50%;
+  }
+  
+  .answer-section,
+  .hints-section,
+  .puzzle-stats,
+  .already-solved,
+  .puzzle-solved {
+    width: 100%;
+  }
+}
