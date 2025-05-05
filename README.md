@@ -13,11 +13,11 @@ Tento projekt je mobilní aplikace vytvořená pomocí Next.js a TypeScriptu, kt
 
 1. Klonujte repozitář:
    ```
-   git clone https://github.com/yourusername/vymyto-unikova-hra.git
+   git clone https://github.com/100ky/RandomAPP.git
    ```
 2. Přejděte do adresáře projektu:
    ```
-   cd vymyto-unikova-hra
+   cd RandomAPP/vymyto-unikova-hra
    ```
 3. Nainstalujte závislosti:
    ```
