@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
+import Image from 'next/image';
+import styles from '@/styles/AppMenu.module.css';
 
 // Definice dostupných avatarů
 export const avatars = [
@@ -30,56 +32,31 @@ export const avatars = [
 ];
 
 interface AppMenuProps {
-  onSelectAvatar: (avatar: typeof avatars[0]) => void;
   selectedAvatarId: string | null;
+  onSelectAvatar?: (avatar: typeof avatars[0]) => void;
 }
 
-const AppMenu: React.FC<AppMenuProps> = ({ onSelectAvatar, selectedAvatarId }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-  
-  const handleAvatarSelect = (avatar: typeof avatars[0]) => {
-    onSelectAvatar(avatar);
-    setIsMenuOpen(false);
-  };
-
+const AppMenu: React.FC<AppMenuProps> = ({ selectedAvatarId }) => {
   // Najít aktuálně vybraný avatar
-  const selectedAvatar = avatars.find(avatar => avatar.id === selectedAvatarId) || null;
+  const selectedAvatar = avatars.find(avatar => avatar.id === selectedAvatarId) || avatars[0];
 
   return (
-    <div className="app-menu">
-      <button className="menu-button" onClick={toggleMenu}>
-        {selectedAvatar ? (
-          <img 
-            src={selectedAvatar.imageUrl} 
-            alt={selectedAvatar.name} 
-            className="avatar-icon" 
-          />
-        ) : (
-          'Menu'
-        )}
-      </button>
-
-      {isMenuOpen && (
-        <div className="menu-dropdown">
-          <h3>Vyberte svůj avatar</h3>
-          <div className="avatar-grid">
-            {avatars.map((avatar) => (
-              <div 
-                key={avatar.id}
-                className={`avatar-option ${selectedAvatarId === avatar.id ? 'selected' : ''}`}
-                onClick={() => handleAvatarSelect(avatar)}
-              >
-                <img src={avatar.imageUrl} alt={avatar.name} />
-                <span>{avatar.name}</span>
-              </div>
-            ))}
+    <div className={styles['app-menu']}>
+      <div className={styles['avatar-display']}>
+        {selectedAvatar && (
+          <div className={styles['current-avatar']}>
+            <Image 
+              src={selectedAvatar.imageUrl} 
+              alt={selectedAvatar.name} 
+              width={50}
+              height={50}
+              className={styles['avatar-icon']} 
+            />
+            {/* Text jména avatara je skrytý pomocí CSS */}
+            <span className={styles['avatar-name']}>{selectedAvatar.name}</span>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

@@ -1,0 +1,142 @@
+.settingsContainer {
+  position: absolute;
+  right: 10px;
+  top: 70px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.statsContainer {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  width: auto;
+  min-width: 150px;
+}
+
+.statItem {
+  margin: 4px 0;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.statItem span {
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.settingsButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: white;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.settingsButton:hover {
+  background-color: #f0f0f0;
+  transform: rotate(30deg);
+}
+
+.menuContainer {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background-color: white;
+  border-radius: 8px;
+  padding: 8px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 220px;
+  animation: fadeIn 0.2s ease;
+}
+
+.menuList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menuList li {
+  margin: 0;
+}
+
+.menuList button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 15px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.menuList button:hover {
+  background-color: #f5f5f5;
+}
+
+.menuList button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.menuList svg {
+  margin-right: 10px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responzivní design pro malé obrazovky */
+@media (max-width: 480px) {
+  .settingsContainer {
+    top: 60px;
+    right: 5px;
+  }
+  
+  .statsContainer {
+    min-width: 120px;
+    padding: 6px 10px;
+  }
+  
+  .statItem {
+    font-size: 12px;
+  }
+  
+  .settingsButton {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .menuContainer {
+    min-width: 180px;
+  }
+  
+  .menuList button {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}

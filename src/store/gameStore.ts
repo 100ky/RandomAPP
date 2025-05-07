@@ -20,6 +20,8 @@ interface GameState {
   solvePuzzle: (puzzleId: string) => void;
   visitLocation: (locationId: string) => void;
   useHint: (puzzleId: string) => void;
+  addSteps: (steps: number) => void;
+  addDistance: (meters: number) => void;
 }
 
 // Výchozí stav progress objektu
@@ -29,6 +31,8 @@ const initialPlayerProgress: PlayerProgress = {
   visitedLocations: [],
   achievements: [],
   lastPlayed: Date.now(),
+  steps: 0,
+  distanceMeters: 0,
 };
 
 export const useGameStore = create<GameState>()(
@@ -133,7 +137,24 @@ export const useGameStore = create<GameState>()(
             lastPlayed: Date.now()
           }
         };
-      })
+      }),
+      
+      // Nové funkce pro sledování kroků a vzdálenosti
+      addSteps: (steps: number) => set(state => ({
+        playerProgress: {
+          ...state.playerProgress,
+          steps: state.playerProgress.steps + steps,
+          lastPlayed: Date.now()
+        }
+      })),
+      
+      addDistance: (meters: number) => set(state => ({
+        playerProgress: {
+          ...state.playerProgress,
+          distanceMeters: state.playerProgress.distanceMeters + meters,
+          lastPlayed: Date.now()
+        }
+      }))
     }),
     {
       name: 'game-storage', // název klíče v lokálním úložišti

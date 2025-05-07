@@ -43,6 +43,8 @@ export interface PlayerProgress {
     lastPlayed: number;
     username?: string;
     avatarId?: string;
+    steps: number;
+    distanceMeters: number;
 }
 
 export interface Achievement {

@@ -20,9 +20,11 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
     const userMarkerRef = useRef<maplibre.Marker | null>(null);
     const markersRef = useRef<maplibre.Marker[]>([]);
     const animationStartedRef = useRef<boolean>(false);
+    const lastPositionRef = useRef<{lat: number, lng: number} | null>(null);
+    const stepCounterTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     
     // Připojení k Zustand storu
-    const { visitLocation, playerProgress } = useGameStore();
+    const { visitLocation, playerProgress, addSteps, addDistance } = useGameStore();
     
     // Použití vylepšeného hooku pro geolokaci
     const { 
@@ -46,9 +48,18 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         progress: 0,
         complete: false,
     });
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     
     // Nový stav pro sledování režimu zobrazení
     const [isFullscreenMode, setIsFullscreenMode] = useState(false);
+    
+    // Přidání nového stavu pro skrytí chybové zprávy geolokace
+    const [hideGeolocationError, setHideGeolocationError] = useState(false);
+    
+    // Funkce pro zavření chybové zprávy o poloze
+    const handleDismissGeolocationError = useCallback(() => {
+        setHideGeolocationError(true);
+    }, []);
     
     // Funkce pro zpracování změny fullscreen režimu
     const handleFullscreenToggle = useCallback((isFullscreen: boolean) => {
@@ -126,12 +137,95 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
     // Najít vybraný avatar nebo použít první jako výchozí
     const selectedAvatar = avatars.find(avatar => avatar.id === selectedAvatarId) || avatars[0];
 
+    // Funkce pro formátování vzdálenosti
+    const formatDistance = (meters: number) => {
+        if (meters < 1000) {
+            return `${Math.round(meters)} m`;
+        } else {
+            return `${(meters / 1000).toFixed(2)} km`;
+        }
+    };
+
+    // Funkce pro aktualizaci počtu kroků - jednoduchá heuristika
+    const updateStepsCount = useCallback((distance: number) => {
+        // Přibližný počet kroků je vzdálenost v metrech děleno průměrnou délkou kroku (0.75m)
+        const stepsEstimate = Math.round(distance / 0.75);
+        if (stepsEstimate > 0) {
+            addSteps(stepsEstimate);
+        }
+    }, [addSteps]);
+
+    // Funkce pro kontrolu, zda je uživatel blízko některé lokace
+    const checkProximityToLocations = useCallback((userCoordinates: [number, number]) => {
+        if (!userCoordinates[0] || !userCoordinates[1]) return;
+        
+        pointsOfInterest.forEach(location => {
+            const distanceToLocation = calculateDistance(
+                userCoordinates[1], // latitude
+                userCoordinates[0], // longitude
+                location.coordinates[1], // point latitude
+                location.coordinates[0]  // point longitude
+            );
+            
+            // Pokud je uživatel v okruhu 50 metrů od lokace, zaznamenat návštěvu
+            if (distanceToLocation <= 50) {
+                // Zkontrolovat, zda uživatel již lokaci navštívil
+                if (!playerProgress.visitedLocations.includes(location.id)) {
+                    visitLocation(location.id);
+                    // Zobrazit oznámení o objevení nové lokace
+                    showLocationDiscoveryNotification(location.name);
+                }
+            }
+        });
+    }, [playerProgress.visitedLocations, visitLocation]);
+    
+    // Funkce pro výpočet vzdálenosti mezi dvěma body (Haversine formula)
+    const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+        const R = 6371e3; // poloměr Země v metrech
+        const φ1 = (lat1 * Math.PI) / 180;
+        const φ2 = (lat2 * Math.PI) / 180;
+        const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+        const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+
+        const a =
+            Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+            Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    };
+    
     // Funkce pro aktualizaci markeru uživatele podle aktuální polohy
     const updateUserMarker = useCallback(() => {
         if (!mapRef.current || !latitude || !longitude) return;
 
         // Souřadnice uživatele
         const userCoordinates: [number, number] = [longitude, latitude];
+
+        // Výpočet vzdálenosti od poslední pozice
+        if (lastPositionRef.current) {
+            const distance = calculateDistance(
+                latitude,
+                longitude,
+                lastPositionRef.current.lat,
+                lastPositionRef.current.lng
+            );
+            
+            if (distance > 5) { // jen pokud se pohnul o více než 5 metrů
+                addDistance(distance); // přidat vzdálenost do stavu
+                
+                // Omezit aktualizaci kroků, aby nebyly příliš časté, ale jen když se uživatel hýbe
+                if (stepCounterTimeoutRef.current) {
+                    clearTimeout(stepCounterTimeoutRef.current);
+                }
+                
+                stepCounterTimeoutRef.current = setTimeout(() => {
+                    updateStepsCount(distance);
+                }, 2000);
+            }
+        }
+        
+        // Uložit aktuální pozici
+        lastPositionRef.current = { lat: latitude, lng: longitude };
 
         // Odstranit předchozí marker, pokud existuje
         if (userMarkerRef.current) {
@@ -177,46 +271,7 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         
         // Kontrola, zda je uživatel v blízkosti některého z bodů zájmu
         checkProximityToLocations(userCoordinates);
-    }, [latitude, longitude, accuracy, heading, selectedAvatar]);
-    
-    // Funkce pro kontrolu, zda je uživatel blízko některé lokace
-    const checkProximityToLocations = useCallback((userCoordinates: [number, number]) => {
-        if (!userCoordinates[0] || !userCoordinates[1]) return;
-        
-        pointsOfInterest.forEach(location => {
-            const distanceToLocation = calculateDistance(
-                userCoordinates[1], // latitude
-                userCoordinates[0], // longitude
-                location.coordinates[1], // point latitude
-                location.coordinates[0]  // point longitude
-            );
-            
-            // Pokud je uživatel v okruhu 50 metrů od lokace, zaznamenat návštěvu
-            if (distanceToLocation <= 50) {
-                // Zkontrolovat, zda uživatel již lokaci navštívil
-                if (!playerProgress.visitedLocations.includes(location.id)) {
-                    visitLocation(location.id);
-                    // Zobrazit oznámení o objevení nové lokace
-                    showLocationDiscoveryNotification(location.name);
-                }
-            }
-        });
-    }, [playerProgress.visitedLocations, visitLocation]);
-    
-    // Funkce pro výpočet vzdálenosti mezi dvěma body (Haversine formula)
-    const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
-        const R = 6371e3; // poloměr Země v metrech
-        const φ1 = (lat1 * Math.PI) / 180;
-        const φ2 = (lat2 * Math.PI) / 180;
-        const Δφ = ((lat2 - lat1) * Math.PI) / 180;
-        const Δλ = ((lon2 - lon1) * Math.PI) / 180;
-
-        const a =
-            Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-            Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
-    };
+    }, [latitude, longitude, accuracy, heading, selectedAvatar, addDistance, updateStepsCount, checkProximityToLocations]);
     
     // Zobrazení oznámení o objevení nové lokace
     const showLocationDiscoveryNotification = (locationName: string) => {
@@ -432,7 +487,7 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                 mapRef.current = null;
             }
         };
-    }, []);
+    }, [animateToUserLocation, latitude, longitude]);
     
     // Přidání markerů lokací
     const addLocationMarkers = useCallback(() => {
@@ -669,9 +724,10 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
             )}
             
             {/* Chybová zpráva geolokace */}
-            {geolocationError && (
+            {geolocationError && !hideGeolocationError && (
                 <div className="geolocation-error">
                     <p>{geolocationError}</p>
+                    <button onClick={handleDismissGeolocationError}>Zavřít</button>
                 </div>
             )}
             

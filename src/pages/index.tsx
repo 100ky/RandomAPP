@@ -4,17 +4,18 @@ import GameControls from '../components/GameControls';
 import PuzzleModal from '../components/PuzzleModal';
 import LoadingScreen from '../components/LoadingScreen';
 import AppMenu from '../components/AppMenu';
-import StartMenu from '../components/StartMenu';
+import SplashScreen from '../components/SplashScreen';
+import AvatarSelection from '../components/AvatarSelection';
 
 // Definice možných stavů aplikace
-type AppState = 'loading' | 'start-menu' | 'game';
+type AppState = 'loading' | 'splash' | 'avatar-selection' | 'game';
 
 const Home: React.FC = () => {
-    // Stav aplikace - načítání, úvodní menu nebo hra
+    // Stav aplikace - načítání, splash screen, výběr avatara nebo hra
     const [appState, setAppState] = useState<AppState>('loading');
     
     // Informace o hráči
-    const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>('explorer');
+    const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
     const [playerName, setPlayerName] = useState<string>('');
     
     // Stav hry - běží nebo ne
@@ -23,17 +24,27 @@ const Home: React.FC = () => {
     // Při prvním načtení zobrazit načítací obrazovku
     useEffect(() => {
         const loadingTimeout = setTimeout(() => {
-            // Po načtení přejít na úvodní menu
-            setAppState('start-menu');
+            // Po načtení přejít na splash screen
+            setAppState('splash');
         }, 3000);
 
         return () => clearTimeout(loadingTimeout);
     }, []);
 
-    // Funkce volaná po kliknutí na Start Game v úvodním menu
-    const handleStartGame = (avatarId: string, name: string) => {
+    // Handler pro ukončení splash screenu
+    const handleSplashFinish = () => {
+        setAppState('avatar-selection');
+    };
+    
+    // Funkce volaná po výběru avatara
+    const handleAvatarSelect = (avatarId: string) => {
         setSelectedAvatarId(avatarId);
-        setPlayerName(name);
+        
+        // Lze také odvodit výchozí jméno hráče podle avatara
+        const defaultName = avatarId || 'Hráč';
+        setPlayerName(defaultName);
+        
+        // Přepnout do herního režimu
         setAppState('game');
     };
 
@@ -64,8 +75,10 @@ const Home: React.FC = () => {
         switch (appState) {
             case 'loading':
                 return <LoadingScreen />;
-            case 'start-menu':
-                return <StartMenu onStartGame={handleStartGame} />;
+            case 'splash':
+                return <SplashScreen onFinish={handleSplashFinish} />;
+            case 'avatar-selection':
+                return <AvatarSelection onSelect={handleAvatarSelect} />;
             case 'game':
                 return (
                     <div className="container">
