@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Puzzle } from '../types/game';
 import { updateSolvedPuzzle, isPuzzleSolved, getTotalPoints } from '../utils/progressTracker';
+import FullscreenToggle from './FullscreenToggle';
 
 interface PuzzleModalProps {
   puzzle: Puzzle | null;
@@ -17,6 +18,9 @@ const PuzzleModal: React.FC<PuzzleModalProps> = ({ puzzle, onClose, onSolve }) =
   const [solved, setSolved] = useState(false);
   const [startTime] = useState<number>(Date.now());
   const [timeTaken, setTimeTaken] = useState<number>(0);
+  
+  // Nový stav pro režim na šířku
+  const [isFullscreenMode, setIsFullscreenMode] = useState(false);
 
   useEffect(() => {
     // Resetovat stav při změně hádanky
@@ -26,6 +30,7 @@ const PuzzleModal: React.FC<PuzzleModalProps> = ({ puzzle, onClose, onSolve }) =
     setCurrentHintIndex(0);
     setAttempts(0);
     setSolved(false);
+    setIsFullscreenMode(false);
 
     // Kontrola, zda je hádanka již vyřešena
     if (puzzle) {
@@ -45,6 +50,11 @@ const PuzzleModal: React.FC<PuzzleModalProps> = ({ puzzle, onClose, onSolve }) =
 
   // Když není předána žádná hádanka, nezobrazovat nic
   if (!puzzle) return null;
+  
+  // Obsluha přepínání režimu zobrazení
+  const handleFullscreenToggle = (isFullscreen: boolean) => {
+    setIsFullscreenMode(isFullscreen);
+  };
 
   const handleAnswerSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,7 +117,11 @@ const PuzzleModal: React.FC<PuzzleModalProps> = ({ puzzle, onClose, onSolve }) =
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="puzzle-modal" onClick={(e) => e.stopPropagation()}>
+      <div 
+        className={`puzzle-modal ${isFullscreenMode ? 'puzzle-fullscreen' : ''}`} 
+        onClick={(e) => e.stopPropagation()}
+        id="puzzle-content"
+      >
         <button className="close-button" onClick={onClose}>×</button>
         
         {/* Hlavička hádanky */}
@@ -123,8 +137,18 @@ const PuzzleModal: React.FC<PuzzleModalProps> = ({ puzzle, onClose, onSolve }) =
 
         {/* Obrázek hádanky (pokud existuje) */}
         {puzzle.image && (
-          <div className="puzzle-image">
-            <img src={puzzle.image} alt={puzzle.title} />
+          <div className="puzzle-image-container">
+            <img 
+              src={puzzle.image} 
+              alt={puzzle.title} 
+              className="puzzle-image"
+            />
+            {/* Přidat fullscreen toggle pokud je obrázek */}
+            <FullscreenToggle 
+              targetId="puzzle-content"
+              type="camera"
+              onToggle={handleFullscreenToggle}
+            />
           </div>
         )}
 

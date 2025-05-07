@@ -1,0 +1,64 @@
+Vymýto - Úniková hra
+Copyright (c) 2025
+
+Tento software používá následující knihovny třetích stran pod příslušnými licencemi:
+
+-----
+
+MapLibre GL JS
+License: BSD 3-Clause License
+https://github.com/maplibre/maplibre-gl-js/blob/main/LICENSE.txt
+
+React Map GL
+License: MIT License
+https://github.com/visgl/react-map-gl/blob/master/LICENSE
+
+Next.js
+License: MIT License
+https://github.com/vercel/next.js/blob/canary/license.md
+
+React
+License: MIT License
+https://github.com/facebook/react/blob/main/LICENSE
+
+Zustand
+License: MIT License
+https://github.com/pmndrs/zustand/blob/main/LICENSE
+
+TypeScript
+License: Apache License 2.0
+https://github.com/microsoft/TypeScript/blob/main/LICENSE.txt
+
+Next PWA
+License: MIT License
+https://github.com/shadowwalker/next-pwa/blob/master/LICENSE
+
+Jest
+License: MIT License
+https://github.com/facebook/jest/blob/main/LICENSE
+
+ESLint
+License: MIT License
+https://github.com/eslint/eslint/blob/main/LICENSE
+
+-----
+
+OpenStreetMap data použitá v této aplikaci je pod licencí Open Data Commons Open Database License (ODbL)
+https://www.openstreetmap.org/copyright
+
+-----
+
+UPOZORNĚNÍ PRO POUŽITÍ DATOVÝCH PODKLADŮ:
+
+Aplikace využívá dlaždice z OpenStreetMap, které jsou zdarma pro běžné použití, ale mají omezení:
+- Je nutné dodržet podmínky použití OpenStreetMap (https://operations.osmfoundation.org/policies/tiles/)
+- Při větším zatížení (vysoký provoz) je nutné hostovat vlastní dlaždicové servery
+
+-----
+
+POZNÁMKA K PUBLIKOVÁNÍ V APP STORES:
+
+Pro publikování v Google Play Store je vyžadován vývojářský účet ($25 jednorázově).
+Pro publikování v Apple App Store je vyžadován vývojářský účet ($99 ročně).
+
+Žádná z použitých knihoven nevyžaduje licenční poplatky pro komerční využití.

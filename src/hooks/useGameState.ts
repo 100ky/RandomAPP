@@ -24,11 +24,8 @@ const useGameState = () => {
         setProgress(prevProgress => Math.min(prevProgress + increment, 100));
     };
 
-    useEffect(() => {
-        if (progress >= 100) {
-            nextLevel();
-        }
-    }, [progress]);
+    // Odstranil jsem useEffect, který kontroluje progress >= 100
+    // a spouští nextLevel(), protože stejnou logiku již řeší gameStore.ts
 
     return {
         level,

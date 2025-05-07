@@ -1,4 +1,16 @@
 /* Resetovací styly */
+:root {
+  --primary-color: #4285f4;
+  --secondary-color: #34a853;
+  --warning-color: #fbbc05;
+  --danger-color: #ea4335;
+  --light-gray: #f0f0f0;
+  --medium-gray: #ddd;
+  --dark-gray: #666;
+  --black: #333;
+  --white: #fff;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -7,17 +19,26 @@
 
 html,
 body {
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   height: 100%;
   width: 100%;
   overflow: hidden;
+  position: fixed;
 }
 
+/* Kontejner aplikace */
 #__next {
   height: 100%;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
   position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 /* Styly pro načítací obrazovku */
@@ -506,14 +527,15 @@ body {
 /* Zachování ostatních stylů */
 
 /* Styly pro mapu */
-.map-container {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
+.map-container-wrapper {
+  position: relative;
   width: 100%;
+  height: 100%;
+}
+
+.map-container {
+  width: 100%;
+  height: 100%;
 }
 
 .map-loading, .map-error {
@@ -533,396 +555,296 @@ body {
   color: #d32f2f;
 }
 
-/* Styly pro herní ovládací prvky */
-.game-controls {
+/* Styly pro marker uživatele s avatarem */
+.user-location-marker {
+  position: relative;
+  width: 50px;
+  height: 50px;
+}
+
+.user-location-marker img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 3px solid var(--white);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  object-fit: cover;
+  background-color: var(--primary-color);
+}
+
+/* Kruh zobrazující přesnost geolokace */
+.accuracy-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid rgba(66, 133, 244, 0.5);
+  background-color: rgba(66, 133, 244, 0.1);
+  pointer-events: none;
+}
+
+/* Indikátor směru pohybu */
+.heading-indicator {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 16px solid var(--primary-color);
+  transform-origin: bottom center;
+  margin-left: -8px;
+  margin-top: -18px;
+}
+
+/* Značka navštíveného místa */
+.visited-badge {
+  display: inline-block;
+  background-color: var(--secondary-color);
+  color: var(--white);
+  font-size: 12px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 12px;
+  margin-top: 5px;
+}
+
+/* Oznámení o objevení nové lokace */
+.location-discovery-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--secondary-color);
+  color: var(--white);
+  padding: 16px;
+  border-radius: 8px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: opacity 0.5s ease;
+  max-width: 90%;
+  text-align: center;
+  font-weight: bold;
+}
+
+.location-discovery-notification.fade-out {
+  opacity: 0;
+}
+
+/* Indikátor offline režimu */
+.offline-indicator {
+  position: absolute;
+  top: 70px;
+  right: 10px;
+  background-color: rgba(251, 188, 5, 0.9);
+  color: var(--black);
+  padding: 8px 12px;
+  border-radius: 4px;
+  z-index: 5;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Progress bar pro stahování offline map */
+.download-progress {
   position: absolute;
   bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10;
-  padding: 10px 20px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 50px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Vylepšené styly pro herní tlačítka */
-.game-button {
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  width: 80%;
+  background-color: var(--white);
+  border-radius: 8px;
+  padding: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  min-width: 180px;
-  display: block;
-  margin: 0 auto;
+  z-index: 10;
 }
 
-.start-button {
-  background-color: #4CAF50;
-  color: white;
+.progress-bar {
+  height: 8px;
+  background-color: var(--light-gray);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
 }
 
-.start-button:hover {
-  background-color: #388E3C;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-  transform: translateY(-2px);
+.progress-filled {
+  height: 100%;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
 }
 
-.stop-button {
-  background-color: #F44336;
-  color: white;
+.progress-text {
+  font-size: 12px;
+  text-align: center;
+  color: var(--dark-gray);
 }
 
-.stop-button:hover {
-  background-color: #D32F2F;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-  transform: translateY(-2px);
-}
-
-/* Styly pro modální okno s hádankami */
-.puzzle-modal {
-  position: fixed;
+/* Geolokační chybová hláška */
+.geolocation-error {
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-  z-index: 20;
-  max-width: 90%;
-  width: 500px;
-  max-height: 80vh;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  animation: modalFadeIn 0.3s ease-out;
-}
-
-@keyframes modalFadeIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -45%);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-}
-
-.puzzle-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  border-bottom: 1px solid #e0e0e0;
-  background-color: #f5f5f5;
-  border-radius: 12px 12px 0 0;
-}
-
-.puzzle-header h2 {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #333;
-  flex: 1;
-}
-
-.puzzle-stats {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
-
-.puzzle-points {
-  background-color: #4CAF50;
-  color: white;
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-}
-
-.puzzle-timer {
-  font-family: monospace;
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #555;
-}
-
-.close-button {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #666;
-  margin-left: 10px;
-}
-
-.close-button:hover {
-  color: #333;
-}
-
-.puzzle-image-container {
-  width: 100%;
-  max-height: 250px;
-  overflow: hidden;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.puzzle-image {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-}
-
-.puzzle-content {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.puzzle-description {
-  color: #555;
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-.puzzle-question-container {
-  background-color: #f0f4f8;
-  border-left: 4px solid #3f51b5;
-  padding: 15px;
-  border-radius: 4px;
-}
-
-.puzzle-question {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  margin-top: 10px;
-  font-weight: 500;
-}
-
-.hints-container {
-  background-color: #fff8e1;
-  padding: 15px;
+  background-color: var(--danger-color);
+  color: var(--white);
+  padding: 16px;
   border-radius: 8px;
-  border: 1px solid #ffe082;
-}
-
-.hint {
-  color: #8d6e63;
-  font-style: italic;
-  margin-bottom: 10px;
-}
-
-.hint-button {
-  background-color: #ffb74d;
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.2s;
-}
-
-.hint-button:hover {
-  background-color: #ff9800;
-}
-
-.answer-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.answer-form label {
-  font-weight: bold;
-  color: #333;
-}
-
-.answer-form input {
-  padding: 12px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.2s;
-}
-
-.answer-form input:focus {
-  border-color: #3f51b5;
-  outline: none;
-}
-
-.submit-button {
-  background-color: #3f51b5;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  margin-top: 5px;
-}
-
-.submit-button:hover {
-  background-color: #303f9f;
-}
-
-.feedback {
-  padding: 10px 15px;
-  border-radius: 8px;
-  font-weight: 500;
+  z-index: 10;
+  max-width: 80%;
   text-align: center;
 }
 
-.feedback.correct {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  border: 1px solid #a5d6a7;
-}
-
-.feedback.incorrect {
-  background-color: #ffebee;
-  color: #c62828;
-  border: 1px solid #ef9a9a;
-}
-
-.success-message {
+/* Styly pro herní ovládací prvky */
+.game-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 20px;
-  background-color: #e8f5e9;
-  border-radius: 8px;
-  text-align: center;
+  gap: 12px;
+  z-index: 10;
 }
 
-.success-message h3 {
-  color: #2e7d32;
-  margin: 0;
-}
-
-.confetti {
-  font-size: 2rem;
-  animation: bounce 0.5s ease infinite alternate;
-}
-
-@keyframes bounce {
-  from { transform: translateY(0); }
-  to { transform: translateY(-10px); }
-}
-
-/* Responsivní styly pro modální okno */
-@media (max-width: 500px) {
-  .puzzle-modal {
-    max-width: 95%;
-    width: 95%;
-  }
-  
-  .puzzle-header {
-    padding: 10px 15px;
-    flex-wrap: wrap;
-  }
-  
-  .puzzle-header h2 {
-    font-size: 1.2rem;
-    width: 100%;
-    margin-bottom: 5px;
-  }
-  
-  .puzzle-stats {
-    gap: 10px;
-  }
-  
-  .puzzle-content {
-    padding: 15px;
-    gap: 15px;
-  }
-}
-
-/* Landscape orientace */
-@media (max-height: 500px) and (orientation: landscape) {
-  .puzzle-modal {
-    max-height: 90vh;
-  }
-  
-  .puzzle-image-container {
-    max-height: 150px;
-  }
-  
-  .puzzle-content {
-    gap: 10px;
-  }
-}
-
-/* Styly pro markery na mapě */
-.location-marker {
+.game-button {
+  padding: 12px 24px;
+  border-radius: 24px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   cursor: pointer;
+  transition: all 0.2s;
 }
 
-/* Styly pro menu aplikace - přesunuto z pravé strany na levou */
+.game-button:hover {
+  background-color: #3367d6;
+  transform: translateY(-2px);
+}
+
+.game-button.stop {
+  background-color: var(--danger-color);
+}
+
+.game-button.stop:hover {
+  background-color: #d32f2f;
+}
+
+/* Menu aplikace */
 .app-menu {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 50;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
 }
 
 .menu-button {
-  background-color: white;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--white);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   border: none;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.menu-container {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  background-color: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 12px;
+  min-width: 250px;
+  max-width: 90vw;
+  z-index: 11;
+  transform-origin: top left;
+  animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Úvodní obrazovka */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--primary-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  color: var(--white);
+}
+
+.loading-screen h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.loading-screen p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.loading-spinner {
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-top: 5px solid var(--white);
   border-radius: 50%;
   width: 50px;
   height: 50px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Úvodní menu */
+.start-menu {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  overflow: hidden;
-  padding: 0;
+  height: 100vh;
+  background-color: var(--primary-color);
+  color: var(--white);
+  padding: 20px;
 }
 
-.menu-button .avatar-icon {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-}
-
-.menu-dropdown {
-  position: absolute;
-  top: 60px;
-  right: 0;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  padding: 16px;
-  width: 300px;
-  z-index: 100;
-}
-
-.menu-dropdown h3 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 16px;
+.start-menu h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
   text-align: center;
-  color: #333;
 }
 
-.avatar-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
+.start-menu p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  max-width: 600px;
+}
+
+.avatar-selection {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 .avatar-option {
@@ -930,928 +852,442 @@ body {
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  padding: 10px;
-  border-radius: 8px;
-  transition: background-color 0.2s;
-}
-
-.avatar-option:hover {
-  background-color: #f5f5f5;
+  transition: transform 0.2s;
+  width: 80px;
 }
 
 .avatar-option.selected {
-  background-color: #e3f2fd;
+  transform: scale(1.1);
 }
 
 .avatar-option img {
-  width: 40px;
-  height: 40px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
+  border: 3px solid transparent;
   object-fit: cover;
-  border: 2px solid #ffffff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.avatar-option span {
-  font-size: 12px;
-  color: #666;
+.avatar-option.selected img {
+  border-color: var(--white);
+}
+
+.avatar-option p {
+  margin-top: 8px;
+  font-size: 0.9rem;
   text-align: center;
 }
 
-/* Styl pro avatara na mapě */
-.user-location-marker {
-  width: 44px;
-  height: 44px;
-  background-color: transparent;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.user-location-marker img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #3f51b5;
-  box-shadow: 0 0 0 2px white, 0 3px 8px rgba(0, 0, 0, 0.4);
-}
-
-.user-location-marker svg {
-  width: 30px;
-  height: 30px;
-}
-
-/* Přidané styly pro SVG avatary */
-.avatar-icon, .avatar-svg {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.avatar-svg svg {
+.player-name-input {
+  margin-bottom: 24px;
   width: 100%;
-  height: 100%;
+  max-width: 300px;
 }
 
-/* Styly pro úvodní menu */
-.start-menu {
+.player-name-input input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 24px;
+  border: none;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.start-button {
+  padding: 16px 32px;
+  border-radius: 24px;
+  background-color: var(--secondary-color);
+  color: var(--white);
+  border: none;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.start-button:hover {
+  background-color: #2d9348;
+  transform: translateY(-2px);
+}
+
+.start-button:disabled {
+  background-color: var(--medium-gray);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Modální okno s hádankou */
+.puzzle-modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: linear-gradient(to bottom right, #303f9f, #1a237e);
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 100;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 20px;
-  color: white;
-  z-index: 1000;
-  transition: background-image 0.5s ease;
 }
 
-.start-menu h1 {
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  transition: font-family 0.3s ease;
-}
-
-.start-container {
-  background-color: rgba(255, 255, 255, 0.9);
+.puzzle-content {
+  background-color: var(--white);
   border-radius: 12px;
-  padding: 30px;
-  width: 90%;
-  max-width: 600px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  color: #333;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
+  max-width: 90%;
+  width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 24px;
 }
 
-/* Tematická zpráva */
-.theme-message {
-  font-size: 1.2rem;
-  text-align: center;
-  margin-bottom: 20px;
-  padding: 10px;
-  border-radius: 8px;
-  background-color: rgba(0, 0, 0, 0.05);
-  font-style: italic;
+.puzzle-header {
+  margin-bottom: 16px;
 }
 
-/* Avatar wrapper s dekoracemi */
-.avatar-wrapper {
-  position: relative;
-  display: inline-block;
+.puzzle-header h2 {
+  font-size: 1.8rem;
+  color: var(--black);
 }
 
-.avatar-decoration {
-  position: absolute;
-  top: 0;
-  left: 0;
+.puzzle-description {
+  margin-bottom: 24px;
+  color: var(--dark-gray);
+  line-height: 1.5;
+}
+
+.puzzle-image {
   width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  pointer-events: none;
+  border-radius: 8px;
+  margin-bottom: 24px;
 }
 
-/* Bivoj theme */
-.bivoj-theme {
-  background: rgba(250, 240, 230, 0.9);
-  border: 3px solid #8b4513;
-  box-shadow: 0 8px 20px rgba(139, 69, 19, 0.4);
-  position: relative;
-}
-
-.bivoj-theme::before {
-  content: "";
-  position: absolute;
-  top: -10px;
-  left: -10px;
-  right: -10px;
-  bottom: -10px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='%238b4513' fill-opacity='0.05' d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/svg%3E");
-  z-index: -1;
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-.bivoj-theme::after {
-  content: "";
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  top: -20px;
-  right: -20px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%238b4513' fill-opacity='0.15' d='M25,30 C35,15 45,10 65,10 C75,15 85,30 85,50 C85,70 75,85 65,90 C45,90 35,85 25,70 C15,50 15,45 25,30 Z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-size: contain;
-  opacity: 0.8;
-  pointer-events: none;
-}
-
-.bivoj-theme input {
-  background-color: rgba(255, 248, 240, 0.9);
-  border: 2px solid #a0522d;
-}
-
-.bivoj-theme input:focus {
-  border-color: #8b4513;
-  box-shadow: 0 0 0 3px rgba(160, 82, 45, 0.3);
-}
-
-.bivoj-theme .theme-message {
-  background-color: rgba(160, 82, 45, 0.1);
-  border-left: 4px solid #a0522d;
-  font-family: 'Almendra', serif;
+.puzzle-question {
   font-weight: bold;
+  margin-bottom: 16px;
+  color: var(--black);
+  font-size: 1.2rem;
 }
 
-.bivoj-theme .avatar-option.selected .avatar-decoration {
-  box-shadow: 0 0 0 4px #a0522d, 0 0 15px rgba(160, 82, 45, 0.7);
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23a0522d' fill-opacity='0.1' d='M25,30 C35,15 45,10 65,10 C75,15 85,30 85,50 C85,70 75,85 65,90 C45,90 35,85 25,70 C15,50 15,45 25,30 Z'/%3E%3C/svg%3E");
-  animation: pulseBivoj 2s infinite;
+.puzzle-answer {
+  margin-bottom: 24px;
 }
 
-@keyframes pulseBivoj {
-  0% { transform: scale(1); opacity: 0.7; }
-  50% { transform: scale(1.05); opacity: 0.9; }
-  100% { transform: scale(1); opacity: 0.7; }
+.answer-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--medium-gray);
+  border-radius: 4px;
+  font-size: 1rem;
 }
 
-/* Princezna theme */
-.princezna-theme {
-  background: rgba(253, 242, 248, 0.9);
-  border: 3px solid #e91e63;
-  box-shadow: 0 8px 20px rgba(233, 30, 99, 0.4);
+.hint-section {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--medium-gray);
 }
 
-.princezna-theme::before {
-  content: "";
-  position: absolute;
-  top: -10px;
-  left: -10px;
-  right: -10px;
-  bottom: -10px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M14 16H9v-2h5V9.87a4 4 0 1 1 2 0V14h5v2h-5v15.95A10 10 0 0 0 23.66 27l-3.88-3.88a1 1 0 0 1 1.41-1.41l4.24 4.24a1 1 0 0 1 0 1.41l-4.24 4.24a1 1 0 0 1-1.41-1.41l3.88-3.88A10 10 0 0 0 16 31.95V16zm40 40h-5v-2h5v-4.13a4 4 0 1 1 2 0V54h5v2h-5v15.95A10 10 0 0 0 63.66 67l-3.88-3.88a1 1 0 0 1 1.41-1.41l4.24 4.24a1 1 0 0 1 0 1.41l-4.24 4.24a1 1 0 0 1-1.41-1.41l3.88-3.88A10 10 0 0 0 56 71.95V56zm-39 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm40-40a2 2 0 1 1 0-4 2 2 0 0 1 0 4zM15 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm40 40a2 2 0 1 0 0-4 2 2 0 0 0 0 4z' fill='%23e91e63' fill-opacity='0.12'/%3E%3C/svg%3E");
-  z-index: -1;
-  opacity: 0.5;
-  pointer-events: none;
+.hint-button {
+  background-color: var(--light-gray);
+  color: var(--dark-gray);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
 }
 
-.princezna-theme::after {
-  content: "";
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  width: 80px;
-  height: 80px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23e91e63' fill-opacity='0.2' d='M50 5 L60 20 L80 25 L65 40 L70 60 L50 50 L30 60 L35 40 L20 25 L40 20 Z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-size: contain;
-  pointer-events: none;
+.hint-text {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: var(--light-gray);
+  border-radius: 4px;
+  color: var(--dark-gray);
 }
 
-.princezna-theme input {
-  background-color: rgba(255, 240, 250, 0.9);
-  border: 2px solid #ff4081;
-  border-radius: 20px;
+.puzzle-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
 }
 
-.princezna-theme input:focus {
-  border-color: #e91e63;
-  box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.3);
+.submit-button, .close-button {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.princezna-theme .theme-message {
-  background-color: rgba(233, 30, 99, 0.1);
-  border-radius: 20px;
-  font-family: 'Dancing Script', cursive;
-  font-size: 1.4rem;
+.submit-button {
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
 }
 
-.princezna-theme .avatar-option.selected .avatar-decoration {
-  box-shadow: 0 0 0 4px #ff4081, 0 0 15px rgba(233, 30, 99, 0.7);
-  background: radial-gradient(circle at center, rgba(255, 64, 129, 0.2) 0%, rgba(255, 64, 129, 0) 70%);
-  animation: pulsePrincezna 2s infinite alternate;
+.submit-button:hover {
+  background-color: #3367d6;
 }
 
-.princezna-theme .start-game-button {
-  border-radius: 20px;
+.close-button {
+  background-color: var(--light-gray);
+  color: var(--dark-gray);
+  border: none;
 }
 
-@keyframes pulsePrincezna {
-  0% { box-shadow: 0 0 0 4px #ff4081, 0 0 15px rgba(233, 30, 99, 0.7); }
-  100% { box-shadow: 0 0 0 6px #ff4081, 0 0 20px rgba(233, 30, 99, 0.9); }
+.close-button:hover {
+  background-color: var(--medium-gray);
 }
 
-/* Ninja theme */
-.ninja-theme {
-  background: rgba(30, 30, 30, 0.85);
-  border: 3px solid #37474f;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-  color: #e0e0e0;
-}
-
-.ninja-theme::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23546e7a' fill-opacity='0.2' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
-  z-index: -1;
-  pointer-events: none;
-}
-
-.ninja-theme::after {
-  content: "";
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  width: 100px;
-  height: 100px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23546e7a' fill-opacity='0.15' d='M50,10 L90,50 L50,90 L10,50 Z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-size: contain;
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-.ninja-theme input {
-  background-color: rgba(40, 40, 40, 0.9);
-  border: 2px solid #546e7a;
-  color: #e0e0e0;
-}
-
-.ninja-theme input:focus {
-  border-color: #607d8b;
-  box-shadow: 0 0 0 3px rgba(84, 110, 122, 0.3);
-}
-
-.ninja-theme .theme-message {
-  background-color: rgba(84, 110, 122, 0.2);
-  border-left: 4px solid #546e7a;
-  color: #bdbdbd;
-}
-
-.ninja-theme label, .ninja-theme h3 {
-  color: #e0e0e0;
-}
-
-.ninja-theme .avatar-option span {
-  color: #bdbdbd;
-}
-
-.ninja-theme .avatar-option.selected .avatar-decoration {
-  box-shadow: 0 0 0 4px #546e7a, 0 0 15px rgba(84, 110, 122, 0.7);
-  background: radial-gradient(circle at center, rgba(84, 110, 122, 0.3) 0%, rgba(84, 110, 122, 0) 70%);
-  animation: pulseNinja 1.5s infinite alternate;
-}
-
-@keyframes pulseNinja {
-  0% { opacity: 0.5; }
-  100% { opacity: 0.9; }
-}
-
-/* Detective theme */
-.detective-theme {
-  background: rgba(255, 255, 255, 0.9);
-  border: 3px solid #1976d2;
-  box-shadow: 0 8px 20px rgba(25, 118, 210, 0.4);
-}
-
-.detective-theme::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231976d2' fill-opacity='0.08' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
-  z-index: -1;
-  pointer-events: none;
-}
-
-.detective-theme .theme-message {
-  background-color: rgba(25, 118, 210, 0.1);
-  border-left: 4px solid #1976d2;
-  font-family: 'Roboto Slab', serif;
-}
-
-.detective-theme input {
-  background-color: rgba(240, 248, 255, 0.9);
-  border: 2px solid #2196F3;
-}
-
-.detective-theme input:focus {
-  border-color: #1976d2;
-  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.3);
-}
-
-.detective-theme .avatar-option.selected .avatar-decoration {
-  box-shadow: 0 0 0 4px #2196F3, 0 0 15px rgba(25, 118, 210, 0.7);
-  background: radial-gradient(circle at center, rgba(33, 150, 243, 0.2) 0%, rgba(33, 150, 243, 0) 70%);
-}
-
-/* Explorer theme */
-.explorer-theme {
-  background: rgba(255, 255, 255, 0.9);
-  border: 3px solid #43a047;
-  box-shadow: 0 8px 20px rgba(67, 160, 71, 0.4);
-}
-
-.explorer-theme::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2343a047' fill-opacity='0.1'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  z-index: -1;
-  pointer-events: none;
-}
-
-.explorer-theme .theme-message {
-  background-color: rgba(67, 160, 71, 0.1);
-  border-left: 4px solid #43a047;
-}
-
-.explorer-theme input {
-  background-color: rgba(240, 255, 240, 0.9);
-  border: 2px solid #4CAF50;
-}
-
-.explorer-theme input:focus {
-  border-color: #43a047;
-  box-shadow: 0 0 0 3px rgba(67, 160, 71, 0.3);
-}
-
-.explorer-theme .avatar-option.selected .avatar-decoration {
-  box-shadow: 0 0 0 4px #4CAF50, 0 0 15px rgba(67, 160, 71, 0.7);
-  background: radial-gradient(circle at center, rgba(76, 175, 80, 0.2) 0%, rgba(76, 175, 80, 0) 70%);
-}
-
-/* Responsivní styly */
+/* Responzivní design */
 @media (max-width: 768px) {
-  .game-controls {
-    width: 90%;
+  .puzzle-content {
+    padding: 16px;
   }
 
+  .puzzle-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .avatar-selection {
+    gap: 8px;
+  }
+  
+  .avatar-option {
+    width: 60px;
+  }
+  
+  .avatar-option img {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-controls {
+    bottom: 10px;
+  }
+  
+  .game-button {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+  
   .start-menu h1 {
     font-size: 2rem;
   }
   
-  .start-menu .avatar-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .start-container {
-    padding: 20px;
-  }
-  
-  .start-menu .avatar-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .theme-message {
+  .start-menu p {
     font-size: 1rem;
-    padding: 8px;
   }
 }
 
-/* Landscape orientace (naklonění telefonu na šířku) */
-@media (max-width: 950px) and (orientation: landscape) {
-  /* Úpravy pro úvodní menu v landscape orientaci */
-  .start-menu {
-    padding: 10px;
-  }
+/* Animace pro doladění uživatelského zážitku */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
 
-  .start-menu h1 {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-  }
+.pulse-animation {
+  animation: pulse 1.5s infinite;
+}
 
-  .start-container {
-    padding: 15px;
-    display: flex;
-    flex-direction: row;
-    max-height: 80vh;
-    overflow-y: auto;
-  }
-
-  .player-info-section {
-    display: flex;
-    flex-direction: column;
+/* Responzivní design pro různé orientace zařízení */
+@media (orientation: portrait) {
+  .map-container-wrapper {
+    height: 100%;
     width: 100%;
-    margin-bottom: 0;
   }
 
-  .player-name-input {
-    margin-bottom: 10px;
+  .game-controls {
+    bottom: 20px;
+    flex-direction: row;
   }
-
-  .avatar-selection-section {
-    flex: 1;
-  }
-
-  .avatar-selection-section h3 {
-    margin-bottom: 8px;
-  }
-
-  .start-menu .avatar-grid {
-    grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-    margin-bottom: 10px;
-  }
-
-  .start-menu .avatar-option img {
-    width: 40px;
-    height: 40px;
-  }
-
-  .start-game-button {
-    padding: 10px;
-    font-size: 1rem;
-  }
-
-  /* Úpravy pro herní obrazovku v landscape orientaci */
+  
   .app-menu {
     top: 10px;
     left: 10px;
   }
-
-  .game-controls {
-    bottom: 15px;
-    padding: 8px 16px;
-  }
-
-  .game-button {
-    padding: 8px 16px;
-    font-size: 14px;
-    min-width: 150px;
-  }
-
-  /* Úprava pozice tlačítek pro zoom, aby nepřekážela */
-  .maplibregl-ctrl-top-right {
-    top: 10px;
+  
+  .offline-indicator {
+    top: 70px;
     right: 10px;
   }
-}
-
-/* Speciální styly pro velmi malé displeje v landscape orientaci */
-@media (max-height: 450px) and (orientation: landscape) {
-  .start-menu h1 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
+  
+  .location-discovery-notification {
+    top: 20px;
+    width: 80%;
   }
-
-  .start-container {
-    padding: 10px;
+  
+  .puzzle-content {
+    width: 90%;
+    max-height: 80vh;
   }
-
-  .player-name-input label {
-    font-size: 1rem;
-    margin-bottom: 5px;
+  
+  /* Vertikální rozvržení pro úvodní obrazovku */
+  .start-menu {
+    flex-direction: column;
   }
-
-  .player-name-input input {
-    padding: 8px;
-  }
-
-  .avatar-selection-section h3 {
-    font-size: 1rem;
-  }
-
-  .start-menu .avatar-option img {
-    width: 35px;
-    height: 35px;
-  }
-
-  .start-menu .avatar-option span {
-    font-size: 10px;
+  
+  .avatar-selection {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }
 
-/* PuzzleModal styly */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.75);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+@media (orientation: landscape) {
+  /* Speciální úpravy pro horizontální režim */
+  body {
+    overflow: auto; /* Povolí scrollování v landscape módu */
+  }
+  
+  .map-container-wrapper {
+    height: 100%;
+    width: 100%;
+  }
+  
+  /* Zvětšení mapy v landscape módu */
+  .map-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+  }
+  
+  .game-controls {
+    bottom: 10px;
+    flex-direction: row;
+    justify-content: flex-end;
+    right: 10px;
+    left: auto;
+    transform: none;
+  }
+  
+  .app-menu {
+    top: 10px;
+    left: 10px;
+  }
+  
+  .puzzle-content {
+    width: 70%;
+    max-height: 90vh;
+  }
+  
+  /* Horizontální rozvržení pro úvodní obrazovku */
+  .start-menu {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 5%;
+  }
+  
+  .start-menu-content {
+    width: 50%;
+  }
+  
+  .avatar-selection {
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 45%;
+  }
 }
 
-.puzzle-modal {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 20px;
-  position: relative;
-  animation: modalAppear 0.3s ease-out;
-}
-
-@keyframes modalAppear {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.close-button {
+/* Speciální třída pro přepínání do fullscreen režimu */
+.fullscreen-map-button, .fullscreen-camera-button {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #555;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  bottom: 80px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  background: white;
   border-radius: 50%;
-  transition: background-color 0.2s;
-}
-
-.close-button:hover {
-  background-color: #f0f0f0;
-}
-
-.puzzle-header {
-  margin-bottom: 20px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-}
-
-.puzzle-header h2 {
-  margin: 0;
-  color: #333;
-  font-size: 1.5rem;
-}
-
-.puzzle-difficulty {
-  display: flex;
-  align-items: center;
-}
-
-.difficulty {
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.difficulty.easy {
-  background-color: #e4f7e1;
-  color: #2e8b24;
-}
-
-.difficulty.medium {
-  background-color: #fff6e5;
-  color: #e69b00;
-}
-
-.difficulty.hard {
-  background-color: #fde9e9;
-  color: #d93025;
-}
-
-.puzzle-image {
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.puzzle-image img {
-  max-width: 100%;
-  max-height: 300px;
-  border-radius: 4px;
-}
-
-.puzzle-content {
-  margin-bottom: 25px;
-}
-
-.puzzle-description {
-  margin-bottom: 15px;
-  color: #444;
-  line-height: 1.5;
-}
-
-.puzzle-question {
-  font-weight: 600;
-  color: #333;
-  font-size: 1.1rem;
-  margin-top: 10px;
-}
-
-.answer-section {
-  display: flex;
-  margin-bottom: 20px;
-}
-
-.answer-input {
-  flex-grow: 1;
-  padding: 12px 15px;
-  border: 2px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  margin-right: 10px;
-  transition: border-color 0.2s;
-}
-
-.answer-input:focus {
-  border-color: #4c84ff;
-  outline: none;
-}
-
-.submit-button {
-  background-color: #4c84ff;
-  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  z-index: 10;
   border: none;
-  border-radius: 4px;
-  padding: 0 20px;
-  font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.submit-button:hover {
-  background-color: #3a70e3;
+/* Ikona pro přepnutí režimu */
+.fullscreen-icon {
+  width: 24px;
+  height: 24px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23333"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.submit-button:disabled {
-  background-color: #d0d0d0;
-  cursor: not-allowed;
+/* Ikona pro ukončení fullscreen režimu */
+.exit-fullscreen-icon {
+  width: 24px;
+  height: 24px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23333"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.feedback {
-  padding: 10px 15px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  animation: fadeIn 0.3s;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.feedback.correct {
-  background-color: #e4f7e1;
-  color: #2e8b24;
-  border-left: 4px solid #2e8b24;
-}
-
-.feedback.incorrect {
-  background-color: #fde9e9;
-  color: #d93025;
-  border-left: 4px solid #d93025;
-}
-
-.hints-section {
-  margin: 20px 0;
-  padding: 15px;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-}
-
-.hint-button {
-  background-color: transparent;
-  color: #5c6bc0;
-  border: 1px solid #5c6bc0;
-  padding: 8px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-  width: 100%;
-}
-
-.hint-button:hover {
-  background-color: #5c6bc0;
-  color: white;
-}
-
-.hint-container {
-  animation: fadeIn 0.3s;
-}
-
-.hint-label {
-  font-weight: 600;
-  color: #555;
-  margin-bottom: 5px;
-}
-
-.hint-text {
-  color: #333;
-  margin-bottom: 10px;
-  line-height: 1.4;
-  padding: 10px;
-  background-color: #fff;
-  border-radius: 4px;
-  border-left: 3px solid #5c6bc0;
-}
-
-.next-hint-button {
-  background-color: #5c6bc0;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.2s;
-}
-
-.next-hint-button:hover {
-  background-color: #4a58a3;
-}
-
-.puzzle-stats {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-  padding-top: 15px;
-  border-top: 1px solid #eee;
-}
-
-.stat {
-  text-align: center;
-  flex: 1;
-}
-
-.stat-label {
-  display: block;
-  color: #777;
-  font-size: 0.85rem;
-  margin-bottom: 5px;
-}
-
-.stat-value {
-  font-weight: 600;
-  color: #333;
-}
-
-.puzzle-solved {
-  text-align: center;
-  padding: 20px 0;
-}
-
-.success-message {
-  color: #2e8b24;
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 15px;
-}
-
-.continue-button {
-  background-color: #4c84ff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 25px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  margin-top: 15px;
-}
-
-.continue-button:hover {
-  background-color: #3a70e3;
-}
-
-.already-solved {
-  margin-top: 10px;
-  padding: 10px;
-  background-color: #f0f0f0;
-  border-radius: 4px;
-  color: #666;
-  font-style: italic;
-  text-align: center;
-}
-
-/* Responzivní styly pro PuzzleModal */
-@media (max-width: 480px) {
-  .puzzle-modal {
-    padding: 16px;
-    width: 95%;
+/* Optimalizace pro různé typy zařízení */
+/* Malé mobilní telefony */
+@media (max-width: 375px) {
+  .game-button {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .menu-button {
+    width: 40px;
+    height: 40px;
   }
   
   .puzzle-header h2 {
     font-size: 1.3rem;
   }
-  
-  .answer-section {
-    flex-direction: column;
+}
+
+/* Tablety */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .user-location-marker {
+    width: 60px;
+    height: 60px;
   }
   
-  .submit-button {
-    margin-left: 0;
-    margin-top: 8px;
-    height: 40px;
+  .location-marker {
+    width: 25px;
+    height: 25px;
   }
   
-  .puzzle-stats {
-    flex-direction: column;
-    align-items: flex-start;
+  .game-controls {
+    gap: 16px;
   }
   
-  .stat {
-    margin-bottom: 8px;
-    text-align: left;
+  .game-button {
+    padding: 14px 28px;
+    font-size: 1.1rem;
   }
 }
 
-/* Styly pro landscape orientaci */
-@media (max-width: 850px) and (orientation: landscape) {
-  .puzzle-modal {
-    max-height: 85vh;
-    max-width: 90%;
-    display: flex;
-    flex-wrap: wrap;
+/* Velká zařízení a desktop */
+@media (min-width: 1025px) {
+  .user-location-marker {
+    width: 70px;
+    height: 70px;
   }
   
-  .puzzle-header {
-    width: 100%;
+  .map-container-wrapper {
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 20px;
+    height: calc(100% - 40px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   }
   
-  .puzzle-image {
-    width: 45%;
-    margin-right: 5%;
-  }
-  
-  .puzzle-content {
-    width: 50%;
-  }
-  
-  .answer-section,
-  .hints-section,
-  .puzzle-stats,
-  .already-solved,
-  .puzzle-solved {
-    width: 100%;
+  .game-controls {
+    bottom: 30px;
   }
 }
