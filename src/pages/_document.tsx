@@ -25,8 +25,7 @@ class MyDocument extends Document {
           <link rel="manifest" href="/manifest.json" crossOrigin="use-credentials" />
           <link rel="shortcut icon" href="/favicon.ico" />
           
-          {/* Meta tagy pro offline funkčnost */}
-          <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover" />
+          {/* Meta tag viewport přesunut do _app.tsx */}
         </Head>
         <body>
           <Main />

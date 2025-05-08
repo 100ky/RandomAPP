@@ -1,32 +1,52 @@
+/**
+ * Komponenta Map - Hlavní komponenta pro zobrazení interaktivní mapy a herní svět
+ * 
+ * Tato komponenta zobrazuje interaktivní mapu pomocí MapLibre GL, sleduje polohu uživatele,
+ * zobrazuje body zájmu, umožňuje jejich objevování a poskytuje herní mechanismy jako počítání
+ * kroků, sledování vzdálenosti a stažení offline mapy pro použití bez připojení k internetu.
+ */
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import maplibre from 'maplibre-gl';
 import useGeolocation from '../hooks/useGeolocation';
-import { vysokeMytoGeoJSON, vysokeMytoCenterGeoJSON, pointsOfInterest } from '../data/cityBoundary';
+import { pointsOfInterest } from '../data/cityBoundary';
 import { avatars } from './AppMenu';
 import { useGameStore } from '../store/gameStore';
 import { createOfflineMapCache } from '../utils/mapHelpers';
 import LocationMarker from './LocationMarker';
 import { getRequiredAttributions } from '../utils/attributions';
 import FullscreenToggle from './FullscreenToggle';
+import GameMenu from './GameMenu';
+import GameControls from './GameControls';
 
+/**
+ * Props pro komponentu Map
+ */
 interface MapProps {
-    selectedAvatarId: string | null;
-    animateToUserLocation?: boolean;
+    selectedAvatarId: string | null;        // ID vybraného avatara uživatelem
+    animateToUserLocation?: boolean;        // Zda má mapa automaticky animovat k poloze uživatele
+    onEndGame?: () => void;                 // Callback funkce volaná při ukončení hry
 }
 
-const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = false }) => {
-    const mapContainerRef = useRef<HTMLDivElement | null>(null);
-    const mapRef = useRef<maplibre.Map | null>(null);
-    const userMarkerRef = useRef<maplibre.Marker | null>(null);
-    const markersRef = useRef<maplibre.Marker[]>([]);
-    const animationStartedRef = useRef<boolean>(false);
-    const lastPositionRef = useRef<{lat: number, lng: number} | null>(null);
-    const stepCounterTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+/**
+ * Hlavní komponenta pro zobrazení a interakci s mapou
+ */
+const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = false, onEndGame }) => {
+    // Reference na DOM elementy a objekty mapy
+    const mapContainerRef = useRef<HTMLDivElement | null>(null);    // Reference na DOM kontejner pro mapu
+    const mapRef = useRef<maplibre.Map | null>(null);               // Reference na instanci mapy
+    const userMarkerRef = useRef<maplibre.Marker | null>(null);     // Reference na marker uživatele
+    const markersRef = useRef<maplibre.Marker[]>([]);               // Reference na markery bodů zájmu
+    const animationStartedRef = useRef<boolean>(false);             // Reference pro sledování, zda byla animace spuštěna
+    const lastPositionRef = useRef<{lat: number, lng: number} | null>(null);  // Reference na poslední pozici uživatele
+    const stepCounterTimeoutRef = useRef<NodeJS.Timeout | null>(null);        // Reference na timeout pro počítání kroků
     
-    // Připojení k Zustand storu
-    const { visitLocation, playerProgress, addSteps, addDistance } = useGameStore();
+    // Připojení k Zustand storu pro správu herního stavu
+    const { visitLocation, playerProgress, addSteps, addDistance, startGame, isGameActive, resetStats } = useGameStore();
     
-    // Použití vylepšeného hooku pro geolokaci
+    // Stav pro sledování, zda je hra spuštěna
+    const [isGameRunning, setIsGameRunning] = useState(false);
+    
+    // Použití hooku pro geolokaci - sledování polohy uživatele
     const { 
         latitude, 
         longitude, 
@@ -41,27 +61,31 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
     });
     
     // Stavy komponenty mapy
-    const [mapLoaded, setMapLoaded] = useState(false);
-    const [offlineMode, setOfflineMode] = useState(false);
-    const [offlineTilesStatus, setOfflineTilesStatus] = useState({
+    const [mapLoaded, setMapLoaded] = useState(false);              // Byl načten mapový podklad
+    const [offlineMode, setOfflineMode] = useState(false);          // Je aktivní offline režim
+    const [offlineTilesStatus, setOfflineTilesStatus] = useState({  // Stav stahování offline dlaždic
         downloading: false,
         progress: 0,
         complete: false,
     });
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isGamePaused, setIsGamePaused] = useState(false);        // Je hra pozastavena
     
-    // Nový stav pro sledování režimu zobrazení
+    // Stav pro sledování režimu zobrazení na celou obrazovku
     const [isFullscreenMode, setIsFullscreenMode] = useState(false);
     
-    // Přidání nového stavu pro skrytí chybové zprávy geolokace
+    // Stav pro skrytí chybové zprávy geolokace
     const [hideGeolocationError, setHideGeolocationError] = useState(false);
     
-    // Funkce pro zavření chybové zprávy o poloze
+    /**
+     * Funkce pro zavření chybové zprávy o poloze
+     */
     const handleDismissGeolocationError = useCallback(() => {
         setHideGeolocationError(true);
     }, []);
     
-    // Funkce pro zpracování změny fullscreen režimu
+    /**
+     * Funkce pro zpracování změny fullscreen režimu
+     */
     const handleFullscreenToggle = useCallback((isFullscreen: boolean) => {
         setIsFullscreenMode(isFullscreen);
         
@@ -79,6 +103,9 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
     
     // Sledování změny orientace
     useEffect(() => {
+        /**
+         * Kontrola orientace zařízení a nastavení příslušného stavu
+         */
         const checkOrientation = () => {
             setIsLandscape(window.innerWidth > window.innerHeight);
         };
@@ -86,7 +113,7 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         // Počáteční kontrola
         checkOrientation();
         
-        // Přidat posluchač události
+        // Přidat posluchač události pro změnu velikosti okna
         window.addEventListener('resize', checkOrientation);
         
         // Volitelně, sledování změny orientace pomocí API, pokud je podporováno
@@ -100,7 +127,7 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
             console.log('API orientace není podporováno:', error);
         }
         
-        // Cleanup
+        // Cleanup - odstranění posluchačů událostí
         return () => {
             window.removeEventListener('resize', checkOrientation);
             try {
@@ -115,7 +142,7 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         };
     }, []);
     
-    // Aktualizace mapy při změně orientace
+    // Aktualizace mapy při změně orientace zařízení
     useEffect(() => {
         if (mapRef.current && mapLoaded) {
             // Dát mapě čas na přizpůsobení se novým rozměrům
@@ -137,7 +164,11 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
     // Najít vybraný avatar nebo použít první jako výchozí
     const selectedAvatar = avatars.find(avatar => avatar.id === selectedAvatarId) || avatars[0];
 
-    // Funkce pro formátování vzdálenosti
+    /**
+     * Formátuje vzdálenost v metrech na čitelný řetězec
+     * @param meters Vzdálenost v metrech
+     * @returns Formátovaný řetězec s jednotkami (m nebo km)
+     */
     const formatDistance = (meters: number) => {
         if (meters < 1000) {
             return `${Math.round(meters)} m`;
@@ -146,7 +177,11 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         }
     };
 
-    // Funkce pro aktualizaci počtu kroků - jednoduchá heuristika
+    /**
+     * Aktualizuje počet kroků na základě uražené vzdálenosti
+     * Používá jednoduchou heuristiku pro odhad počtu kroků ze vzdálenosti
+     * @param distance Uražená vzdálenost v metrech
+     */
     const updateStepsCount = useCallback((distance: number) => {
         // Přibližný počet kroků je vzdálenost v metrech děleno průměrnou délkou kroku (0.75m)
         const stepsEstimate = Math.round(distance / 0.75);
@@ -155,7 +190,10 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         }
     }, [addSteps]);
 
-    // Funkce pro kontrolu, zda je uživatel blízko některé lokace
+    /**
+     * Kontroluje, zda je uživatel blízko některé lokace a případně registruje návštěvu
+     * @param userCoordinates Souřadnice uživatele [lng, lat]
+     */
     const checkProximityToLocations = useCallback((userCoordinates: [number, number]) => {
         if (!userCoordinates[0] || !userCoordinates[1]) return;
         
@@ -179,7 +217,14 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         });
     }, [playerProgress.visitedLocations, visitLocation]);
     
-    // Funkce pro výpočet vzdálenosti mezi dvěma body (Haversine formula)
+    /**
+     * Výpočet vzdálenosti mezi dvěma body pomocí Haversine formule
+     * @param lat1 Zeměpisná šířka prvního bodu
+     * @param lon1 Zeměpisná délka prvního bodu
+     * @param lat2 Zeměpisná šířka druhého bodu
+     * @param lon2 Zeměpisná délka druhého bodu
+     * @returns Vzdálenost v metrech
+     */
     const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
         const R = 6371e3; // poloměr Země v metrech
         const φ1 = (lat1 * Math.PI) / 180;
@@ -194,7 +239,10 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         return R * c;
     };
     
-    // Funkce pro aktualizaci markeru uživatele podle aktuální polohy
+    /**
+     * Aktualizuje marker uživatele podle aktuální polohy
+     * Také počítá uraženou vzdálenost a kroky a kontroluje blízkost k bodům zájmu
+     */
     const updateUserMarker = useCallback(() => {
         if (!mapRef.current || !latitude || !longitude) return;
 
@@ -210,7 +258,7 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                 lastPositionRef.current.lng
             );
             
-            if (distance > 5) { // jen pokud se pohnul o více než 5 metrů
+            if (distance > 5 && isGameRunning) { // jen pokud se pohnul o více než 5 metrů a hra běží
                 addDistance(distance); // přidat vzdálenost do stavu
                 
                 // Omezit aktualizaci kroků, aby nebyly příliš časté, ale jen když se uživatel hýbe
@@ -270,10 +318,15 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
           .addTo(mapRef.current);
         
         // Kontrola, zda je uživatel v blízkosti některého z bodů zájmu
-        checkProximityToLocations(userCoordinates);
-    }, [latitude, longitude, accuracy, heading, selectedAvatar, addDistance, updateStepsCount, checkProximityToLocations]);
+        if (isGameRunning) {
+            checkProximityToLocations(userCoordinates);
+        }
+    }, [latitude, longitude, accuracy, heading, selectedAvatar, addDistance, updateStepsCount, checkProximityToLocations, isGameRunning]);
     
-    // Zobrazení oznámení o objevení nové lokace
+    /**
+     * Zobrazí oznámení o objevení nové lokace
+     * @param locationName Název objevené lokace
+     */
     const showLocationDiscoveryNotification = (locationName: string) => {
         // Vytvořit notifikační element
         const notification = document.createElement('div');
@@ -292,204 +345,10 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         }, 4000);
     };
 
-    // Inicializace mapy
-    useEffect(() => {
-        // Inicializace mapy při načtení komponenty
-        if (mapContainerRef.current && !mapRef.current) {
-            const initialCenter = animateToUserLocation 
-                ? [czechRepublicLongitude, czechRepublicLatitude] 
-                : [defaultLongitude, defaultLatitude];
-                
-            const initialZoom = animateToUserLocation 
-                ? czechRepublicZoom 
-                : 14;
-            
-            // Kontrola, zda můžeme použít offline mapy (IndexedDB)
-            const hasIndexedDB = typeof window !== 'undefined' && 'indexedDB' in window;
-            
-            // Zjistit, zda máme uložené dlaždice v cache
-            const checkOfflineCache = async () => {
-                if (hasIndexedDB) {
-                    try {
-                        const offlineDBRequest = indexedDB.open('map-tiles-cache', 1);
-                        offlineDBRequest.onsuccess = (event) => {
-                            const db = (event.target as IDBOpenDBRequest).result;
-                            if (db.objectStoreNames.contains('tiles')) {
-                                setOfflineMode(true);
-                            }
-                            db.close();
-                        };
-                    } catch (error) {
-                        console.error('Chyba při kontrole offline cache:', error);
-                    }
-                }
-            };
-            
-            checkOfflineCache();
-            
-            // Vytvořit transformační funkci pro offline cache mapových dlaždic
-            const transformRequest = (url: string, resourceType: string) => {
-                if (resourceType === 'Tile' && offlineMode) {
-                    // Kontrola, zda je dlaždice v cache a vrácení z cache, pokud existuje
-                    return { url };
-                }
-                return { url };
-            };
-            
-            mapRef.current = new maplibre.Map({
-                container: mapContainerRef.current,
-                style: {
-                    version: 8,
-                    sources: {
-                        'osm-tiles': {
-                            type: 'raster',
-                            tiles: [
-                                'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'
-                            ],
-                            tileSize: 256,
-                            // Použijeme naši atribuční funkci, která je požadována licencí ODbL
-                            attribution: getRequiredAttributions()
-                        }
-                    },
-                    layers: [
-                        {
-                            id: 'osm-tiles',
-                            type: 'raster',
-                            source: 'osm-tiles',
-                            minzoom: 0,
-                            maxzoom: 19
-                        }
-                    ]
-                },
-                center: initialCenter as [number, number],
-                zoom: initialZoom,
-                transformRequest
-            });
-            
-            // Přidání kontrolních prvků pro zoom a navigaci
-            mapRef.current.addControl(new maplibre.NavigationControl());
-            
-            // Přidání tlačítka pro stažení offline map
-            const offlineControl = document.createElement('div');
-            offlineControl.className = 'maplibregl-ctrl maplibregl-ctrl-group';
-            offlineControl.innerHTML = `
-                <button type="button" title="Stáhnout offline mapy" aria-label="Stáhnout offline mapy">
-                    <span class="maplibregl-ctrl-icon">📥</span>
-                </button>
-            `;
-            offlineControl.addEventListener('click', () => handleDownloadOfflineTiles());
-            mapRef.current.getContainer().querySelector('.maplibregl-control-container')?.appendChild(offlineControl);
-
-            // Počkat na načtení mapy před přidáním vrstev
-            mapRef.current.on('load', () => {
-                if (!mapRef.current) return;
-                
-                // Přidat zdroj dat pro hranice města
-                mapRef.current.addSource('vysokemyto-boundary', {
-                    'type': 'geojson',
-                    'data': vysokeMytoGeoJSON
-                });
-                
-                // Přidat vrstvu výplně s průhledností
-                mapRef.current.addLayer({
-                    'id': 'vysokemyto-fill',
-                    'type': 'fill',
-                    'source': 'vysokemyto-boundary',
-                    'paint': {
-                        'fill-color': '#3FB1CE',
-                        'fill-opacity': 0.2
-                    }
-                });
-                
-                // Přidat vrstvu ohraničení
-                mapRef.current.addLayer({
-                    'id': 'vysokemyto-outline',
-                    'type': 'line',
-                    'source': 'vysokemyto-boundary',
-                    'layout': {},
-                    'paint': {
-                        'line-color': '#3FB1CE',
-                        'line-width': 3
-                    }
-                });
-                
-                // Přidat zdroj dat pro centrum města
-                mapRef.current.addSource('vysokemyto-center', {
-                    'type': 'geojson',
-                    'data': vysokeMytoCenterGeoJSON
-                });
-                
-                // Přidat vrstvu výplně s průhledností pro centrum
-                mapRef.current.addLayer({
-                    'id': 'vysokemyto-center-fill',
-                    'type': 'fill',
-                    'source': 'vysokemyto-center',
-                    'paint': {
-                        'fill-color': '#FF9900',
-                        'fill-opacity': 0.3
-                    }
-                });
-                
-                // Přidat vrstvu ohraničení pro centrum
-                mapRef.current.addLayer({
-                    'id': 'vysokemyto-center-outline',
-                    'type': 'line',
-                    'source': 'vysokemyto-center',
-                    'layout': {},
-                    'paint': {
-                        'line-color': '#FF9900',
-                        'line-width': 2
-                    }
-                });
-                
-                // Přidat body zájmu jako markery
-                addLocationMarkers();
-                
-                // Změnit kurzor na pointer při najetí na hranice města
-                mapRef.current.on('mouseenter', 'vysokemyto-fill', () => {
-                    if (!mapRef.current) return;
-                    mapRef.current.getCanvas().style.cursor = 'pointer';
-                });
-                
-                mapRef.current.on('mouseleave', 'vysokemyto-fill', () => {
-                    if (!mapRef.current) return;
-                    mapRef.current.getCanvas().style.cursor = '';
-                });
-
-                // Nastavit stav map jako načtený
-                setMapLoaded(true);
-                
-                // Spustit animaci přiblížení, pokud je požadována
-                if (animateToUserLocation && !animationStartedRef.current) {
-                    setTimeout(() => {
-                        startZoomAnimation();
-                    }, 1000); // Malá prodleva před zahájením animace
-                }
-                
-                // Animovat mapu k aktuální poloze uživatele, pokud je známa
-                if (latitude && longitude) {
-                    mapRef.current.flyTo({
-                        center: [longitude, latitude],
-                        zoom: 16,
-                        speed: 1.2,
-                        curve: 1.4
-                    });
-                }
-            });
-        }
-
-        // Cleanup při odmontování komponenty
-        return () => {
-            if (mapRef.current) {
-                mapRef.current.remove();
-                mapRef.current = null;
-            }
-        };
-    }, [animateToUserLocation, latitude, longitude]);
-    
-    // Přidání markerů lokací
+    /**
+     * Přidává markery bodů zájmu na mapu
+     * Odlišuje navštívené lokace od nenavštívených
+     */
     const addLocationMarkers = useCallback(() => {
         if (!mapRef.current) return;
         
@@ -512,7 +371,7 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                 .setLngLat(point.coordinates)
                 .addTo(mapRef.current!);
             
-            // Přidat popup
+            // Přidat popup s informacemi o lokaci
             const popup = new maplibre.Popup({ offset: 25, closeButton: false })
                 .setHTML(`
                     <h3>${point.name}</h3>
@@ -559,7 +418,124 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         });
     }, [playerProgress.visitedLocations]);
     
-    // Funkce pro spuštění animovaného přiblížení k uživateli
+    // Inicializace mapy při načtení komponenty
+    useEffect(() => {
+        // Inicializace mapy pouze pokud ještě nebyla vytvořena
+        if (mapContainerRef.current && !mapRef.current) {
+            const initialCenter = animateToUserLocation 
+                ? [czechRepublicLongitude, czechRepublicLatitude] 
+                : [defaultLongitude, defaultLatitude];
+                
+            const initialZoom = animateToUserLocation 
+                ? czechRepublicZoom 
+                : 14;
+            
+            // Kontrola, zda můžeme použít offline mapy (IndexedDB)
+            const hasIndexedDB = typeof window !== 'undefined' && 'indexedDB' in window;
+            
+            // Zjistit, zda máme uložené dlaždice v cache
+            const checkOfflineCache = async () => {
+                if (hasIndexedDB) {
+                    try {
+                        const offlineDBRequest = indexedDB.open('map-tiles-cache', 1);
+                        offlineDBRequest.onsuccess = (event) => {
+                            const db = (event.target as IDBOpenDBRequest).result;
+                            if (db.objectStoreNames.contains('tiles')) {
+                                setOfflineMode(true);
+                            }
+                            db.close();
+                        };
+                    } catch (error) {
+                        console.error('Chyba při kontrole offline cache:', error);
+                    }
+                }
+            };
+            
+            checkOfflineCache();
+            
+            // Vytvořit transformační funkci pro offline cache mapových dlaždic
+            const transformRequest = (url: string, resourceType: string) => {
+                if (resourceType === 'Tile' && offlineMode) {
+                    // Kontrola, zda je dlaždice v cache a vrácení z cache, pokud existuje
+                    return { url };
+                }
+                return { url };
+            };
+            
+            // Vytvoření instance mapy
+            mapRef.current = new maplibre.Map({
+                container: mapContainerRef.current,
+                style: {
+                    version: 8,
+                    sources: {
+                        'osm-tiles': {
+                            type: 'raster',
+                            tiles: [
+                                'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'
+                            ],
+                            tileSize: 256,
+                            // Použijeme naši atribuční funkci, která je požadována licencí ODbL
+                            attribution: getRequiredAttributions()
+                        }
+                    },
+                    layers: [
+                        {
+                            id: 'osm-tiles',
+                            type: 'raster',
+                            source: 'osm-tiles',
+                            minzoom: 0,
+                            maxzoom: 19
+                        }
+                    ]
+                },
+                center: initialCenter as [number, number],
+                zoom: initialZoom,
+                transformRequest
+            });
+            
+            // Počkat na načtení mapy před přidáním vrstev
+            mapRef.current.on('load', () => {
+                if (!mapRef.current) return;
+                
+                // Přidat body zájmu jako markery
+                addLocationMarkers();
+                
+                // Nastavit stav map jako načtený
+                setMapLoaded(true);
+                
+                // Spustit animaci přiblížení, pokud je požadována
+                if (animateToUserLocation && !animationStartedRef.current) {
+                    setTimeout(() => {
+                        startZoomAnimation();
+                    }, 1000); // Malá prodleva před zahájením animace
+                }
+                
+                // Animovat mapu k aktuální poloze uživatele, pokud je známa
+                if (latitude && longitude) {
+                    mapRef.current.flyTo({
+                        center: [longitude, latitude],
+                        zoom: 16,
+                        speed: 1.2,
+                        curve: 1.4
+                    });
+                }
+            });
+        }
+
+        // Cleanup při odmontování komponenty
+        return () => {
+            if (mapRef.current) {
+                mapRef.current.remove();
+                mapRef.current = null;
+            }
+        };
+    }, [animateToUserLocation, latitude, longitude, addLocationMarkers]);
+    
+    /**
+     * Spustí animaci přiblížení mapy od celkového pohledu na ČR k výchozí lokaci
+     */
     const startZoomAnimation = () => {
         if (!mapRef.current || animationStartedRef.current) return;
         
@@ -598,7 +574,9 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         animate();
     };
 
-    // Stažení offline dlaždic mapy
+    /**
+     * Spustí stažení offline mapových dlaždic pro použití bez připojení
+     */
     const handleDownloadOfflineTiles = async () => {
         if (!mapRef.current) return;
         
@@ -652,6 +630,9 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
     
     // Aktualizovat marker uživatele, když se změní jeho poloha
     useEffect(() => {
+        // Pokud je hra pozastavena, neaktualizovat pozici
+        if (isGamePaused) return;
+        
         if (mapLoaded && latitude && longitude) {
             updateUserMarker();
             
@@ -674,7 +655,7 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                 }
             }
         }
-    }, [latitude, longitude, mapLoaded, updateUserMarker]);
+    }, [latitude, longitude, mapLoaded, updateUserMarker, isGamePaused]);
     
     // Aktualizovat avatar uživatelského markeru, když se změní výběr
     useEffect(() => {
@@ -689,26 +670,102 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
             addLocationMarkers();
         }
     }, [playerProgress.visitedLocations, mapLoaded, addLocationMarkers]);
+    
+    /**
+     * Zahájí novou hru - inicializace herního stavu
+     */
+    const handleStartGame = () => {
+        startGame();
+        resetStats(); // Reset statistik při novém startu
+        setIsGameRunning(true);
+    };
+    
+    /**
+     * Ukončí/zastaví aktuální hru
+     */
+    const handleStopGame = () => {
+        setIsGameRunning(false);
+        if (onEndGame) {
+            onEndGame();
+        }
+    };
+    
+    /**
+     * Pozastaví běžící hru
+     */
+    const handlePauseGame = () => {
+        setIsGamePaused(true);
+    };
+    
+    /**
+     * Pokračuje v pozastavené hře
+     */
+    const handleResumeGame = () => {
+        setIsGamePaused(false);
+    };
+    
+    /**
+     * Ukončí aktuální hru a spustí callback onEndGame
+     */
+    const handleEndGame = () => {
+        setIsGameRunning(false);
+        if (onEndGame) {
+            onEndGame();
+        }
+    };
+    
+    /**
+     * Vycentruje mapu na aktuální polohu uživatele
+     */
+    const centerOnUser = () => {
+        if (mapRef.current && latitude && longitude) {
+            mapRef.current.flyTo({
+                center: [longitude, latitude],
+                zoom: 16,
+                speed: 1.2
+            });
+        }
+    };
 
     return (
         <div className={`map-container-wrapper ${isFullscreenMode ? 'map-fullscreen' : ''}`} id="map-container">
             <div ref={mapContainerRef} className="map-container" />
             
-            {/* Přidat tlačítko pro fullscreen režim */}
+            {/* Herní menu pro ovládání hry */}
+            <GameMenu 
+                onPauseGame={handlePauseGame}
+                onResumeGame={handleResumeGame}
+                onEndGame={handleEndGame}
+                downloadOfflineMaps={handleDownloadOfflineTiles}
+                isOfflineMode={offlineMode}
+                isDownloading={offlineTilesStatus.downloading}
+                downloadProgress={offlineTilesStatus.progress}
+                isPaused={isGamePaused}
+                isGameRunning={isGameRunning}
+            />
+            
+            {/* Tlačítka pro ovládání hry (start/stop) */}
+            <GameControls 
+                onStart={handleStartGame}
+                onStop={handleStopGame}
+                isGameRunning={isGameRunning}
+            />
+            
+            {/* Tlačítko pro přepínání režimu celé obrazovky */}
             <FullscreenToggle 
                 targetId="map-container" 
                 type="map" 
                 onToggle={handleFullscreenToggle}
             />
             
-            {/* Offline status indikátor */}
+            {/* Indikátor offline režimu */}
             {offlineMode && (
                 <div className="offline-indicator">
                     Offline režim aktivní
                 </div>
             )}
             
-            {/* Indikátor stahování map */}
+            {/* Indikátor stahování offline map */}
             {offlineTilesStatus.downloading && (
                 <div className="download-progress">
                     <div className="progress-bar">
@@ -723,16 +780,29 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                 </div>
             )}
             
+            {/* Indikátor pozastavení hry */}
+            {isGamePaused && (
+                <div className="game-paused-indicator">
+                    <div className="game-paused-content">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
+                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                        </svg>
+                        <p>Hra pozastavena</p>
+                        <button onClick={handleResumeGame} className="resume-button">Pokračovat</button>
+                    </div>
+                </div>
+            )}
+            
             {/* Chybová zpráva geolokace */}
             {geolocationError && !hideGeolocationError && (
-                <div className="geolocation-error">
+                <div className="geolocation-error"></div>
                     <p>{geolocationError}</p>
                     <button onClick={handleDismissGeolocationError}>Zavřít</button>
                 </div>
             )}
             
             {/* Atribuce mapových podkladů - vyžadováno licencí ODbL */}
-            <div className="map-attribution">
+            <div className="map-attribution"></div>
                 <div dangerouslySetInnerHTML={{ __html: getRequiredAttributions() }} />
             </div>
         </div>

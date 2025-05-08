@@ -9,6 +9,7 @@ interface GameState {
   playerName: string;
   avatarId: string;
   playerProgress: PlayerProgress;
+  startTime: number | null;
   
   // Akce
   startGame: () => void;
@@ -22,6 +23,8 @@ interface GameState {
   useHint: (puzzleId: string) => void;
   addSteps: (steps: number) => void;
   addDistance: (meters: number) => void;
+  getElapsedTime: () => number;
+  resetStats: () => void;
 }
 
 // Výchozí stav progress objektu
@@ -44,10 +47,21 @@ export const useGameStore = create<GameState>()(
       playerName: '',
       avatarId: 'explorer',
       playerProgress: initialPlayerProgress,
+      startTime: null,
 
-      startGame: () => set({ isGameActive: true, progress: 0, level: 1 }),
+      startGame: () => set({ 
+        isGameActive: true, 
+        progress: 0, 
+        level: 1, 
+        startTime: Date.now(),
+        playerProgress: {
+          ...get().playerProgress,
+          steps: 0,
+          distanceMeters: 0
+        }
+      }),
       
-      endGame: () => set({ isGameActive: false }),
+      endGame: () => set({ isGameActive: false, startTime: null }),
       
       nextLevel: () => set(state => ({ level: state.level + 1, progress: 0 })),
       
@@ -154,7 +168,24 @@ export const useGameStore = create<GameState>()(
           distanceMeters: state.playerProgress.distanceMeters + meters,
           lastPlayed: Date.now()
         }
-      }))
+      })),
+      
+      // Nová funkce pro získání uplynulého času
+      getElapsedTime: () => {
+        const state = get();
+        if (!state.startTime) return 0;
+        return Math.floor((Date.now() - state.startTime) / 1000);
+      },
+      
+      // Funkce pro resetování statistik při novém startu hry
+      resetStats: () => set(state => ({
+        playerProgress: {
+          ...state.playerProgress,
+          steps: 0,
+          distanceMeters: 0,
+        },
+        startTime: Date.now()
+      })),
     }),
     {
       name: 'game-storage', // název klíče v lokálním úložišti

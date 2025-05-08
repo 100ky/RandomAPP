@@ -1,17 +1,30 @@
+/**
+ * Komponenta MapSettings - Poskytuje nastavení a ovládací prvky pro mapu
+ * 
+ * Tato komponenta zobrazuje rozbalovací menu s možnostmi pro ovládání mapy,
+ * jako je centrování na uživatele, přepnutí na celou obrazovku a stažení
+ * offline verze mapy. Také zobrazuje statistiky hráče - kroky a vzdálenost.
+ */
 import React, { useState, useRef, useEffect } from 'react';
 import { useGameStore } from '../store/gameStore';
 import styles from '../styles/MapSettings.module.css';
 
+/**
+ * Props pro komponentu MapSettings
+ */
 interface MapSettingsProps {
-  centerOnUser: () => void;
-  toggleFullscreen: (isFullscreen: boolean) => void;
-  isFullscreen: boolean;
-  downloadOfflineMap: () => void;
-  isOfflineMapDownloaded: boolean;
-  isDownloadingOfflineMap: boolean;
-  downloadProgress: number;
+  centerOnUser: () => void;                    // Funkce pro vycentrování mapy na aktuální polohu uživatele
+  toggleFullscreen: (isFullscreen: boolean) => void; // Funkce pro přepínání režimu celé obrazovky
+  isFullscreen: boolean;                       // Indikátor, zda je mapa v režimu celé obrazovky
+  downloadOfflineMap: () => void;              // Funkce pro stažení offline verze mapy
+  isOfflineMapDownloaded: boolean;             // Indikátor, zda byla offline mapa již stažena
+  isDownloadingOfflineMap: boolean;            // Indikátor, zda právě probíhá stahování mapy
+  downloadProgress: number;                    // Průběh stahování v procentech (0-100)
 }
 
+/**
+ * Komponenta nabízející nastavení a ovládání mapy
+ */
 const MapSettings: React.FC<MapSettingsProps> = ({
   centerOnUser,
   toggleFullscreen,
@@ -21,33 +34,46 @@ const MapSettings: React.FC<MapSettingsProps> = ({
   isDownloadingOfflineMap,
   downloadProgress
 }) => {
+  // Stav určující, zda je menu nastavení otevřené
   const [isOpen, setIsOpen] = useState(false);
+  // Reference na DOM element menu pro detekci kliknutí mimo menu
   const menuRef = useRef<HTMLDivElement>(null);
+  // Přístup k hernímu stavu a statistikám hráče
   const { playerProgress } = useGameStore();
 
   // Zavření menu při kliknutí mimo něj
   useEffect(() => {
+    /**
+     * Zpracování kliknutí mimo menu - zavře menu, pokud bylo kliknuto vně
+     */
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
+    // Přidání posluchače událostí pouze když je menu otevřené
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
+    // Odstranění posluchače při unmount nebo když se změní stav isOpen
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen]);
 
-  // Funkce pro přepínání otevření/zavření menu
+  /**
+   * Přepíná stav otevření/zavření menu nastavení
+   */
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
-  // Zobrazení počtu kroků a vzdálenosti
+  /**
+   * Formátuje vzdálenost v metrech na čitelný řetězec
+   * Převádí metry na kilometry, pokud je vzdálenost větší než 1000m
+   */
   const formatDistance = (meters: number) => {
     if (meters < 1000) {
       return `${Math.round(meters)} m`;
@@ -58,7 +84,7 @@ const MapSettings: React.FC<MapSettingsProps> = ({
 
   return (
     <div className={styles.settingsContainer} ref={menuRef}>
-      {/* Zobrazení statistik pod avatarem */}
+      {/* Zobrazení statistik pod avatarem - kroky a vzdálenost */}
       <div className={styles.statsContainer}>
         <div className={styles.statItem}>
           <span>Kroky:</span> {playerProgress.steps}
@@ -79,10 +105,11 @@ const MapSettings: React.FC<MapSettingsProps> = ({
         </svg>
       </button>
 
-      {/* Rozbalovací menu s nastavením */}
+      {/* Rozbalovací menu s možnostmi nastavení */}
       {isOpen && (
         <div className={styles.menuContainer}>
           <ul className={styles.menuList}>
+            {/* Možnost centrování mapy na uživatele */}
             <li>
               <button onClick={() => {
                 centerOnUser();
@@ -94,6 +121,7 @@ const MapSettings: React.FC<MapSettingsProps> = ({
                 Centrovat na moji polohu
               </button>
             </li>
+            {/* Možnost přepnutí do režimu celé obrazovky */}
             <li>
               <button onClick={() => {
                 toggleFullscreen(!isFullscreen);
@@ -109,6 +137,7 @@ const MapSettings: React.FC<MapSettingsProps> = ({
                 {isFullscreen ? 'Ukončit režim celé obrazovky' : 'Zobrazit na celou obrazovku'}
               </button>
             </li>
+            {/* Možnost stažení offline mapy */}
             <li>
               <button 
                 onClick={() => {

@@ -1,20 +1,36 @@
+/**
+ * Komponenta AvatarSelection - Umožňuje uživateli vybrat herní postavu (avatara)
+ * 
+ * Tato komponenta zobrazuje dostupné herní postavy a jejich podrobnosti včetně
+ * popisu dobrodružství, obtížnosti, vzdálenosti a doby trvání hry. Uživatel může
+ * kliknutím na avatara zobrazit jeho detaily a poté zahájit hru s vybranou postavou.
+ */
 import React, { useState } from 'react';
 import Image from 'next/image';
 import styles from '@/styles/AvatarSelection.module.css';
 
+/**
+ * Rozhraní popisující informace o avatarovi
+ */
 interface AvatarInfo {
-  name: string;
-  image: string;
-  description: string;
-  difficulty: string;
-  distance: string;
-  duration: string;
+  name: string;        // Jméno avatara
+  image: string;       // Cesta k obrázku avatara
+  description: string; // Popis dobrodružství spojeného s tímto avatarem
+  difficulty: string;  // Úroveň obtížnosti (Lehká, Střední, Obtížná)
+  distance: string;    // Přibližná vzdálenost trasy
+  duration: string;    // Přibližná doba trvání hry
 }
 
+/**
+ * Props komponenty pro výběr avatara
+ */
 interface AvatarSelectionProps {
-  onSelect: (avatar: string) => void;
+  onSelect: (avatar: string) => void; // Funkce volaná po výběru avatara
 }
 
+/**
+ * Seznam dostupných avatarů s jejich podrobnými informacemi
+ */
 const avatarsInfo: AvatarInfo[] = [
   {
     name: 'Detektiv',
@@ -58,15 +74,26 @@ const avatarsInfo: AvatarInfo[] = [
   },
 ];
 
+/**
+ * Komponenta pro výběr avatara a zobrazení informací o herní postavě
+ */
 const AvatarSelection: React.FC<AvatarSelectionProps> = ({ onSelect }) => {
+  // Stav pro uložení aktuálně vybraného avatara
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
+  // Stav pro uložení podrobných informací o vybraném avatarovi
   const [avatarInfo, setAvatarInfo] = useState<AvatarInfo | null>(null);
 
+  /**
+   * Zpracovává kliknutí na avatara - nastaví vybraného avatara a jeho informace
+   */
   const handleAvatarClick = (avatar: AvatarInfo) => {
     setSelectedAvatar(avatar.name);
     setAvatarInfo(avatar);
   };
 
+  /**
+   * Spustí hru s vybraným avatarem
+   */
   const handleStartGame = () => {
     if (selectedAvatar) {
       onSelect(selectedAvatar);
@@ -75,6 +102,7 @@ const AvatarSelection: React.FC<AvatarSelectionProps> = ({ onSelect }) => {
 
   return (
     <div className={styles.container}>
+      {/* Seznam dostupných avatarů */}
       <div className={styles.avatarList}>
         {avatarsInfo.map((avatar) => (
           <div
@@ -94,6 +122,7 @@ const AvatarSelection: React.FC<AvatarSelectionProps> = ({ onSelect }) => {
         ))}
       </div>
       
+      {/* Panel s informacemi o vybraném avatarovi */}
       <div className={styles.infoPanel}>
         {avatarInfo ? (
           <>

@@ -1,8 +1,14 @@
+/**
+ * Komponenta AppMenu - Zobrazuje hlavní menu aplikace s vybraným avatarem hráče
+ * 
+ * Tato komponenta slouží k zobrazení aktuálně vybraného avatara hráče v horní části aplikace.
+ * Uživatel tak vždy vidí, kterou postavu si zvolil pro průchod hrou.
+ */
 import React from 'react';
 import Image from 'next/image';
 import styles from '@/styles/AppMenu.module.css';
 
-// Definice dostupných avatarů
+// Definice dostupných avatarů - seznam všech herních postav, které si může uživatel vybrat
 export const avatars = [
   {
     id: 'explorer',
@@ -31,13 +37,21 @@ export const avatars = [
   }
 ];
 
+/**
+ * Typová definice props pro AppMenu komponentu
+ * @param selectedAvatarId - ID aktuálně vybraného avatara
+ * @param onSelectAvatar - Volitelná funkce pro změnu avatara (pokud je menu aktivní)
+ */
 interface AppMenuProps {
   selectedAvatarId: string | null;
   onSelectAvatar?: (avatar: typeof avatars[0]) => void;
 }
 
+/**
+ * Komponenta zobrazující menu aplikace s vybraným avatarem
+ */
 const AppMenu: React.FC<AppMenuProps> = ({ selectedAvatarId }) => {
-  // Najít aktuálně vybraný avatar
+  // Najít aktuálně vybraný avatar podle jeho ID
   const selectedAvatar = avatars.find(avatar => avatar.id === selectedAvatarId) || avatars[0];
 
   return (
@@ -52,7 +66,7 @@ const AppMenu: React.FC<AppMenuProps> = ({ selectedAvatarId }) => {
               height={50}
               className={styles['avatar-icon']} 
             />
-            {/* Text jména avatara je skrytý pomocí CSS */}
+            {/* Text jména avatara je skrytý pomocí CSS ale přítomný pro přístupnost */}
             <span className={styles['avatar-name']}>{selectedAvatar.name}</span>
           </div>
         )}
