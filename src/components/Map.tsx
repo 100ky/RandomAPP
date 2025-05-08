@@ -726,7 +726,7 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
             });
         }
     };
-
+    
     return (
         <div className={`map-container-wrapper ${isFullscreenMode ? 'map-fullscreen' : ''}`} id="map-container">
             <div ref={mapContainerRef} className="map-container" />
@@ -792,17 +792,16 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                     </div>
                 </div>
             )}
-            
-            {/* Chybová zpráva geolokace */}
+              {/* Chybová zpráva geolokace */}
             {geolocationError && !hideGeolocationError && (
-                <div className="geolocation-error"></div>
+                <div className="geolocation-error">
                     <p>{geolocationError}</p>
                     <button onClick={handleDismissGeolocationError}>Zavřít</button>
                 </div>
             )}
             
             {/* Atribuce mapových podkladů - vyžadováno licencí ODbL */}
-            <div className="map-attribution"></div>
+            <div className="map-attribution">
                 <div dangerouslySetInnerHTML={{ __html: getRequiredAttributions() }} />
             </div>
         </div>

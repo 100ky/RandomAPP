@@ -2,12 +2,17 @@
  * Komponenta MapSettings - Poskytuje nastavení a ovládací prvky pro mapu
  * 
  * Tato komponenta zobrazuje rozbalovací menu s možnostmi pro ovládání mapy,
- * jako je centrování na uživatele, přepnutí na celou obrazovku a stažení
- * offline verze mapy. Také zobrazuje statistiky hráče - kroky a vzdálenost.
+ * jako je centrování na uživatele, přepnutí na celou obrazovku, přepínání mapových vrstev
+ * a stažení offline verze mapy. Také zobrazuje statistiky hráče - kroky a vzdálenost.
  */
 import React, { useState, useRef, useEffect } from 'react';
 import { useGameStore } from '../store/gameStore';
 import styles from '../styles/MapSettings.module.css';
+
+/**
+ * Typ definující dostupné mapové vrstvy
+ */
+export type MapLayerType = 'streets' | 'satellite' | 'terrain' | 'dark';
 
 /**
  * Props pro komponentu MapSettings
@@ -16,11 +21,28 @@ interface MapSettingsProps {
   centerOnUser: () => void;                    // Funkce pro vycentrování mapy na aktuální polohu uživatele
   toggleFullscreen: (isFullscreen: boolean) => void; // Funkce pro přepínání režimu celé obrazovky
   isFullscreen: boolean;                       // Indikátor, zda je mapa v režimu celé obrazovky
-  downloadOfflineMap: () => void;              // Funkce pro stažení offline verze mapy
-  isOfflineMapDownloaded: boolean;             // Indikátor, zda byla offline mapa již stažena
-  isDownloadingOfflineMap: boolean;            // Indikátor, zda právě probíhá stahování mapy
-  downloadProgress: number;                    // Průběh stahování v procentech (0-100)
+  downloadOfflineMap?: () => void;             // Funkce pro stažení offline verze mapy
+  isOfflineMapDownloaded?: boolean;            // Indikátor, zda byla offline mapa již stažena
+  isDownloadingOfflineMap?: boolean;           // Indikátor, zda právě probíhá stahování mapy
+  downloadProgress?: number;                   // Průběh stahování v procentech (0-100)
+  currentMapLayer?: MapLayerType;              // Aktuálně vybraná mapová vrstva
+  onMapLayerChange?: (layer: MapLayerType) => void; // Callback pro změnu mapové vrstvy
+  showPointsOfInterest?: boolean;              // Indikátor, zda zobrazovat body zájmu
+  togglePointsOfInterest?: () => void;         // Přepínání viditelnosti bodů zájmu
+  weatherEnabled?: boolean;                    // Indikátor, zda je povoleno zobrazení počasí
+  toggleWeather?: () => void;                  // Přepínání zobrazení počasí
 }
+
+/**
+ * Formátuje vzdálenost v metrech na čitelný řetězec
+ * Převádí metry na kilometry, pokud je vzdálenost větší než 1000m
+ */
+const formatDistance = (meters: number): string => {
+  if (meters < 1000) {
+    return `${meters.toFixed(0)} m`;
+  }
+  return `${(meters / 1000).toFixed(2)} km`;
+};
 
 /**
  * Komponenta nabízející nastavení a ovládání mapy
@@ -29,17 +51,23 @@ const MapSettings: React.FC<MapSettingsProps> = ({
   centerOnUser,
   toggleFullscreen,
   isFullscreen,
-  downloadOfflineMap,
-  isOfflineMapDownloaded,
-  isDownloadingOfflineMap,
-  downloadProgress
+  downloadOfflineMap = () => {},
+  isOfflineMapDownloaded = false,
+  isDownloadingOfflineMap = false,
+  downloadProgress = 0,
+  currentMapLayer = 'streets',
+  onMapLayerChange,
+  showPointsOfInterest = true,
+  togglePointsOfInterest,
+  weatherEnabled = false,
+  toggleWeather
 }) => {
   // Stav určující, zda je menu nastavení otevřené
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   // Reference na DOM element menu pro detekci kliknutí mimo menu
   const menuRef = useRef<HTMLDivElement>(null);
   // Přístup k hernímu stavu a statistikám hráče
-  const { playerProgress } = useGameStore();
+  const playerProgress = useGameStore(state => state.playerProgress);
 
   // Zavření menu při kliknutí mimo něj
   useEffect(() => {
@@ -55,6 +83,8 @@ const MapSettings: React.FC<MapSettingsProps> = ({
     // Přidání posluchače událostí pouze když je menu otevřené
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
     }
 
     // Odstranění posluchače při unmount nebo když se změní stav isOpen
@@ -70,90 +100,151 @@ const MapSettings: React.FC<MapSettingsProps> = ({
     setIsOpen(!isOpen);
   };
 
-  /**
-   * Formátuje vzdálenost v metrech na čitelný řetězec
-   * Převádí metry na kilometry, pokud je vzdálenost větší než 1000m
-   */
-  const formatDistance = (meters: number) => {
-    if (meters < 1000) {
-      return `${Math.round(meters)} m`;
-    } else {
-      return `${(meters / 1000).toFixed(2)} km`;
-    }
-  };
+  // Povolení prvků v menu podle podporovaných funkcí
+  const hasLayerSupport = !!onMapLayerChange;
+  const hasPoiSupport = !!togglePointsOfInterest;
+  const hasWeatherSupport = !!toggleWeather;
+  const hasOfflineSupport = !!downloadOfflineMap;
 
   return (
-    <div className={styles.settingsContainer} ref={menuRef}>
-      {/* Zobrazení statistik pod avatarem - kroky a vzdálenost */}
+    <div className={styles.settingsContainer}>
+      {/* Statistiky hry */}
       <div className={styles.statsContainer}>
         <div className={styles.statItem}>
-          <span>Kroky:</span> {playerProgress.steps}
+          <span>Vyřešeno:</span> {playerProgress.solvedPuzzles}/{playerProgress.totalPuzzles}
         </div>
         <div className={styles.statItem}>
-          <span>Vzdálenost:</span> {formatDistance(playerProgress.distance)}
+          <span>Vzdálenost:</span> {formatDistance(playerProgress.distanceTraveled)}
+        </div>
+        <div className={styles.statItem}>
+          <span>Skóre:</span> {playerProgress.score} bodů
         </div>
       </div>
 
-      {/* Tlačítko pro otevření nastavení (ozubené kolečko) */}
-      <button 
-        onClick={toggleMenu} 
-        className={styles.settingsButton}
-        aria-label="Nastavení mapy"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-          <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
+      {/* Tlačítko pro otevření menu */}
+      <button className={styles.settingsButton} onClick={toggleMenu} aria-label="Nastavení mapy">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+          <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
         </svg>
       </button>
 
-      {/* Rozbalovací menu s možnostmi nastavení */}
+      {/* Menu s nastavením */}
       {isOpen && (
-        <div className={styles.menuContainer}>
+        <div className={styles.menuContainer} ref={menuRef}>
           <ul className={styles.menuList}>
-            {/* Možnost centrování mapy na uživatele */}
+            {/* Centrování mapy na uživatele */}
             <li>
               <button onClick={() => {
                 centerOnUser();
                 setIsOpen(false);
               }}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                  <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4zm4.51-8.95C17.41 8.99 18 10.43 18 12c0 1.57-.59 3.01-1.49 4.01l1.52 1.52C19.27 15.93 20 14.04 20 12c0-2.04-.73-3.93-1.97-5.53l-1.52 1.58zm-9.02 0l-1.52-1.58C4.73 8.07 4 9.96 4 12c0 2.04.73 3.93 1.97 5.53l1.52-1.52C6.59 15.01 6 13.57 6 12c0-1.57.59-3.01 1.49-4.01z"/>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 3L14.5 21a.55.55 0 01-1 0L10 14l-6.5-3.5a.55.55 0 010-1L21 3" />
                 </svg>
-                Centrovat na moji polohu
+                Centrovat na mé místo
               </button>
             </li>
-            {/* Možnost přepnutí do režimu celé obrazovky */}
+
+            {/* Podmenu pro výběr mapové vrstvy */}
+            {hasLayerSupport && (
+              <li className={styles.submenuContainer}>
+                <div className={styles.submenuTitle}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                  </svg>
+                  Mapová vrstva
+                </div>
+                <div className={styles.submenuItems}>
+                  <button 
+                    className={`${styles.layerButton} ${currentMapLayer === 'streets' ? styles.activeLayer : ''}`}
+                    onClick={() => onMapLayerChange && onMapLayerChange('streets')}
+                  >
+                    Ulice
+                  </button>
+                  <button 
+                    className={`${styles.layerButton} ${currentMapLayer === 'satellite' ? styles.activeLayer : ''}`}
+                    onClick={() => onMapLayerChange && onMapLayerChange('satellite')}
+                  >
+                    Satelitní
+                  </button>
+                  <button 
+                    className={`${styles.layerButton} ${currentMapLayer === 'terrain' ? styles.activeLayer : ''}`}
+                    onClick={() => onMapLayerChange && onMapLayerChange('terrain')}
+                  >
+                    Terénní
+                  </button>
+                  <button 
+                    className={`${styles.layerButton} ${currentMapLayer === 'dark' ? styles.activeLayer : ''}`}
+                    onClick={() => onMapLayerChange && onMapLayerChange('dark')}
+                  >
+                    Tmavý
+                  </button>
+                </div>
+              </li>
+            )}
+
+            {/* Přepínač bodů zájmu */}
+            {hasPoiSupport && (
+              <li>
+                <button onClick={() => togglePointsOfInterest && togglePointsOfInterest()}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  {showPointsOfInterest ? 'Skrýt body zájmu' : 'Zobrazit body zájmu'}
+                </button>
+              </li>
+            )}
+
+            {/* Přepínač počasí */}
+            {hasWeatherSupport && (
+              <li>
+                <button onClick={() => toggleWeather && toggleWeather()}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                  </svg>
+                  {weatherEnabled ? 'Vypnout počasí' : 'Zobrazit počasí'}
+                </button>
+              </li>
+            )}
+
+            {/* Stažení offline mapy */}
+            {hasOfflineSupport && (
+              <li>
+                <button 
+                  disabled={isOfflineMapDownloaded || isDownloadingOfflineMap}
+                  onClick={() => {
+                    downloadOfflineMap();
+                    // Necháme menu otevřené, aby uživatel viděl stav stahování
+                  }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  {isOfflineMapDownloaded 
+                    ? 'Offline mapa stažena' 
+                    : isDownloadingOfflineMap 
+                      ? `Stahování (${downloadProgress}%)` 
+                      : 'Stáhnout mapu offline'}
+                </button>
+              </li>
+            )}
+
+            {/* Přepínač celé obrazovky */}
             <li>
               <button onClick={() => {
                 toggleFullscreen(!isFullscreen);
                 setIsOpen(false);
               }}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   {isFullscreen ? (
-                    <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>
+                    <path d="M8 3v3a2 2 0 01-2 2H3m18 0h-3a2 2 0 01-2-2V3m0 18v-3a2 2 0 012-2h3M3 16h3a2 2 0 012 2v3" />
                   ) : (
-                    <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                    <path d="M3 8h3a2 2 0 002-2V3m13 5h-3a2 2 0 01-2-2V3m0 18v-3a2 2 0 012-2h3M3 16h3a2 2 0 012 2v3" />
                   )}
                 </svg>
-                {isFullscreen ? 'Ukončit režim celé obrazovky' : 'Zobrazit na celou obrazovku'}
-              </button>
-            </li>
-            {/* Možnost stažení offline mapy */}
-            <li>
-              <button 
-                onClick={() => {
-                  downloadOfflineMap();
-                  setIsOpen(false);
-                }}
-                disabled={isOfflineMapDownloaded || isDownloadingOfflineMap}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                  <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
-                </svg>
-                {isDownloadingOfflineMap ? 
-                  `Stahování ${downloadProgress}%` : 
-                  isOfflineMapDownloaded ? 
-                  'Offline mapa stažena' : 
-                  'Stáhnout offline mapu'}
+                {isFullscreen ? 'Ukončit celou obrazovku' : 'Zobrazit na celé obrazovce'}
               </button>
             </li>
           </ul>

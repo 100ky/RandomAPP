@@ -1,7 +1,7 @@
 .settingsContainer {
   position: absolute;
+  top: 10px;
   right: 10px;
-  top: 70px;
   z-index: 10;
   display: flex;
   flex-direction: column;
@@ -9,57 +9,65 @@
 }
 
 .statsContainer {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.8);
   border-radius: 8px;
-  padding: 8px 12px;
-  margin-bottom: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  width: auto;
-  min-width: 150px;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  width: 180px;
+  max-width: 100%;
 }
 
 .statItem {
-  margin: 4px 0;
-  font-size: 14px;
   display: flex;
   justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.statItem:last-child {
+  margin-bottom: 0;
 }
 
 .statItem span {
   font-weight: bold;
-  margin-right: 8px;
 }
 
 .settingsButton {
+  background-color: white;
+  color: #333;
+  border: none;
+  border-radius: 50%;
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  background-color: white;
-  border: none;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   cursor: pointer;
-  color: #333;
-  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease;
 }
 
 .settingsButton:hover {
   background-color: #f0f0f0;
-  transform: rotate(30deg);
+}
+
+.settingsButton svg {
+  width: 24px;
+  height: 24px;
 }
 
 .menuContainer {
   position: absolute;
-  top: 45px;
+  top: 50px;
   right: 0;
   background-color: white;
   border-radius: 8px;
-  padding: 8px 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   min-width: 220px;
-  animation: fadeIn 0.2s ease;
+  z-index: 20;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
 }
 
 .menuList {
@@ -69,21 +77,25 @@
 }
 
 .menuList li {
-  margin: 0;
+  border-bottom: 1px solid #eee;
+  position: relative;
+}
+
+.menuList li:last-child {
+  border-bottom: none;
 }
 
 .menuList button {
-  display: flex;
-  align-items: center;
-  width: 100%;
   padding: 12px 15px;
+  width: 100%;
+  text-align: left;
   background: none;
   border: none;
-  text-align: left;
   cursor: pointer;
+  display: flex;
+  align-items: center;
   font-size: 14px;
-  color: #333;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease;
 }
 
 .menuList button:hover {
@@ -91,52 +103,72 @@
 }
 
 .menuList button:disabled {
-  opacity: 0.5;
   cursor: not-allowed;
+  opacity: 0.5;
 }
 
-.menuList svg {
+.menuList button svg {
   margin-right: 10px;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
+/* Styly pro submenu */
+.submenuContainer {
+  border-bottom: 1px solid #eee;
+  padding: 0;
+}
+
+.submenuTitle {
+  padding: 12px 15px;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  background-color: #f9f9f9;
+}
+
+.submenuTitle svg {
+  margin-right: 10px;
+}
+
+.submenuItems {
+  padding: 8px 15px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.layerButton {
+  padding: 8px !important;
+  font-size: 13px !important;
+  text-align: center !important;
+  border: 1px solid #eee !important;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.activeLayer {
+  background-color: #2196F3 !important;
+  color: white !important;
+  border-color: #1976D2 !important;
+}
+
+/* Animace pro progress bar */
+@keyframes progressAnimation {
+  0% {
+    width: 0%;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  100% {
+    width: 100%;
   }
 }
 
 /* Responzivní design pro malé obrazovky */
-@media (max-width: 480px) {
-  .settingsContainer {
-    top: 60px;
-    right: 5px;
-  }
-  
+@media (max-width: 768px) {
   .statsContainer {
-    min-width: 120px;
-    padding: 6px 10px;
-  }
-  
-  .statItem {
-    font-size: 12px;
-  }
-  
-  .settingsButton {
-    width: 36px;
-    height: 36px;
+    width: 150px;
   }
   
   .menuContainer {
-    min-width: 180px;
-  }
-  
-  .menuList button {
-    padding: 10px 12px;
-    font-size: 13px;
+    min-width: 200px;
   }
 }

@@ -45,6 +45,14 @@ export interface PlayerProgress {
     avatarId?: string;
     steps: number;
     distanceMeters: number;
+    badges?: {
+        [badgeId: string]: {
+            earned: boolean;
+            earnedAt: number;
+            progress?: number;
+            maxProgress?: number;
+        }
+    };
 }
 
 export interface Achievement {
@@ -55,4 +63,19 @@ export interface Achievement {
     condition: string; // popis podmínky pro získání
     points: number;
     isSecret?: boolean; // některé úspěchy mohou být skryté
+}
+
+export interface Badge {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    category: 'exploration' | 'puzzle' | 'activity' | 'special';
+    rarity: 'common' | 'uncommon' | 'rare' | 'legendary';
+    earnCondition: string;
+    points: number;
+    isSecret?: boolean;
+    isProgressBased?: boolean;
+    maxProgress?: number;
+    unlockMessage?: string;
 }

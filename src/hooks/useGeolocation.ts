@@ -42,7 +42,7 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
   return R * c;
 };
 
-const useGeolocation = (options: GeolocationOptions = {}) => {
+export const useGeolocation = (options: GeolocationOptions = {}) => {
   const mergedOptions = { ...DEFAULT_OPTIONS, ...options };
   
   const [state, setState] = useState<GeolocationState>({
@@ -164,4 +164,5 @@ const useGeolocation = (options: GeolocationOptions = {}) => {
   return state;
 };
 
+// Export jako výchozí i pojmenovaný, aby byla zachována zpětná kompatibilita
 export default useGeolocation;

@@ -1,0 +1,242 @@
+/* Badge.module.css */
+.badge {
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 5px;
+  position: relative;
+}
+
+.badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Velikosti odznaků */
+.small {
+  width: 120px;
+  height: 40px;
+}
+
+.medium {
+  width: 150px;
+  height: 60px;
+}
+
+.large {
+  width: 180px;
+  height: 80px;
+}
+
+/* Ikona odznaku */
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #333;
+  color: white;
+  font-size: 20px;
+  padding: 10px;
+}
+
+.medium .icon {
+  width: 60px;
+  height: 60px;
+}
+
+.large .icon {
+  width: 80px;
+  height: 80px;
+  font-size: 32px;
+}
+
+/* Obsah odznaku */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5px 10px;
+  position: relative;
+}
+
+/* Název odznaku */
+.name {
+  font-weight: bold;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.medium .name {
+  font-size: 14px;
+}
+
+.large .name {
+  font-size: 16px;
+}
+
+/* Indikátor vzácnosti */
+.rarityTag {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  font-size: 9px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.medium .rarityTag {
+  font-size: 10px;
+}
+
+.large .rarityTag {
+  font-size: 11px;
+}
+
+/* Barvy podle vzácnosti */
+.common .icon {
+  background-color: #8e8e8e;
+}
+
+.uncommon .icon {
+  background-color: #2196f3;
+}
+
+.rare .icon {
+  background-color: #9c27b0;
+}
+
+.legendary .icon {
+  background-color: #ff9800;
+  animation: legendaryGlow 1.5s infinite alternate;
+}
+
+/* Tajné odznaky */
+.secret {
+  background-color: #333;
+}
+
+.secret .icon {
+  background-color: #555;
+}
+
+.secret .name {
+  color: #999;
+}
+
+/* Uzamčené odznaky */
+.locked {
+  opacity: 0.6;
+}
+
+.locked .icon {
+  background-color: #999;
+}
+
+/* Indikátor postupu */
+.progressContainer {
+  height: 6px;
+  background-color: #e0e0e0;
+  border-radius: 3px;
+  margin-top: 5px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progressBar {
+  height: 100%;
+  background-color: #4caf50;
+  border-radius: 3px;
+  transition: width 0.3s ease-out;
+}
+
+.progressText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 8px;
+  color: #333;
+  text-shadow: 0 0 2px white;
+}
+
+/* Animace pro získání odznaku */
+@keyframes badgeEarned {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); box-shadow: 0 0 15px gold; }
+  100% { transform: scale(1); }
+}
+
+.earned {
+  animation: badgeEarned 1s ease-out;
+}
+
+/* Animace pro legendární odznaky */
+@keyframes legendaryGlow {
+  0% { box-shadow: 0 0 5px rgba(255, 152, 0, 0.5); }
+  100% { box-shadow: 0 0 15px rgba(255, 152, 0, 0.8); }
+}
+
+/* Styly pro mřížku odznaků */
+.badgeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+  padding: 15px;
+}
+
+/* Styly pro oznámení o získání odznaku */
+.badgeNotification {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  max-width: 90%;
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+.badgeNotification .icon {
+  margin-right: 15px;
+}
+
+.notificationContent {
+  flex: 1;
+}
+
+.notificationTitle {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.notificationDesc {
+  font-size: 14px;
+  color: #666;
+}
+
+@keyframes slideUp {
+  0% { transform: translate(-50%, 100%); opacity: 0; }
+  100% { transform: translate(-50%, 0); opacity: 1; }
+}
+
+/* Responsivní design */
+@media (max-width: 768px) {
+  .badgeGrid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
