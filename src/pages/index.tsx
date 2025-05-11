@@ -78,24 +78,17 @@ const Home: React.FC = () => {
             case 'splash':
                 return <SplashScreen onFinish={handleSplashFinish} />;
             case 'avatar-selection':
-                return <AvatarSelection onSelect={handleAvatarSelect} />;
-            case 'game':
-                return (
+                return <AvatarSelection onSelect={handleAvatarSelect} />;            case 'game':                return (
                     <div className="container">
                         <Map 
                             selectedAvatarId={selectedAvatarId}
                             animateToUserLocation={true}
+                            onEndGame={handleGameStop}
                         />
                         <AppMenu 
                             selectedAvatarId={selectedAvatarId}
                             onSelectAvatar={handleAvatarChange}
                         />
-                        <GameControls 
-                            onStart={handleGameStart} 
-                            onStop={handleGameStop}
-                            isGameRunning={isGameRunning}
-                        />
-                        <PuzzleModal />
                     </div>
                 );
             default:

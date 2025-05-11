@@ -67,14 +67,18 @@ const FullscreenToggle: React.FC<FullscreenToggleProps> = ({ targetId, type, onT
           });
       }
       // Přidat třídu pro speciální styly při zobrazení na celou obrazovku
-      targetElement.classList.add('map-fullscreen');
-      
-      // Pokus o otočení obrazovky do landscape režimu, pokud zařízení podporuje
-      if ('orientation' in screen) {
+      targetElement.classList.add('map-fullscreen');      // Pokus o otočení obrazovky do landscape režimu, pokud zařízení podporuje a jedná se o typ 'map'
+      if (type === 'map' && 'orientation' in screen) {
         try {
-          // Pro iOS a moderní prohlížeče
-          screen.orientation.lock('landscape')
-            .catch(() => console.log('Otočení obrazovky není podporováno'));
+          // Detekujeme mobilní zařízení (screen < 1024px)
+          const isMobile = window.innerWidth < 1024;
+          
+          // Pro mobilní zařízení se pokusíme o otočení obrazovky do landscape režimu
+          if (isMobile && 'lock' in screen.orientation) {
+            // Pro iOS a moderní prohlížeče
+            (screen.orientation as any).lock('landscape')
+              .catch(() => console.log('Otočení obrazovky není podporováno'));
+          }
         } catch (error) {
           console.log('API pro orientaci obrazovky není podporováno');
         }
@@ -89,11 +93,12 @@ const FullscreenToggle: React.FC<FullscreenToggleProps> = ({ targetId, type, onT
       }
       // Odstranění třídy pro speciální styly
       targetElement.classList.remove('map-fullscreen');
-      
-      // Uvolnění zámku orientace obrazovky
+        // Uvolnění zámku orientace obrazovky
       if ('orientation' in screen) {
         try {
-          screen.orientation.unlock();
+          if ('unlock' in screen.orientation) {
+            (screen.orientation as any).unlock();
+          }
         } catch (error) {
           console.log('Uvolnění orientace není podporováno');
         }

@@ -169,6 +169,86 @@
   }
   
   .menuContainer {
-    min-width: 200px;
+    max-width: 250px;
+  }
+  
+  .menuList li button {
+    font-size: 13px;
+  }
+}
+
+/* Responzivní design pro mobilní zařízení */
+@media (max-width: 480px) {
+  .statsContainer {
+    width: 140px;
+    font-size: 12px;
+    padding: 8px;
+  }
+  
+  .settingsButton {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .settingsButton svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .menuContainer {
+    max-width: 200px;
+    right: 5px;
+  }
+  
+  .menuList li button {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  .layerButton {
+    padding: 6px !important;
+    font-size: 11px !important;
+  }
+}
+
+/* Responzivní design pro různé orientace zařízení */
+@media (orientation: portrait) {
+  .settingsContainer {
+    top: 10px;
+    right: 10px;
+  }
+}
+
+@media (orientation: landscape) {
+  .settingsContainer {
+    top: 10px;
+    right: 10px;
+  }
+  
+  .statsContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: auto;
+    max-width: 300px;
+  }
+  
+  .statItem {
+    margin-right: 10px;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+}
+
+/* Pro velmi malé displeje v landscape režimu */
+@media (orientation: landscape) and (max-height: 500px) {
+  .settingsContainer {
+    transform: scale(0.85);
+    transform-origin: top right;
+  }
+  
+  .menuContainer {
+    max-height: 80vh;
+    overflow-y: auto;
   }
 }

@@ -164,3 +164,104 @@
     line-height: 1.3;
   }
 }
+
+/* Responzivní design pro různé orientace zařízení */
+@media (orientation: portrait) {
+  .container {
+    flex-direction: column;
+  }
+  
+  .avatarList {
+    width: 100%;
+    max-height: 40vh;
+  }
+  
+  .detailsContainer {
+    width: 100%;
+    height: 60vh;
+  }
+}
+
+@media (orientation: landscape) {
+  .container {
+    flex-direction: row;
+  }
+  
+  .avatarList {
+    width: 35%;
+    height: 100%;
+  }
+  
+  .detailsContainer {
+    width: 65%;
+  }
+  
+  .avatarGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+}
+
+/* Pro velmi malé displeje v landscape režimu */
+@media (orientation: landscape) and (max-height: 500px) {
+  .avatarItem {
+    padding: 6px;
+  }
+  
+  .avatarImage {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .avatarName {
+    font-size: 13px;
+  }
+  
+  .detailsHeader {
+    margin-bottom: 5px;
+  }
+  
+  .avatarDetails {
+    gap: 5px;
+  }
+  
+  .detailsName {
+    font-size: 18px;
+  }
+  
+  .description {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  
+  .buttonContainer {
+    margin-top: 10px;
+  }
+}
+
+/* Pro mobilní zařízení */
+@media (max-width: 480px) {
+  .avatarList {
+    padding: 10px;
+  }
+  
+  .avatarItem {
+    padding: 8px;
+  }
+  
+  .avatarImage {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .detailsImage {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .detailsName {
+    font-size: 20px;
+  }
+}

@@ -93,3 +93,61 @@
     height: 90px;
   }
 }
+
+/* Responzivní design pro různé orientace zařízení */
+@media (orientation: portrait) {
+  .content {
+    flex-direction: column;
+    max-width: 90%;
+  }
+}
+
+@media (orientation: landscape) {
+  .content {
+    flex-direction: row;
+    align-items: center;
+    max-width: 80%;
+    gap: 30px;
+  }
+  
+  .logoPlaceholder {
+    width: 80px;
+    height: 80px;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  
+  .textContent {
+    text-align: left;
+  }
+  
+  .title {
+    font-size: 20px;
+  }
+  
+  .subtitle {
+    font-size: 14px;
+  }
+}
+
+/* Pro velmi malé displeje v landscape režimu */
+@media (orientation: landscape) and (max-height: 500px) {
+  .content {
+    padding: 10px;
+    gap: 15px;
+  }
+  
+  .logoPlaceholder {
+    width: 60px;
+    height: 60px;
+    font-size: 16px;
+  }
+  
+  .title {
+    font-size: 18px;
+  }
+  
+  .subtitle {
+    font-size: 12px;
+  }
+}

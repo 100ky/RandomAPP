@@ -767,8 +767,7 @@ body {
 }
 
 .game-button:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transform: scale(0.95);
 }
 
 .hidden-control {
@@ -1346,6 +1345,141 @@ body {
 
 @media (orientation: landscape) {
   /* Speciální úpravy pro horizontální režim */
+  .map-container-wrapper {
+    height: 100%;
+    width: 100%;
+  }
+  
+  /* Zvětšení mapy v landscape módu */
+  .map-fullscreen {
+    width: 100vw !important;
+    height: 100vh !important;
+  }
+  
+  /* Upravit pozice ovládacích prvků pro landscape režim */
+  .game-controls {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  /* Upravit pozice notifikací a informací */
+  .offline-indicator {
+    top: 10px;
+    right: 60px;
+  }
+    .location-discovery-notification {
+    bottom: 20px;
+    top: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+  }
+  
+  /* Přizpůsobení dialogů pro landscape režim */
+  .puzzle-modal {
+    flex-direction: row;
+  }
+  
+  .puzzle-content {
+    width: 70%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .puzzle-image {
+    width: 40%;
+    height: auto;
+  }
+  
+  .puzzle-details {
+    width: 60%;
+  }
+  
+  /* Menu a avatar */
+  .app-menu {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+  }
+}
+
+/* Pro malé mobilní zařízení v landscape režimu */
+@media (orientation: landscape) and (max-height: 500px) {
+  .game-controls {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    transform: scale(0.85);
+    transform-origin: bottom right;
+  }
+  
+  .app-menu {
+    transform: scale(0.85);
+    transform-origin: top left;
+  }
+  
+  .location-discovery-notification {
+    bottom: 15px;
+    padding: 8px;
+    font-size: 12px;
+  }
+  
+  .offline-indicator {
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+}
+
+/* Responzivní design pro různé orientace zařízení */
+@media (orientation: portrait) {
+  .map-container-wrapper {
+    height: 100%;
+    width: 100%;
+  }
+
+  .game-controls {
+    bottom: 20px;
+    flex-direction: row;
+  }
+  
+  .app-menu {
+    top: 10px;
+    left: 10px;
+  }
+  
+  .offline-indicator {
+    top: 70px;
+    right: 10px;
+  }
+  
+  .location-discovery-notification {
+    top: 20px;
+    width: 80%;
+  }
+  
+  .puzzle-content {
+    width: 90%;
+    max-height: 80vh;
+  }
+  
+  /* Vertikální rozvržení pro úvodní obrazovku */
+  .start-menu {
+    flex-direction: column;
+  }
+  
+  .avatar-selection {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (orientation: landscape) {
+  /* Speciální úpravy pro horizontální režim */
   body {
     overflow: auto; /* Povolí scrollování v landscape módu */
   }
@@ -1503,5 +1637,50 @@ body {
   
   .game-controls {
     bottom: 30px;
+  }
+}
+
+/* Třídy pro podporu landscape a portrait režimů */
+.landscape-controls {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1000;
+}
+
+.landscape-menu {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 1000;
+}
+
+.landscape-popup .maplibregl-popup-content {
+  max-width: 250px;
+}
+
+.portrait-popup .maplibregl-popup-content {
+  max-width: 300px;
+}
+
+/* Vylepšení ovládacích prvků pro dotykové obrazovky */
+@media (hover: none) and (pointer: coarse) {
+  .game-button {
+    padding: 12px 18px;
+    min-width: 80px;
+  }
+  
+  .settings-button, 
+  .fullscreen-map-button, 
+  .fullscreen-camera-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  .maplibregl-popup-close-button {
+    padding: 8px;
+    font-size: 20px;
   }
 }
