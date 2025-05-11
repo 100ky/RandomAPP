@@ -707,7 +707,82 @@ body {
   z-index: 10;
   max-width: 80%;
   text-align: center;
-  position: relative;
+}
+
+/* Tlačítka v chybové hlášce geolokace */
+.geolocation-error-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.geolocation-error-buttons button {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.geolocation-error-buttons .center-button {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.geolocation-error-buttons .center-button:hover {
+  background-color: var(--primary-color-dark);
+}
+
+/* Tlačítko pro přiblížení na Vysoké Mýto */
+.vysokemyto-button {
+  position: absolute;
+  bottom: 80px;
+  right: 10px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  z-index: 5;
+  transition: all 0.2s ease;
+}
+
+.vysokemyto-button:hover {
+  background-color: var(--primary-color-dark);
+  transform: scale(1.05);
+}
+
+.geolocation-error-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.geolocation-error-buttons button {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.geolocation-error-buttons .center-button {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.geolocation-error-buttons .center-button:hover {
+  background-color: var(--primary-color-dark);
 }
 
 /* Tlačítko pro zavření chybové hlášky o geolokaci */
@@ -730,6 +805,31 @@ body {
 
 .close-error-btn:hover {
   background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Tlačítko pro přiblížení na Vysoké Mýto */
+.vysokemyto-button {
+  position: absolute;
+  bottom: 80px;
+  right: 10px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  z-index: 5;
+  transition: all 0.2s ease;
+}
+
+.vysokemyto-button:hover {
+  background-color: var(--primary-color-dark);
+  transform: scale(1.05);
 }
 
 /* Styly pro herní ovládací prvky */
