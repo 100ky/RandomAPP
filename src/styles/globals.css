@@ -570,19 +570,68 @@ body {
 
 /* Styly pro marker uživatele s avatarem */
 .user-location-marker {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
-  width: 50px;
-  height: 50px;
+  transform-origin: center;
+  transition: transform 0.3s ease;
 }
 
 .user-location-marker img {
-  width: 100%;
-  height: 100%;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  border: 3px solid var(--white);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   object-fit: cover;
-  background-color: var(--primary-color);
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+  background-color: #fff;
+}
+
+.user-location-marker .accuracy-circle {
+  position: absolute;
+  border-radius: 50%;
+  background-color: rgba(66, 133, 244, 0.15);
+  border: 1px solid rgba(66, 133, 244, 0.3);
+  z-index: 1;
+  animation: pulse-accuracy 2s infinite;
+}
+
+@keyframes pulse-accuracy {
+  0% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.05); opacity: 0.4; }
+  100% { transform: scale(1); opacity: 0.6; }
+}
+
+.user-location-marker .heading-indicator {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0; 
+  height: 0; 
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 12px solid #4285F4;
+  z-index: 3;
+  transition: transform 0.5s ease;
+}
+
+/* Efekt pro marker uživatele při objevení nové lokace */
+.user-location-marker.discovery {
+  animation: discovery-celebration 1s ease;
+}
+
+@keyframes discovery-celebration {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.5); }
+  75% { transform: rotate(15deg) scale(1.2); }
+  85% { transform: rotate(-10deg) scale(1.1); }
+  100% { transform: rotate(0) scale(1); }
 }
 
 /* Kruh zobrazující přesnost geolokace */
@@ -629,21 +678,90 @@ body {
   position: fixed;
   top: 20px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(-100px);
   background-color: var(--secondary-color);
   color: var(--white);
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 12px;
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: opacity 0.5s ease;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   max-width: 90%;
-  text-align: center;
-  font-weight: bold;
+  width: 320px;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.location-discovery-notification.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
 }
 
 .location-discovery-notification.fade-out {
+  transform: translateX(-50%) translateY(-20px);
   opacity: 0;
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.discovery-icon {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  animation: pulse-discovery 2s infinite;
+}
+
+.discovery-text {
+  flex: 1;
+}
+
+.discovery-title {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 4px;
+}
+
+.discovery-name {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.notification-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.notification-progress.active::before {
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: 0%;
+  background-color: white;
+  animation: progress-animation 5s linear forwards;
+}
+
+@keyframes pulse-discovery {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes progress-animation {
+  0% { width: 0%; }
+  100% { width: 100%; }
 }
 
 /* Indikátor offline režimu */
@@ -858,20 +976,112 @@ body {
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 5;
 }
 
-.game-button:hover {
+.game-button .button-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.3s ease;
+}
+
+.game-button .button-glow {
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.game-button.hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
   background-color: var(--primary-hover, #45a049);
 }
 
-.game-button:active {
+.game-button.hover .button-glow {
+  opacity: 0.1;
+}
+
+.game-button.active {
   transform: scale(0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.game-button.active .button-content {
+  transform: scale(0.97);
+}
+
+.game-button.start-button {
+  background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+}
+
+.game-button.start-button.hover {
+  background: linear-gradient(135deg, #45a049 0%, #1b5e20 100%);
+}
+
+.start-button .start-icon {
+  animation: subtle-bounce 2s infinite;
+}
+
+@keyframes subtle-bounce {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(3px); }
 }
 
 .hidden-control {
   display: none;
+}
+
+/* Animace pro přechod ke hře */
+.game-starting {
+  position: relative;
+  overflow: hidden;
+}
+
+.game-starting::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.2);
+  z-index: 10;
+  opacity: 0;
+  animation: game-start-flash 0.6s ease-out forwards;
+}
+
+.game-active .map-container {
+  transition: all 0.7s ease-in-out;
+}
+
+@keyframes game-start-flash {
+  0% { opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+/* Animace pro avatar při startu hry */
+.game-starting .user-location-marker {
+  animation: location-marker-pulse 1.2s infinite;
+}
+
+@keyframes location-marker-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
 /* Styly pro herní menu */
@@ -1407,8 +1617,12 @@ body {
   }
 
   .game-controls {
-    bottom: 20px;
+    position: fixed;
+    bottom: 50px;  /* Posun výrazně výš od spodního okraje */
+    left: 50%;
+    transform: translateX(-50%);  /* Pouze horizontální centrování */
     flex-direction: row;
+    z-index: 20;
   }
   
   .app-menu {
@@ -1534,7 +1748,7 @@ body {
   }
 }
 
-/* Responzivní design pro různé orientace zařízení */
+/* Responsivní design pro různé orientace zařízení */
 @media (orientation: portrait) {
   .map-container-wrapper {
     height: 100%;
@@ -1602,7 +1816,11 @@ body {
   /* Zachováváme tlačítko Start Game uprostřed i v landscape režimu, 
      ale pouze když hra neběží. Pokud hra běží, tlačítka jsou umístěna jinde */
   .game-controls {
-    /* Pozice uprostřed obrazovky zůstává stejná jako v základním stylu */
+    position: fixed;
+    top: 90% !important; /* Umístění v horní polovině obrazovky */
+    left: 50% !important;
+    bottom: auto !important; /* Vypnutí bottom vlastnosti */
+    transform: translate(-10%, -50%) !important; /* Centrování horizontálně i vertikálně */
   }
   
   /* Pro ostatní herní ovládací prvky, které se objeví po spuštění hry, použijeme jiné umístění */
@@ -1782,5 +2000,413 @@ body {
   .maplibregl-popup-close-button {
     padding: 8px;
     font-size: 20px;
+  }
+}
+
+/* Styly pro uživatelský marker */
+.user-marker-container {
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+.accuracy-circle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: rgba(66, 133, 244, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s, background-color 0.3s;
+}
+
+.accuracy-circle.moving {
+  animation: accuracy-pulse 1.5s infinite;
+}
+
+@keyframes accuracy-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.4;
+  }
+}
+
+.user-marker {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+}
+
+.user-marker.game-active {
+  filter: drop-shadow(0 0 4px rgba(66, 133, 244, 0.8));
+}
+
+.user-marker.moving {
+  animation: marker-bounce 0.5s ease;
+}
+
+@keyframes marker-bounce {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+}
+
+.direction-indicator {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 12px solid rgba(66, 133, 244, 0.8);
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s;
+}
+
+.avatar {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.avatar.moving {
+  animation: avatar-bounce 0.5s ease;
+}
+
+.avatar.game-active::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
+  animation: shine 2s infinite;
+}
+
+@keyframes avatar-bounce {
+  0%, 100% {
+    transform: translate(-50%, -50%);
+  }
+  50% {
+    transform: translate(-50%, -60%);
+  }
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) rotate(45deg);
+  }
+}
+
+.shadow {
+  position: absolute;
+  width: 20px;
+  height: 6px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, 10px);
+  filter: blur(2px);
+  opacity: 0.6;
+}
+
+.pulse-effect {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: rgba(66, 133, 244, 0.6);
+  opacity: 0;
+}
+
+.game-active .pulse-effect {
+  animation: pulse-effect 2s infinite;
+}
+
+@keyframes pulse-effect {
+  0% {
+    transform: scale(0.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* Styly pro různé avatary */
+.avatar.default {
+  background-color: var(--primary-color);
+}
+
+.avatar.explorer {
+  background-color: var(--secondary-color);
+}
+
+.avatar.adventurer {
+  background-color: #9c27b0;
+}
+
+.avatar.traveler {
+  background-color: #ff9800;
+}
+
+/* Styly pro ovládání zvuku */
+.sound-controls {
+  position: absolute;
+  top: 70px; /* Posunuto níže, aby nepřekrývalo menu tlačítko */
+  right: 20px;
+  display: flex;
+  align-items: center;
+  z-index: 95; /* Z-index nižší než menu, ale stále vysoký */
+}
+
+.sound-toggle {
+  /* Základní styly jsou nyní v .control-button-base */
+}
+
+/* Společné styly pro kontrolní tlačítka (menu, zvuk, apod.) */
+.control-button-base {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Styly pro dotykové zařízení */
+@media (hover: none) {
+  .sound-toggle {
+    width: 46px;
+    height: 46px;
+    opacity: 0.9;
+    background-color: rgba(255, 255, 255, 0.95); /* Více viditelné */
+  }
+  
+  .sound-toggle:active {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+  
+  /* Vylepšení viditelnosti menu tlačítka na dotykových zařízeních */
+  .menu-button {
+    width: 46px;
+    height: 46px;
+    background-color: rgba(255, 255, 255, 0.95);
+    -webkit-tap-highlight-color: transparent; /* Odstraní zvýraznění při dotyku */
+  }
+  
+  .menu-button:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Styly pro zařízení s myší */
+@media (hover: hover) {
+  .sound-toggle:hover {
+    transform: scale(1.1);
+    background-color: white;
+  }
+
+  .sound-toggle:active {
+    transform: scale(0.95);
+  }
+}
+
+.sound-toggle svg {
+  width: 28px;
+  height: 28px;
+  color: var(--primary-color);
+}
+
+.sound-toggle.sound-on svg {
+  animation: pulse-icon 2s infinite;
+}
+
+.sound-toggle.sound-off {
+  background-color: rgba(240, 240, 240, 0.8);
+}
+
+.sound-toggle.sound-off svg {
+  color: #888;
+}
+
+@keyframes pulse-icon {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Animace pro dosažení cíle a odměny */
+.achievement-notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 20px;
+  border-radius: 16px;
+  z-index: 1100;
+  box-shadow: 0 0 60px rgba(255, 215, 0, 0.6);
+  text-align: center;
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  width: 300px;
+  max-width: 90vw;
+}
+
+.achievement-notification.show {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.achievement-notification.fade-out {
+  transform: translate(-50%, -60%) scale(0.8);
+  opacity: 0;
+}
+
+.achievement-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  background-color: rgba(255, 215, 0, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: achievement-glow 2s infinite alternate;
+}
+
+@keyframes achievement-glow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.9);
+  }
+}
+
+.achievement-icon svg {
+  width: 50px;
+  height: 50px;
+  fill: gold;
+  filter: drop-shadow(0 0 5px gold);
+}
+
+.achievement-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: gold;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+}
+
+.achievement-description {
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: #eee;
+}
+
+.achievement-points {
+  font-size: 18px;
+  font-weight: bold;
+  color: gold;
+  margin-bottom: 20px;
+}
+
+.achievement-close-button {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.achievement-close-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.achievement-confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: gold;
+  opacity: 0.8;
+  border-radius: 50%;
+  animation: confetti-fall 4s ease-in-out forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(400px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Responsivní nastavení pro různé orientace obrazovky */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+  /* V landscape módu na malých obrazovkách (mobilní telefony) */
+  .sound-controls {
+    top: 10px;
+    right: 70px; /* Umístění vlevo od menu tlačítka */
+  }
+  
+  .game-menu-button-container {
+    top: 10px;
+    right: 10px; /* Zachová pozici v pravém horním rohu */
+  }
+}
+
+/* Pro velmi malé obrazovky zajistíme lepší rozložení */
+@media screen and (max-width: 360px) {
+  .sound-controls {
+    top: 10px;
+    right: 70px; /* Umístění vlevo od menu tlačítka i v portrait módu na velmi malých zařízeních */
   }
 }

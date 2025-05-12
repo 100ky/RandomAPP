@@ -12,12 +12,14 @@ import { pointsOfInterest } from '../data/cityBoundary';
 import { avatars } from './AppMenu';
 import { useGameStore } from '../store/gameStore';
 import { createOfflineMapCache } from '../utils/mapHelpers';
-import LocationMarker from './LocationMarker';
 import { getRequiredAttributions } from '../utils/attributions';
 import GameMenu from './GameMenu';
 import GameControls from './GameControls';
 import PuzzleModal from './PuzzleModal';
 import { Puzzle } from '../types/game';
+import { SoundType, playSound } from '../utils/SoundManager';
+import { createUserMarker, useUserMarker } from '../utils/markerUtils';
+import SoundControls from './SoundControls';
 
 /**
  * Props pro komponentu Map
@@ -87,9 +89,55 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
      * Zahájí novou hru - inicializace herního stavu
      */
     const handleStartGame = useCallback(() => {
-        startGame();
-        resetStats(); // Reset statistik při novém startu
-        setIsGameRunning(true);
+        // Přidat třídu pro animaci přechodu
+        const mapContainer = document.getElementById('map-container');
+        if (mapContainer) {
+            mapContainer.classList.add('game-starting');
+            
+            // Efekt zvlnění mapy při startu hry
+            if (mapRef.current) {
+                const currentZoom = mapRef.current.getZoom();
+                const currentCenter = mapRef.current.getCenter();
+                
+                // Plynulá animace přiblížení a oddálení pro efekt "bounce"
+                mapRef.current.easeTo({
+                    zoom: currentZoom + 0.5,
+                    duration: 800,
+                    easing: (t) => {
+                        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+                    }
+                });
+                
+                setTimeout(() => {
+                    if (mapRef.current) {
+                        mapRef.current.easeTo({
+                            zoom: currentZoom,
+                            duration: 600
+                        });
+                    }
+                }, 850);
+            }
+            
+            // Po animaci nastavit stav
+            setTimeout(() => {
+                startGame();
+                resetStats(); // Reset statistik při novém startu
+                setIsGameRunning(true);
+                
+                if (mapContainer) {
+                    mapContainer.classList.remove('game-starting');
+                    mapContainer.classList.add('game-active');
+                }
+            }, 600);
+            
+            // Přidat zvukový efekt při startu hry
+            playSound(SoundType.GAME_START)
+        } else {
+            // Záložní řešení, pokud není k dispozici element kontejneru
+            startGame();
+            resetStats();
+            setIsGameRunning(true);
+        }
     }, [startGame, resetStats]);
     
     /**
@@ -273,15 +321,19 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
 
     /**
      * Kontroluje, zda je uživatel blízko některé lokace a případně registruje návštěvu
-     * @param userCoordinates Souřadnice uživatele [lng, lat]
+     * @param userCoordinates Souřadnice uživatele ve formátu {lat, lng} nebo [lng, lat]
      */
-    const checkProximityToLocations = useCallback((userCoordinates: [number, number]) => {
-        if (!userCoordinates[0] || !userCoordinates[1]) return;
+    const checkProximityToLocations = useCallback((userCoordinates: {lat: number, lng: number} | [number, number]) => {
+        // Zpracování souřadnic v závislosti na formátu dat
+        const lat = Array.isArray(userCoordinates) ? userCoordinates[1] : userCoordinates.lat;
+        const lng = Array.isArray(userCoordinates) ? userCoordinates[0] : userCoordinates.lng;
+        
+        if (!lng || !lat) return;
         
         pointsOfInterest.forEach(location => {
             const distanceToLocation = calculateDistance(
-                userCoordinates[1], // latitude
-                userCoordinates[0], // longitude
+                lat, // latitude
+                lng, // longitude
                 location.coordinates[1], // point latitude
                 location.coordinates[0]  // point longitude
             );
@@ -291,8 +343,42 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                 // Zkontrolovat, zda uživatel již lokaci navštívil
                 if (!playerProgress.visitedLocations.includes(location.id)) {
                     visitLocation(location.id);
+                    
                     // Zobrazit oznámení o objevení nové lokace
                     showLocationDiscoveryNotification(location.name);
+                    
+                    // Počet objevených míst po přičtení aktuálního
+                    const discoveredCount = playerProgress.visitedLocations.length + 1;
+                    
+                    // Pokud je to první objev místa, ukázat speciální achievement
+                    if (discoveredCount === 1) {
+                        import('../utils/achievementUtils').then(({ showAchievement }) => {
+                            setTimeout(() => {
+                                showAchievement({
+                                    title: "První objevení!",
+                                    description: `Objevil jsi své první místo: ${location.name}`,
+                                    points: 100,
+                                    autoClose: true,
+                                    duration: 8000
+                                });
+                            }, 3000); // Počkat po notifikaci objevení
+                        });
+                    }
+                    
+                    // Pro každé 5. objevené místo ukázat speciální achievement
+                    if (discoveredCount % 5 === 0) {
+                        import('../utils/achievementUtils').then(({ showAchievement }) => {
+                            setTimeout(() => {
+                                showAchievement({
+                                    title: "Objevitel!",
+                                    description: `Už jsi objevil ${discoveredCount} míst`,
+                                    points: 250,
+                                    autoClose: true,
+                                    duration: 8000
+                                });
+                            }, 3000);
+                        });
+                    }
                 }
             }
         });
@@ -321,114 +407,147 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
     };
     
     /**
-     * Aktualizuje marker uživatele podle aktuální polohy
-     * Také počítá uraženou vzdálenost a kroky a kontroluje blízkost k bodům zájmu
+     * Efekt pro aktualizaci polohy uživatelského markeru na mapě
      */
-    const updateUserMarker = useCallback(() => {
-        if (!mapRef.current || !latitude || !longitude) return;
-
+    useEffect(() => {
+        // Pokud není mapa načtená nebo nemáme polohu, nic nedělat
+        if (!mapRef.current || !mapLoaded || latitude === null || longitude === null) {
+            return;
+        }
+        
         // Souřadnice uživatele
         const userCoordinates: [number, number] = [longitude, latitude];
-
-        // Výpočet vzdálenosti od poslední pozice
-        if (lastPositionRef.current) {
-            const distance = calculateDistance(
-                latitude,
-                longitude,
-                lastPositionRef.current.lat,
-                lastPositionRef.current.lng
-            );
+        
+        // Pokud se mapa má automaticky přesunout k uživateli, udělat to
+        if (animateToUserLocation && !animationStartedRef.current) {
+            mapRef.current.flyTo({
+                center: userCoordinates,
+                zoom: 15,
+                duration: 2000
+            });
+            animationStartedRef.current = true;
+        }
+        
+        // Aktualizace vzdálenosti při pohybu uživatele
+        if (lastPositionRef.current && isGameRunning) {
+            const lastPos = lastPositionRef.current;
+            const distance = Math.sqrt(
+                Math.pow(latitude - lastPos.lat, 2) + 
+                Math.pow(longitude - lastPos.lng, 2)
+            ) * 111000; // přibližný převod na metry
             
-            if (distance > 5 && isGameRunning) { // jen pokud se pohnul o více než 5 metrů a hra běží
-                addDistance(distance); // přidat vzdálenost do stavu
+            // Pokud je pohyb větší než 3 metry, přidat vzdálenost
+            if (distance > 3) {
+                addDistance(distance);
+                updateStepsCount(distance);
                 
-                // Omezit aktualizaci kroků, aby nebyly příliš časté, ale jen když se uživatel hýbe
-                if (stepCounterTimeoutRef.current) {
-                    clearTimeout(stepCounterTimeoutRef.current);
+                // Přehrát zvuk kroků s nižší pravděpodobností
+                if (Math.random() < 0.3) {
+                    playSound(SoundType.STEP, { volume: 0.15 + Math.random() * 0.1 });
                 }
-                
-                stepCounterTimeoutRef.current = setTimeout(() => {
-                    updateStepsCount(distance);
-                }, 2000);
             }
         }
         
-        // Uložit aktuální pozici
+        // Uložit poslední pozici pro budoucí výpočty
         lastPositionRef.current = { lat: latitude, lng: longitude };
 
-        // Odstranit předchozí marker, pokud existuje
+        // Pokud už existuje marker, odstranit ho
         if (userMarkerRef.current) {
             userMarkerRef.current.remove();
+            userMarkerRef.current = null;
         }
 
-        // Vytvořit HTML element pro uživatelský marker s avatarem a přesností
-        const el = document.createElement('div');
-        el.className = 'user-location-marker';
-        
-        // Přidat obrázek avatara
-        const img = document.createElement('img');
-        img.src = selectedAvatar.imageUrl;
-        img.alt = selectedAvatar.name;
-        el.appendChild(img);
-        
-        // Přidat indikátor přesnosti, pokud je k dispozici
-        if (accuracy) {
-            const accuracyCircle = document.createElement('div');
-            accuracyCircle.className = 'accuracy-circle';
-            // Nastavení velikosti kruhu podle přesnosti
-            const circleSize = Math.min(Math.max(accuracy / 2, 20), 100); // Omezení velikosti kruhu
-            accuracyCircle.style.width = `${circleSize}px`;
-            accuracyCircle.style.height = `${circleSize}px`;
-            el.appendChild(accuracyCircle);
+        // Vytvořit nový marker s naší utilitou
+        if (mapRef.current) {
+            userMarkerRef.current = createUserMarker({
+                map: mapRef.current,
+                position: userCoordinates,
+                accuracy: accuracy || undefined,
+                heading: heading || undefined,
+                isGameActive: isGameRunning,
+                avatarId: selectedAvatarId
+            });
+            
+            // Kontrola, zda je uživatel v blízkosti některého z bodů zájmu
+            if (isGameRunning) {
+                checkProximityToLocations(userCoordinates);
+            }
         }
         
-        if (heading && heading > 0) {
-            // Přidat indikátor směru pohybu, pokud je k dispozici
-            const headingIndicator = document.createElement('div');
-            headingIndicator.className = 'heading-indicator';
-            headingIndicator.style.transform = `rotate(${heading}deg)`;
-            el.appendChild(headingIndicator);
-        }
-
-        // Vytvořit a přidat marker
-        userMarkerRef.current = new maplibre.Marker({
-            element: el,
-            anchor: 'center',
-            rotationAlignment: 'map'
-        }).setLngLat(userCoordinates)
-          .addTo(mapRef.current);
-        
-        // Kontrola, zda je uživatel v blízkosti některého z bodů zájmu
-        if (isGameRunning) {
-            checkProximityToLocations(userCoordinates);
-        }
-    }, [latitude, longitude, accuracy, heading, selectedAvatar, addDistance, updateStepsCount, checkProximityToLocations, isGameRunning]);
+        // Zde není potřeba vracet JSX element, protože marcery vytváříme imperativně
+        return;
+    }, [latitude, longitude, accuracy, heading, selectedAvatarId, mapLoaded, isGameRunning, 
+        animateToUserLocation, addDistance, updateStepsCount, checkProximityToLocations]);
     
     /**
-     * Zobrazí oznámení o objevení nové lokace
+     * Zobrazí oznámení o objevení nové lokace s vylepšenou animací
      * @param locationName Název objevené lokace
      */
     const showLocationDiscoveryNotification = (locationName: string) => {
         // Vytvořit notifikační element
         const notification = document.createElement('div');
         notification.className = 'location-discovery-notification';
-        notification.textContent = `Objevili jste: ${locationName}`;
+        
+        // Vytvořit obsahový kontejner s animací
+        const contentContainer = document.createElement('div');
+        contentContainer.className = 'notification-content';
+        
+        // Přidat ikonu objevení
+        const icon = document.createElement('div');
+        icon.className = 'discovery-icon';
+        icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
+        </svg>`;
+        
+        // Přidat text
+        const text = document.createElement('div');
+        text.className = 'discovery-text';
+        text.innerHTML = `
+            <div class="discovery-title">Nové místo!</div>
+            <div class="discovery-name">${locationName}</div>
+        `;
+        
+        // Sestavit notifikaci
+        contentContainer.appendChild(icon);
+        contentContainer.appendChild(text);
+        notification.appendChild(contentContainer);
+        
+        // Přidat animovaný progress bar pro odpočet
+        const progressBar = document.createElement('div');
+        progressBar.className = 'notification-progress';
+        notification.appendChild(progressBar);
         
         // Přidat do DOM
         document.body.appendChild(notification);
         
-        // Odstranit po 4 sekundách
+        // Přidat vstupní animaci
         setTimeout(() => {
-            notification.classList.add('fade-out');
+            notification.classList.add('show');
+            
+            // Spustit progress bar
             setTimeout(() => {
-                document.body.removeChild(notification);
-            }, 500);
-        }, 4000);
+                progressBar.classList.add('active');
+            }, 100);
+            
+            // Odstranit po 5 sekundách
+            setTimeout(() => {
+                notification.classList.add('fade-out');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        document.body.removeChild(notification);
+                    }
+                }, 800);
+            }, 5000);
+        }, 10);
+
+        // Přidat zvukový efekt při objevení
+        playSound(SoundType.DISCOVER, { volume: 0.7 })
     };
 
     /**
-     * Přidává markery bodů zájmu na mapu
-     * Odlišuje navštívené lokace od nenavštívených
+     * Funkce pro přidání markerů lokací na mapu je nyní prázdná,
+          * Funkce pro přidání markerů lokací na mapu je nyní prázdná, 
+     * aby se odstranily body na mapě a jejich popisky
      */
     const addLocationMarkers = useCallback(() => {
         if (!mapRef.current) return;
@@ -437,65 +556,8 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         markersRef.current.forEach(marker => marker.remove());
         markersRef.current = [];
         
-        // Přidat nové markery
-        pointsOfInterest.forEach(point => {
-            // Zjistit, zda uživatel již lokaci navštívil
-            const isVisited = playerProgress.visitedLocations.includes(point.id);
-              // Přidat marker pomocí komponenty LocationMarker
-            const locationMarkerEl = document.createElement('div');
-            locationMarkerEl.style.width = '0';
-            locationMarkerEl.style.height = '0';
-            
-            // Vytvořit ReactDOM element pro marker
-            const marker = new maplibre.Marker(locationMarkerEl)
-                .setLngLat([point.coordinates[0], point.coordinates[1]] as [number, number])
-                .addTo(mapRef.current!);
-            
-            // Přidat popup s informacemi o lokaci
-            const popup = new maplibre.Popup({ offset: 25, closeButton: false })
-                .setHTML(`
-                    <h3>${point.name}</h3>
-                    <p>${point.description}</p>
-                    ${isVisited ? '<span class="visited-badge">Navštíveno</span>' : ''}
-                `);
-            
-            marker.setPopup(popup);
-            
-            // Uložit marker pro pozdější odstranění
-            markersRef.current.push(marker);
-            
-            // Renderovat React komponentu jako marker
-            const el = document.createElement('div');
-            el.className = 'location-marker';
-            el.style.backgroundColor = isVisited ? '#4CAF50' : '#FF4136';
-            el.style.width = '20px';
-            el.style.height = '20px';
-            el.style.borderRadius = '50%';
-            el.style.border = '2px solid white';
-            el.style.boxShadow = '0 0 5px rgba(0,0,0,0.5)';
-            el.style.position = 'absolute';
-            el.style.top = '-10px';
-            el.style.left = '-10px';
-            
-            if (isVisited) {
-                // Přidat ikonu checkmark pro navštívené lokace
-                const checkmark = document.createElement('div');
-                checkmark.innerHTML = '✓';
-                checkmark.style.color = 'white';
-                checkmark.style.position = 'absolute';
-                checkmark.style.top = '0';
-                checkmark.style.left = '0';
-                checkmark.style.right = '0';
-                checkmark.style.bottom = '0';
-                checkmark.style.display = 'flex';
-                checkmark.style.alignItems = 'center';
-                checkmark.style.justifyContent = 'center';
-                checkmark.style.fontSize = '12px';
-                el.appendChild(checkmark);
-            }
-            
-            locationMarkerEl.appendChild(el);
-        });
+        // Již nebudeme přidávat žádné markery na mapu
+        // Tím skryjeme všechny body na mapě s popisky
     }, [playerProgress.visitedLocations]);
     
     // Inicializace mapy při načtení komponenty
@@ -800,6 +862,9 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                 isPaused={isGamePaused}
                 isGameRunning={isGameRunning}
             />
+            
+            {/* Ovládání zvuku */}
+            <SoundControls />
               {/* Tlačítka pro ovládání hry (start/stop) */}
             <GameControls 
                 onStart={handleStartGame}

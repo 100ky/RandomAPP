@@ -118,7 +118,7 @@ const GameMenu: React.FC<GameMenuProps> = ({
       <div className="game-menu-button-container" ref={menuRef}>
         <button 
           onClick={toggleMenu} 
-          className="menu-button"
+          className="menu-button control-button-base"
           aria-label="Herní menu"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
