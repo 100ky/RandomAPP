@@ -2,9 +2,9 @@
   "name": "vymyto-unikova-hra",
   "version": "1.0.0",
   "description": "A mobile outdoor escape game application using MapLibre, Next.js, and TypeScript.",
-  "main": "index.js",
-  "scripts": {
+  "main": "index.js",  "scripts": {
     "dev": "next dev",
+    "dev:network": "next dev -H 0.0.0.0",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",

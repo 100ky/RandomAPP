@@ -1,27 +1,33 @@
-.splashScreen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #8B4513, #6B3100);
+/* Zjednodušený CSS modul pro SplashScreen */
+.textContent {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  z-index: 1000;
-  animation: fadeIn 0.8s ease-in-out;
-  color: var(--white);
-  overflow: hidden;
+  text-align: center;
 }
 
-.content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  padding: 40px;
-  max-width: 90%;
+.loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Media queries pro orientaci na šířku */
+@media (orientation: landscape) {
+  .textContent {
+    margin-left: 20px;
+  }
+}
+
+/* Speciální třídy pro různé typy zařízení */
+.samsungLandscape {
+  max-width: 100% !important;
+  padding: 10px 15px !important;
+}
+
+.optimizedPerformance {
+  /* Zjednodušení stylů pro lepší výkon */
+  box-shadow: none !important;
+  text-shadow: none !important;
 }
 
 .logoPlaceholder {
@@ -152,4 +158,141 @@
   .subtitle {
     font-size: 12px;
   }
+}
+
+/* Styly pro landscape orientaci */
+.landscapeContent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 90%;
+  max-height: 80vh;
+  padding: 20px;
+}
+
+.landscapeTitleContainer {
+  text-align: left;
+  margin-left: 20px;
+}
+
+/* Přizpůsobení pro různé velikosti obrazovek v landscape orientaci */
+@media (orientation: landscape) and (max-height: 500px) {
+  .landscapeContent {
+    padding: 15px;
+  }
+  
+  .landscapeContent .compassWrapper {
+    transform: scale(0.8);
+  }
+  
+  .landscapeTitleContainer .title {
+    font-size: 22px;
+  }
+  
+  .landscapeTitleContainer .subtitle {
+    font-size: 16px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 400px) {
+  .landscapeContent {
+    padding: 10px;
+  }
+  
+  .landscapeContent .compassWrapper {
+    transform: scale(0.7);
+  }
+  
+  .landscapeTitleContainer .title {
+    font-size: 20px;
+  }
+  
+  .landscapeTitleContainer .subtitle {
+    font-size: 14px;
+  }
+}
+
+/* Styly pro portrait orientaci */
+.portraitContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px;
+  max-width: 90%;
+}
+
+/* Opravy pro Android zařízení */
+.androidDeviceLandscape {
+  padding: 10px;
+}
+
+.androidDeviceLandscape .compassWrapper {
+  transform: scale(0.7);
+}
+
+/* Třída pro landscape v Android zařízeních */
+.androidLandscapeContent {
+  display: flex !important;
+  flex-direction: row !important;
+  padding: 10px !important;
+}
+
+/* Optimalizace pro Android zařízení */
+.androidOptimized {
+  -webkit-tap-highlight-color: transparent; /* Odstranění zvýraznění po klepnutí */
+  -webkit-touch-callout: none; /* Vypnutí kontextového menu na dlouhý stisk */
+  touch-action: manipulation; /* Optimalizace pro touch input */
+  will-change: transform; /* Hardware akcelerace */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.adventureCorner {
+  position: relative;
+}
+
+.adventureCorner::before,
+.adventureCorner::after {
+  content: "";
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border: 3px solid var(--accent-color);
+  opacity: 0.7;
+}
+
+.adventureCorner::before {
+  top: 0;
+  left: 0;
+  border-right: none;
+  border-bottom: none;
+}
+
+.adventureCorner::after {
+  bottom: 0;
+  right: 0;
+  border-top: none;
+  border-left: none;
+}
+
+.adventureBackground {
+  position: relative;
+  overflow: hidden;
+}
+
+.adventureBackground::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23a77c46' fill-opacity='0.05'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a77c46' fill-opacity='0.03' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.3;
 }

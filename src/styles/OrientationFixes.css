@@ -1,0 +1,179 @@
+/* Dodatečné styly pro zajištění správného zobrazení obsahu na úvodních obrazovkách */
+
+/* Oprava pro úvodní obrazovky v portrait módu */
+.portrait-orientation .loadingScreen,
+.portrait-orientation .splashScreen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* Zaručení zobrazení ve středu obrazovky */
+.portrait-orientation .loadingContainer,
+.portrait-orientation .splashContainer,
+.portrait-orientation .content {
+  transform: translateY(0) !important;  
+  margin: 0 auto;
+  max-height: 95vh;
+  overflow-y: auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) !important;
+  flex-direction: column;
+}
+
+/* Oprava pro úvodní obrazovky v landscape módu */
+.landscape-orientation .loadingScreen,
+.landscape-orientation .splashScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  will-change: transform; /* Pomáhá s vyhlazením animací a předchází problikávání */
+}
+
+/* Optimalizace vykreslování v landscape módu */
+.landscape-orientation .loadingContainer,
+.landscape-orientation .splashContainer {
+  position: relative;
+  backface-visibility: hidden; /* Předchází problikávání při transformaci */
+  max-height: 85vh;
+  width: auto;
+  margin: 0 auto;
+  padding: 15px;
+  display: flex;
+  flex-direction: row !important; /* Vynucení horizontálního rozložení */
+  align-items: center;
+  justify-content: space-between;
+  /* Dodatečné vlastnosti pro Android zařízení */
+  -webkit-transform: translateZ(0); /* Hardware acceleration */
+  transform: translateZ(0);
+}
+
+/* Zařízení s nižší výškou v landscape módu (vhodné pro většinu mobilů včetně Android) */
+@media (orientation: landscape) and (max-height: 400px) {  
+  .landscape-orientation .loadingContainer,
+  .landscape-orientation .splashContainer {
+    padding: 10px;
+    max-width: 95%;
+    min-height: auto;
+  }
+  
+  .landscape-orientation .loadingAdventureElements {
+    transform: scale(0.7);
+    margin-right: 10px;
+    display: flex;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+  }
+  
+  .landscape-orientation .compass,
+  .landscape-orientation .mapScroll,
+  .landscape-orientation .planet {
+    transform: scale(0.7);
+    margin: 5px;
+  }
+  
+  /* Zlepšení výkonu na Android zařízeních */
+  .landscape-orientation .loadingContainer::before,
+  .landscape-orientation .splashContainer::before {
+    animation-duration: 8s !important; /* Zpomalení animace pro lepší výkon */
+  }
+  
+  /* Optimalizace animací pro Android */
+  .landscape-orientation .needle,
+  .landscape-orientation .compassRose {
+    animation-timing-function: linear !important; /* Plynulejší animace na Android */
+  }
+  
+  /* Fixace překrývajících se prvků */
+  .landscape-orientation .mapScroll, 
+  .landscape-orientation .planet {
+    position: relative;
+    z-index: 2;
+  }
+  
+  /* Optimalizace textového kontejneru pro landscape */
+  .landscape-orientation .loadingTextContainer {
+    padding-left: 10px;
+    border-left: 1px solid rgba(255, 215, 0, 0.3);
+  }
+  
+  .landscape-orientation .loadingTitle {
+    font-size: 20px !important;
+    margin-bottom: 10px !important;
+  }
+  
+  .landscape-orientation .loadingQuote {
+    font-size: 14px !important;
+    margin-bottom: 10px !important;
+    min-height: 30px !important;
+  }
+  
+  .landscape-orientation .loadingProgressContainer {
+    margin-bottom: 8px !important;
+  }
+  
+  .landscape-orientation .loadingText {
+    font-size: 12px !important;
+  }
+}
+
+/* Úprava velikosti prvků pro lepší čitelnost */
+.portrait-orientation .dobrodružstvíTitle {
+  font-size: 24px;
+}
+
+.portrait-orientation .subtitle {
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* Upravený kontejner pro mapový a další prvky */
+.portrait-orientation .loadingAdventureElements {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+  padding: 5px;
+}
+
+/* Úprava pro mapové prvky */
+.portrait-orientation .mapScroll,
+.portrait-orientation .compass,
+.portrait-orientation .planet {
+  transform: scale(0.8);
+  margin: 5px;
+}
+
+/* Oprava rozestupů na úvodní obrazovce */
+.portrait-orientation .startContainer {
+  padding: 15px;
+  margin: 10px;
+}
+
+/* Zajistit, že text a další obsah jsou plně viditelné */
+.portrait-orientation .textContent {
+  overflow-y: visible;
+  max-height: none;
+}
+
+/* Animace optimalizované pro mobilní zařízení */
+@media (orientation: landscape) {
+  .landscape-orientation .compass,
+  .landscape-orientation .planetRings,
+  .landscape-orientation .planetClouds {
+    animation-duration: 8s; /* Zpomalení animací pro lepší výkon */
+  }
+}

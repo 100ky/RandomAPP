@@ -1,5 +1,10 @@
 /* Import fontů */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Quattrocento:wght@400;700&display=swap');
+@import url('./GameControls.css');
+@import url('./MobileUIFixes.css');
+@import url('./OrientationFixes.css');
+@import url('./SmallScreenFixes.css');
+@import url('./AndroidFixes.css');
 
 /* Resetovací styly */
 :root {

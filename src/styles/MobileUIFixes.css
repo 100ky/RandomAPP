@@ -1,0 +1,72 @@
+/* Dodatečné styly pro mobilní zařízení */
+
+/* Oprava rozložení UI elementů pro mobilní zobrazení */
+@media (orientation: portrait) and (max-width: 480px) {
+  /* Odstranění duplikovaných elementů a přizpůsobení jejich velikosti */
+  .game-controls {
+    /* Posunutí ovládacích prvků nahoru, aby nebyly příliš blízko spodního okraje */
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+  }
+  
+  /* Úprava stylu tlačítek pro lepší dotyková rozhraní */
+  .game-button {
+    padding: 12px 20px;
+    min-width: 160px; /* Zajistí dostatečnou šířku pro dotykové ovládání */
+  }
+  
+  /* Informace o hře - zajištění, že se nepřekrývají s jinými prvky */
+  .notifications, .game-info {
+    max-width: 90%;
+    margin: 0 auto;
+  }
+  
+  /* Úprava překryvných vrstev */
+  .modal-overlay {
+    padding: 10px;
+  }
+  
+  /* Zajištění dostatečného prostoru kolem tlačítek */
+  .action-buttons {
+    margin: 15px 0;
+  }
+  
+  /* Oprava rozestupu mezi prvky */
+  .menu-spacer {
+    height: 70px;
+  }
+}
+
+/* Speciální úpravy pro malé telefony */
+@media (orientation: portrait) and (max-height: 700px) {
+  .game-controls {
+    bottom: 20px;
+    transform: translateX(-50%) scale(0.9);
+  }
+  
+  /* Zmenšení velikosti avatara */
+  .avatar-display {
+    transform: scale(0.85);
+  }
+  
+  /* Zmenšení velikosti menu tlačítka */
+  .menu-button {
+    transform: scale(0.9);
+  }
+}
+
+/* Korekce rozložení pro velmi malé displeje */
+@media (max-width: 360px) {
+  .game-button {
+    padding: 10px 15px;
+    font-size: 13px;
+    min-width: 130px;
+  }
+  
+  .button-content svg {
+    width: 18px;
+    height: 18px;
+  }
+}

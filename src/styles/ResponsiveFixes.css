@@ -1,0 +1,90 @@
+/* CSS pro testování responzivity - upraveno pro použití s CSS moduly */
+/* Nyní propojuje globální třídy s lokálními CSS moduly */
+
+/* Základní kompatibilita s CSS moduly */
+.force-landscape-orientation,
+.force-portrait-orientation,
+.show-grid-overlay,
+.show-screen-center,
+.show-test-borders {
+  /* Ponecháno pro zachování zpětné kompatibility */
+  position: relative;
+  z-index: 1;
+}
+
+/* Zajištění kompatibility tříd orientace */
+.landscape-orientation .loadingContainer,
+.force-landscape-orientation .loadingContainer,
+.landscape-orientation .splashContainer,
+.force-landscape-orientation .splashContainer {
+  display: flex !important;
+  flex-direction: row !important;
+  max-width: 95vw !important;
+}
+
+.portrait-orientation .loadingContainer,
+.force-portrait-orientation .loadingContainer,
+.portrait-orientation .splashContainer, 
+.force-portrait-orientation .splashContainer {
+  display: flex !important;
+  flex-direction: column !important;
+  max-width: 90vw !important;
+}
+
+/* Zajištění kompatibility vnořených elementů */
+.landscape-orientation .loadingAdventureElements,
+.force-landscape-orientation .loadingAdventureElements {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  flex-direction: row !important;
+  margin-right: 15px !important;
+}
+
+.portrait-orientation .loadingAdventureElements,
+.force-portrait-orientation .loadingAdventureElements {
+  display: flex !important;
+  flex-direction: column !important;
+  margin-bottom: 20px !important;
+}
+
+/* Zajištění backward kompatibility s různými systémy detekce */
+html.landscape-orientation,
+html.force-landscape-orientation,
+.landscape-orientation,
+.force-landscape-orientation {
+  --orientation: landscape;
+}
+
+html.portrait-orientation,
+html.force-portrait-orientation,
+.portrait-orientation,
+.force-portrait-orientation {
+  --orientation: portrait;
+}
+
+/* Testovací nástroje - ponecháno z důvodu kompatibility */
+.show-grid-overlay::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(90deg, rgba(0, 0, 255, 0.05) 0%, rgba(0, 0, 255, 0.05) 50%, transparent 50%, transparent 100%) 0 0 / 20px 20px,
+    linear-gradient(0deg, rgba(0, 0, 255, 0.05) 0%, rgba(0, 0, 255, 0.05) 50%, transparent 50%, transparent 100%) 0 0 / 20px 20px;
+  pointer-events: none;
+  z-index: 999999;
+}
+
+.show-screen-center::after {
+  content: '+';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 30px;
+  color: rgba(255, 0, 0, 0.7);
+  pointer-events: none;
+  z-index: 999999;
+}

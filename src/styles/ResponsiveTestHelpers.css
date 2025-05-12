@@ -1,0 +1,54 @@
+/**
+ * ResponsiveTestHelpers.css
+ * Pomocný soubor pro testování responzivního designu
+ * Tento soubor se importuje pouze v testovacích souborech
+ */
+
+/* 
+ * Tyto styly jsou záměrně v samostatném globálním CSS souboru,
+ * protože se používají společně s useOrientation hookem pro testování
+ * orientací a mobilních zařízení pomocí globálních tříd na document.documentElement
+ */
+
+/* Propojení orientací z testovací stránky */
+html.force-landscape-orientation .loadingContainer,
+html.force-landscape-orientation .splashContainer {
+  display: flex !important;
+  flex-direction: row !important;
+  max-width: 95vw !important;
+}
+
+html.force-portrait-orientation .loadingContainer,
+html.force-portrait-orientation .splashContainer {
+  display: flex !important;
+  flex-direction: column !important;
+  max-width: 90vw !important;
+}
+
+/* Opravy vnitřních prvků */
+html.force-landscape-orientation .loadingAdventureElements {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  flex-direction: row !important;
+  justify-content: space-around;
+}
+
+html.android-device.force-landscape-orientation .loadingContainer,
+html.android-device.force-landscape-orientation .splashContainer {
+  padding: 10px !important;
+}
+
+/* Testovací pomůcky */
+html.show-test-grid::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(90deg, rgba(0, 0, 255, 0.05) 0%, rgba(0, 0, 255, 0.05) 50%, transparent 50%, transparent 100%) 0 0 / 20px 20px,
+    linear-gradient(0deg, rgba(0, 0, 255, 0.05) 0%, rgba(0, 0, 255, 0.05) 50%, transparent 50%, transparent 100%) 0 0 / 20px 20px;
+  pointer-events: none;
+  z-index: 999999;
+}

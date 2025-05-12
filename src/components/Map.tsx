@@ -174,17 +174,61 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
             onEndGame();
         }
     }, [onEndGame]);
-    
-    // Detekce orientace zařízení
+      // Detekce orientace zařízení
     const [isLandscape, setIsLandscape] = useState<boolean>(false);
-    
-    // Sledování změny orientace
+    const [deviceType, setDeviceType] = useState<string>('unknown');
+      // Sledování změny orientace
     useEffect(() => {
         /**
          * Kontrola orientace zařízení a nastavení příslušného stavu
+         * S optimalizacemi pro iPhone a další iOS zařízení
          */
         const checkOrientation = () => {
-            setIsLandscape(window.innerWidth > window.innerHeight);
+            const isLandscapeOrientation = window.innerWidth > window.innerHeight;
+            setIsLandscape(isLandscapeOrientation);
+
+            // Detekce typu zařízení
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isIPhone = userAgent.indexOf('iphone') > -1;
+            const isIPad = userAgent.indexOf('ipad') > -1 || (userAgent.indexOf('macintosh') > -1 && 'ontouchend' in document);
+            const isIOS = isIPhone || isIPad;
+            
+            // Nastavit typ zařízení pro specifické optimalizace
+            if (isIPhone) {
+                setDeviceType('iphone');
+                document.documentElement.classList.add('iphone-device');
+            } else if (isIPad) {
+                setDeviceType('ipad');
+                document.documentElement.classList.add('ipad-device');
+            } else if (isIOS) {
+                setDeviceType('ios');
+                document.documentElement.classList.add('ios-device');
+            } else {
+                setDeviceType('other');
+            }
+            
+            // Přidání tříd pro orientaci na root element pro globální CSS selektory
+            if (isLandscapeOrientation) {
+                document.documentElement.classList.add('landscape-orientation');
+                document.documentElement.classList.remove('portrait-orientation');
+                
+                // Speciální třída pro iPhone v landscape módu
+                if (isIPhone && window.innerHeight <= 390) {
+                    document.documentElement.classList.add('iphone-landscape');
+                }
+            } else {
+                document.documentElement.classList.add('portrait-orientation');
+                document.documentElement.classList.remove('landscape-orientation');
+                document.documentElement.classList.remove('iphone-landscape');
+            }
+            
+            // Detekce velmi malého displeje
+            const isSmallScreen = window.innerWidth < 480 || window.innerHeight < 480;
+            if (isSmallScreen) {
+                document.documentElement.classList.add('small-screen');
+            } else {
+                document.documentElement.classList.remove('small-screen');
+            }
         };
         
         // Počáteční kontrola
@@ -239,9 +283,7 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                 adjustUIForOrientation(isLandscape);
             }, 200);
         }
-    }, [isLandscape, mapLoaded, latitude, longitude]);
-
-    /**
+    }, [isLandscape, mapLoaded, latitude, longitude]);    /**
      * Upraví rozložení UI prvků podle orientace zařízení
      * @param landscape Zda je zařízení v landscape orientaci
      */
@@ -249,31 +291,65 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         // Přizpůsobit rozložení UI prvků podle orientace
         const gameControls = document.querySelector('.game-controls');
         const gameMenu = document.querySelector('.game-menu');
+        const mapContainer = document.getElementById('map-container');
         
         if (gameControls) {
             if (landscape) {
                 gameControls.classList.add('landscape-controls');
+                gameControls.classList.remove('portrait-controls');
             } else {
                 gameControls.classList.remove('landscape-controls');
+                gameControls.classList.add('portrait-controls');
             }
         }
         
         if (gameMenu) {
             if (landscape) {
                 gameMenu.classList.add('landscape-menu');
+                gameMenu.classList.remove('portrait-menu');
             } else {
                 gameMenu.classList.remove('landscape-menu');
+                gameMenu.classList.add('portrait-menu');
+            }
+        }
+        
+        // Přidat specifickou třídu na hlavní kontejner mapy
+        if (mapContainer) {
+            if (landscape) {
+                mapContainer.classList.add('landscape-view');
+                mapContainer.classList.remove('portrait-view');
+            } else {
+                mapContainer.classList.remove('landscape-view');
+                mapContainer.classList.add('portrait-view');
             }
         }
         
         // Aktualizovat pozici markerů a vyskakovacích oken
-        if (markersRef.current.length > 0) {
+        if (markersRef.current && markersRef.current.length > 0) {
             markersRef.current.forEach(marker => {
                 const popup = marker.getPopup();
                 if (popup && popup.isOpen()) {
-                    popup.addClassName(landscape ? 'landscape-popup' : 'portrait-popup');
+                    if (landscape) {
+                        popup.addClassName('landscape-popup');
+                        popup.removeClassName('portrait-popup');
+                    } else {
+                        popup.removeClassName('landscape-popup');
+                        popup.addClassName('portrait-popup');
+                    }
                 }
             });
+        }
+        
+        // Aplikování změn pro malé displeje
+        const isSmallScreen = window.innerWidth < 480 || window.innerHeight < 480;
+        document.body.classList.toggle('small-screen', isSmallScreen);
+        
+        // Přizpůsobení mapového containeru podle velikosti obrazovky
+        if (mapRef.current) {
+            // Použít setTimeout, aby se mapa mohla přizpůsobit novému rozměru
+            setTimeout(() => {
+                mapRef.current?.resize();
+            }, 100);
         }
     }, []);
 
@@ -846,9 +922,8 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
     const handleSolvePuzzle = (puzzleId: string, points: number) => {
         // Zde lze implementovat další logiku po vyřešení hádanky
         console.log(`Hádanka ${puzzleId} vyřešena za ${points} bodů`);
-    };
-      return (
-        <div className={styles.mapContainerWrapper} id="map-container">
+    };    return (
+        <div className={`${styles.mapContainerWrapper} ${isLandscape ? 'landscape-mode' : 'portrait-mode'}`} id="map-container">
             <div ref={mapContainerRef} className={styles.mapContainer} />
             
             {/* Herní menu pro ovládání hry */}

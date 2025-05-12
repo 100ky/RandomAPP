@@ -1,0 +1,143 @@
+/* 
+* iOSFixes.css
+* Specifické opravy pro zařízení s iOS, zejména iPhone 12 a podobné modely
+* Zaměřuje se na problémy s blikáním, překrytím a vykreslováním v landscape (vodorovném) režimu
+*/
+
+/* Opravy pro všechna iOS zařízení */
+.ios-device {
+  /* Globální optimalizace vykreslování pro iOS */
+  -webkit-overflow-scrolling: touch;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Speciálně pro iPhone ve vodorovné orientaci */
+.iphone-device.landscape-orientation {
+  /* Zastavení problémových animací */
+  --animation-speed: 0;
+}
+
+/* iPhone 12 a podobné modely ve vodorovné orientaci */
+.iphone-landscape .loadingScreen,
+.iphone-landscape .splashScreen {
+  /* Pevná velikost kontejneru */
+  height: 100% !important; 
+  width: 100% !important;
+  
+  /* Optimalizace vykreslování */
+  -webkit-backface-visibility: hidden;
+  -webkit-transform: translateZ(0) scale(1.0, 1.0);
+  transform: translateZ(0);
+}
+
+/* Stabilizace obsahu při překreslování */
+.iphone-landscape .loadingContainer,
+.iphone-landscape .splashContainer {
+  /* Zajištění stabilní pozice */
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  
+  /* Výkonnostní optimalizace */
+  will-change: transform;
+  transform-style: preserve-3d;
+  
+  /* Vypnutí stínů a animací pro lepší výkon */
+  box-shadow: none !important;
+}
+
+/* Optimalizace pro iPhone v landscape orientaci */
+.iphone-landscape .loadingContainer::before,
+.iphone-landscape .loadingContainer::after,
+.iphone-landscape .splashContainer::before,
+.iphone-landscape .splashContainer::after {
+  /* Odstranění animovaných efektů okrajů */
+  animation: none !important;
+  background: none !important;
+}
+
+/* Zajistit, že všechny animace jsou pozastaveny */
+.iphone-landscape .needle,
+.iphone-landscape .compassRose,
+.iphone-landscape .mapScroll,
+.iphone-landscape .compassGlow,
+.iphone-landscape .planetRings,
+.iphone-landscape .planetClouds,
+.iphone-landscape .progressGlow,
+.iphone-landscape .loadingProgressFill::after,
+.iphone-landscape [class*="anim"] {
+  animation-play-state: paused !important;
+  transition: none !important;
+}
+
+/* Speciální úpravy pro iPhone 12 Pro a novější s výřezem */
+@media (orientation: landscape) and (max-height: 390px) {
+  .iphone-landscape .loadingContainer {
+    /* Menší padding pro lepší využití prostoru */
+    padding: 8px !important;
+    
+    /* Upravená velikost a uspořádání */
+    width: auto !important;
+    max-width: 85% !important;
+    max-height: 80vh !important;
+    
+    /* Použít jednodušší pozadí */
+    background-color: rgba(255, 252, 245, 0.1) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  
+  /* Zjednodušit rozložení prvků */
+  .iphone-landscape .loadingAdventureElements {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
+  }
+  
+  /* Zmenšit a zjednodušit dekorativní prvky */
+  .iphone-landscape .compass,
+  .iphone-landscape .mapScroll,
+  .iphone-landscape .planet {
+    width: 40px !important;
+    height: 40px !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+  
+  /* Upravit rozložení textu */
+  .iphone-landscape .loadingTextContainer {
+    padding: 5px !important;
+  }
+  
+  /* Menší a čistší text */
+  .iphone-landscape .loadingTitle {
+    font-size: 14px !important;
+    margin-bottom: 4px !important;
+    text-shadow: none !important;
+  }
+  
+  .iphone-landscape .loadingQuote {
+    font-size: 12px !important;
+    margin-bottom: 6px !important;
+    padding: 0 !important;
+    min-height: auto !important;
+  }
+  
+  /* Optimalizovaný styl pro progress bar */
+  .iphone-landscape .loadingProgressBar {
+    height: 8px !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: none !important;
+  }
+  
+  .iphone-landscape .loadingProgressFill {
+    box-shadow: none !important;
+  }
+  
+  .iphone-landscape .loadingPercentage {
+    font-size: 12px !important;
+  }
+}

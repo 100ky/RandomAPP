@@ -1,0 +1,168 @@
+/* Game Controls Styly */
+
+.game-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-button {
+  background: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 50px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-medium);
+  transition: all 0.3s ease;
+  font-family: var(--font-adventure);
+  min-width: 180px;
+}
+
+.game-button:hover, .game-button.hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-strong);
+}
+
+.game-button:active, .game-button.active {
+  transform: translateY(1px);
+  box-shadow: var(--shadow-light);
+}
+
+.start-button {
+  background: linear-gradient(to right, var(--secondary-color), var(--secondary-dark));
+  border: 2px solid var(--accent-color);
+}
+
+.stop-button {
+  background: linear-gradient(to right, var(--danger-color), #8B0000);
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.button-glow {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.3), 
+    transparent
+  );
+  z-index: 1;
+  animation: glowMove 3s infinite;
+}
+
+.pulse-animation::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border: 2px solid var(--accent-color);
+  border-radius: 50px;
+  animation: pulse 2s infinite;
+  z-index: 0;
+  opacity: 0;
+}
+
+.hidden-control {
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
+.hidden-control:hover {
+  opacity: 1;
+}
+
+@keyframes glowMove {
+  0% { left: -100%; }
+  50%, 100% { left: 100%; }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.05);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* Responzivní design */
+@media (max-width: 768px) {
+  .game-button {
+    padding: 10px 20px;
+    font-size: 15px;
+    min-width: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-button {
+    padding: 8px 16px;
+    font-size: 14px;
+    min-width: 140px;
+  }
+  
+  .button-content svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Styly pro landscape orientaci */
+@media (orientation: landscape) {
+  .game-controls {
+    bottom: 20px;
+    right: 20px;
+    left: auto;
+    transform: none;
+  }
+}
+
+/* Pro velmi malé displeje v landscape režimu */
+@media (orientation: landscape) and (max-height: 500px) {
+  .game-controls {
+    bottom: 10px;
+    right: 10px;
+    transform: scale(0.85);
+    transform-origin: bottom right;
+  }
+}
+
+/* Styly pro portrait orientaci na malých zařízeních */
+@media (orientation: portrait) and (max-height: 700px) {
+  .game-controls {
+    bottom: 70px;
+  }
+}

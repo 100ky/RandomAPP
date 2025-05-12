@@ -19,6 +19,11 @@ const nextConfig = {
       },
     ],
   },
+  // Umožní přístup k serveru z jiných zařízení v síti
+  server: {
+    host: '0.0.0.0',
+    port: 3000,
+  },
   // Přidání CORS hlaviček pro vyřešení problémů s manifest.json
   async headers() {
     return [

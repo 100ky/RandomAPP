@@ -1,0 +1,293 @@
+/* Základní styly pro SplashScreen a LoadingScreen */
+.fullScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #8B4513, #6B3100, #8B4513);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  color: white;
+  overflow: hidden;
+  position: relative;
+}
+
+.fullScreen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg width='100' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21.184 20c.357-.13.72-.264.888-.14C19.454 15.64 33.67 7.116 34.15 7.215c1.315.262 2.356 7.114 2.07 8.112-.144.14-1.356 2.316-4.2 3.23a17.876 17.876 0 01-6.877 1.384c-1.567.017-2.313-.412-4.207-.764-.483-.097-1.145.022-1.81.162-.847.219-1.898.538-2.35.6-.976.073-1.85-.47-2.13-.917-.486-.93-1.8-2.055-1.957-2.94-.25-1.425 1.592-2.346 1.011-2.076a11.74 11.74 0 015.53-.17c.76.142 1.388.458 2.838.232.766-.12 1.627-.32 2.363-.63 1.376-.58 2.51-.786 3.447-.399.68.282 1.138 1.11 1.852 1.7.标号.524.774 1.655 1.536 1.95.585.18.777.743.592 1.043-.123.2-.364.385-.604.577-.534.42-1.35.989-1.718 1.138C25.327 19.637 21.53 20 21.184 20z' fill='rgba(255, 255, 255, 0.08)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg width='70' height='30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M.97 19.336c-.9.144-1.832.27-2.283.142-1.19-.332-2.064-1.594-3.107-3.926-.48-1.07-.954-1.913-1.425-2.529-.22-.293-.363-.553-.433-.78a47.916 47.916 0 00-.745-1.852c-.096-.258-.16-.495-.19-.713-.101-.783.057-1.538.398-2.044.349-.52.904-.883 1.617-.89.612-.005 1.756.394 2.645 1.348.277.277.59.754.992 1.43.117.192.295.44.57.648.483.36.94.468 1.395.604.723.216 1.373.162 2.053.382a5.392 5.392 0 012.348 1.434c.396.379 1.032 1.103 1.522 1.988a8.16 8.16 0 01.507 1.177c.26.63.294 1.39.401 2.076.105.65.2 1.32.152 1.675-.038.233-.154.4-.338.481-.195.08-.54.085-.907.03z' fill='rgba(255, 255, 255, 0.06)'/%3E%3C/svg%3E");
+  opacity: 0.6;
+  z-index: -1;
+  animation: cloudsMove 60s linear infinite;
+}
+
+@keyframes cloudsMove {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 90%;
+  padding: 20px;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+/* Základní animace pro všechny obrazovky */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.fadeIn {
+  animation: fadeIn 1.2s ease-in-out;
+}
+
+.fadeOut {
+  animation: fadeOut 0.8s ease-in-out forwards;
+}
+
+/* Stylizace textu */
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 16px;
+  margin-top: 5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Dekorativní prvky */
+.adventureCorner {
+  position: relative;
+}
+
+.adventureCorner::before,
+.adventureCorner::after {
+  content: "";
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  opacity: 0.7;
+}
+
+.adventureCorner::before {
+  top: 0;
+  left: 0;
+  border-right: none;
+  border-bottom: none;
+}
+
+.adventureCorner::after {
+  bottom: 0;
+  right: 0;
+  border-top: none;
+  border-left: none;
+}
+
+/* Optimalizované styly pro orientaci */
+.portraitContent {
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
+.landscapeContent {
+  flex-direction: row;
+  justify-content: space-around;
+  gap: 30px;
+  max-height: 80vh;
+}
+
+/* Optimalizace pro Android */
+.androidOptimized {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Optimalizace pro nízkovýkonná zařízení */
+.lowPerformanceMode {
+  will-change: auto !important;
+}
+
+.lowPerformanceMode .compass,
+.lowPerformanceMode .needle {
+  animation: none !important;
+}
+
+/* Optimalizace pro Samsung zařízení v landscape módu */
+.samsungLandscapeMode {
+  height: 100% !important;
+  height: -webkit-fill-available !important;
+}
+
+/* Media queries pro responzivitu */
+@media (orientation: landscape) {
+  .landscapeContent {
+    padding: 15px;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 30px !important;
+  }
+  
+  .title {
+    font-size: 20px;
+  }
+  
+  .subtitle {
+    font-size: 14px;
+  }
+  
+  .compass {
+    margin-right: 20px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .landscapeContent {
+    padding: 10px;
+    gap: 15px !important;
+  }
+  
+  .title {
+    font-size: 18px;
+  }
+  
+  .subtitle {
+    font-size: 12px;
+  }
+  
+  .compass {
+    transform: scale(0.8);
+  }
+}
+
+/* Kompas - základní stylování */
+.compass {
+  width: 80px;
+  height: 80px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.needle {
+  width: 4px;
+  height: 40px;
+  background: linear-gradient(to bottom, #cc0000 50%, #cccccc 50%);
+  position: absolute;
+  top: 20px;
+  transform-origin: center 20px;
+  animation: needleRotate 5s ease-in-out infinite;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  border-radius: 2px;
+}
+
+@keyframes needleRotate {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(45deg); }
+  50% { transform: rotate(-45deg); }
+  75% { transform: rotate(20deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* Přidáme drobný efekt rotace kompasu pro větší interaktivitu */
+.compass {
+  animation: subtleRotate 15s ease-in-out infinite;
+}
+
+@keyframes subtleRotate {
+  0% { transform: rotate(0deg); }
+  33% { transform: rotate(3deg); }
+  66% { transform: rotate(-3deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@media (orientation: landscape) and (max-height: 450px) {
+  .compass {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .needle {
+    height: 30px;
+    top: 15px;
+    transform-origin: center 15px;
+  }
+}
+
+/* Progress bar */
+.progressContainer {
+  width: 80%;
+  height: 10px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 20px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(to right, rgba(255, 215, 0, 0.7), rgba(255, 255, 255, 0.7));
+  transition: width 0.3s ease-out;
+  box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+  position: relative;
+}
+
+.progressBar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+}

@@ -1,0 +1,204 @@
+/* 
+* Opravy pro malé mobilní displeje
+* Zajistí správné zobrazení UI prvků na malých obrazovkách v portrait a landscape módu
+*/
+
+/* Úprava pro extra malé zařízení - Portrait */
+@media (max-height: 600px) and (orientation: portrait) {
+  /* Zmenšení velikostí prvků loadingu */
+  .loadingAdventureElements {
+    transform: scale(0.6) !important;
+    margin-bottom: 5px !important;
+  }
+  
+  .loadingContainer {
+    padding: 15px !important;
+  }
+  
+  .loadingTitle {
+    font-size: 16px !important;
+    margin-bottom: 5px !important;
+  }
+  
+  .loadingQuote {
+    font-size: 14px !important;
+    margin-bottom: 10px !important;
+    max-height: 40px !important;
+  }
+  
+  .loadingProgressBar {
+    height: 12px !important;
+  }
+  
+  .loadingText {
+    font-size: 12px !important;
+  }
+  
+  /* Umožnit scrollování content containeru pro nejmenší obrazovky */
+  .loadingContainer, .splashContainer, .startContainer {
+    max-height: 95vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important; /* Plynulé scrollování na iOS */
+  }
+}
+
+/* Speciální opravy pro Android zařízení v landscape módu */
+@media (orientation: landscape) and (max-height: 400px) {
+  /* Oprava problikávání v landscape módu */
+  .loadingScreen, .splashScreen {
+    backface-visibility: hidden;
+    perspective: 1000px;
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
+    transform: translate3d(0, 0, 0);
+    transform: translateZ(0);
+  }
+    /* Optimalizace pro Android - upravení animací místo úplného vypnutí */
+  .loadingContainer, .splashContainer {
+    transform: translateZ(0) !important;
+  }
+  
+  .compass, .mapScroll, .planet {
+    animation-duration: 10s !important; /* Zpomalení animací pro lepší výkon */
+  }
+  
+  /* Optimalizace layoutu pro Android v landscape módu */
+  .loadingContainer {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    max-width: 90% !important;
+    max-height: 85vh !important;
+    padding: 10px 15px !important;
+    margin: 0 auto !important;
+    overflow-x: hidden !important; /* Předejít horizontálnímu scrollování */
+    box-shadow: 0 0 5px rgba(0,0,0,0.3) !important; /* Lehčí stín pro lepší výkon */
+  }
+    /* Optimalizace prvků pro Android zařízení v landscape módu */
+  .loadingAdventureElements {
+    flex-direction: row !important;
+    flex: 0 0 auto !important;
+    gap: 10px !important;
+    transform: scale(0.75) !important;
+    margin-right: 15px !important;
+  }
+  
+  .compass {
+    width: 55px !important;
+    height: 55px !important;
+  }
+  
+  .mapScroll, .planet {
+    width: 50px !important;
+    height: 45px !important;
+  }
+  
+  .loadingTextContainer {
+    padding-left: 10px !important;
+    flex: 1 !important;
+  }
+  
+  .loadingTitle {
+    font-size: 16px !important;
+    margin-bottom: 5px !important;
+  }
+  
+  .loadingQuote {
+    font-size: 12px !important;
+    margin-bottom: 8px !important;
+    max-height: 40px !important;
+    overflow-y: auto !important;
+  }
+  
+  .loadingProgressContainer {
+    margin: 5px 0 !important;
+  }
+  
+  .loadingProgressBar {
+    height: 10px !important;
+  }
+  
+  .loadingPercentage {
+    font-size: 12px !important;
+  }
+  
+  .loadingText {
+    font-size: 10px !important;
+    margin: 0 !important;
+  }
+}
+
+/* Pro ještě menší displeje nebo otevřenou klávesnici */
+@media (max-height: 450px) {
+  .loadingScreen, .splashScreen {
+    position: fixed !important;
+    overflow-y: scroll !important;
+  }
+  
+  .loadingContainer, .splashContainer {
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    transform: none !important;
+    margin: 10px auto !important;
+    max-height: none !important;
+  }
+  
+  /* Zmenšit nebo skrýt zbytečné prvky */
+  .loadingAdventureElements {
+    max-height: 120px !important;
+    overflow: hidden !important;
+  }
+}
+
+/* Oprava pro zobrazení klávesnice */
+/* Když se výška výrazně změní (pravděpodobně se otevřela klávesnice) */
+@media (max-height: 400px) {
+  .loadingAdventureElements {
+    display: none !important; /* Skrýt ozdobné prvky, které zbytečně zabírají místo */
+  }
+  
+  .loadingContainer, .splashContainer {
+    width: 95% !important;
+    padding: 10px !important;
+  }
+}
+
+/* Pro ještě menší displeje nebo otevřenou klávesnici */
+@media (max-height: 450px) {
+  .loadingScreen, .splashScreen {
+    position: fixed !important;
+    overflow-y: scroll !important;
+  }
+  
+  .loadingContainer, .splashContainer {
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    transform: none !important;
+    margin: 10px auto !important;
+    max-height: none !important;
+  }
+  
+  /* Zmenšit nebo skrýt zbytečné prvky */
+  .loadingAdventureElements {
+    max-height: 120px !important;
+    overflow: hidden !important;
+  }
+}
+
+/* Oprava pro zobrazení klávesnice */
+/* Když se výška výrazně změní (pravděpodobně se otevřela klávesnice) */
+@media (max-height: 400px) {
+  .loadingAdventureElements {
+    display: none !important; /* Skrýt ozdobné prvky, které zbytečně zabírají místo */
+  }
+  
+  .loadingContainer, .splashContainer {
+    width: 95% !important;
+    padding: 10px !important;
+  }
+}

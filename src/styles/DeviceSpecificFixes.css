@@ -1,0 +1,42 @@
+/* DeviceSpecificFixes.css - Specifické úpravy pro různé typy zařízení */
+
+/* Samsung zařízení - specifické úpravy pro landscape režim */
+.android-device.samsung-device.landscape-orientation .fullScreen {
+  /* Řeší problémy s výškou v landscape režimu na některých Samsung telefonech */
+  height: 100% !important;
+  height: -webkit-fill-available !important;
+  height: fill-available !important;
+}
+
+/* Opravy pro zařízení s výřezem v obrazovce (notch) */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .fullScreen {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Specifické optimalizace výkonu pro starší Android zařízení */
+.android-device.old-device .fadeIn,
+.android-device.old-device .fadeOut {
+  /* Zjednodušit animace */
+  animation-duration: 0.5s !important;
+}
+
+.android-device.old-device .compass,
+.android-device.old-device .needle {
+  /* Omezit animace pro lepší výkon */
+  animation: none !important;
+}
+
+/* Optimalizace pro zařízení s nízkým výkonem */
+.low-performance-device .cloudsMove,
+.low-performance-device .gradientShift {
+  animation: none !important;
+}
+
+.low-performance-device .fullScreen::before {
+  display: none !important;
+}

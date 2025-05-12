@@ -55,15 +55,3 @@
     margin-top: -3px;
   }
 }
-
-/* Speciální třídy pro různé typy zařízení */
-.samsungLandscape {
-  max-width: 100% !important;
-  padding: 10px 15px !important;
-}
-
-.optimizedPerformance {
-  /* Zjednodušení stylů pro lepší výkon */
-  box-shadow: none !important;
-  text-shadow: none !important;
-}

@@ -16,6 +16,34 @@
   transform: perspective(400px) rotateX(8deg) rotateY(-8deg);
 }
 
+/* Fixace správného zobrazení v landscape orientaci - horizontální layout */
+.landscape-orientation .loadingContainer {
+  display: flex !important;
+  flex-direction: row !important;
+  max-width: 95vw !important;
+  width: auto !important;
+  height: auto !important;
+  max-height: 85vh !important;
+  overflow: auto;
+}
+
+/* Vylepšení pro okamžité přepnutí bez prodlevy při změně orientace */
+.loadingContainer {
+  transition: all 0.2s ease-out;
+  will-change: transform, width, height;
+}
+
+/* Fixace pro špatné rozložení elementů v landscape orientaci */
+.landscape-orientation .loadingAdventureElements {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  flex-direction: row !important;
+  justify-content: flex-start !important;
+  margin-right: 15px !important;
+  padding-right: 15px !important;
+  border-right: 1px solid rgba(255, 215, 0, 0.2);
+}
+
 .mapContent {
   position: absolute;
   top: 5px;
@@ -258,4 +286,113 @@
   .compassRose, .compassMarkings {
     transform: scale(0.8);
   }
+}
+
+/* Upravené rozměry elementů pro landscape režim */
+@media (orientation: landscape) {
+  .landscape-orientation .loadingAdventureElements .compass {
+    width: 100px !important;
+    height: 100px !important;
+    margin: 5px;
+  }
+  
+  .landscape-orientation .loadingAdventureElements .mapScroll {
+    width: 100px !important;
+    height: 75px !important;
+    margin: 5px;
+  }
+  
+  .landscape-orientation .loadingAdventureElements .planet {
+    width: 70px !important;
+    height: 70px !important;
+    margin: 5px;
+  }
+  
+  /* Zlepšení čitelnosti textu */
+  .landscape-orientation .loadingTextContainer {
+    padding-left: 10px !important;
+    max-width: 60% !important;
+  }
+  
+  .landscape-orientation .loadingTitle {
+    font-size: 24px !important;
+    margin-bottom: 10px !important;
+  }
+  
+  .landscape-orientation .loadingQuote {
+    font-size: 16px !important;
+    margin-bottom: 15px !important;
+    min-height: 40px !important;
+  }
+}
+
+/* Fixace pro velmi malé obrazovky v landscape módu (většina mobilů) */
+@media (orientation: landscape) and (max-height: 450px) {
+  .landscape-orientation .loadingAdventureElements .compass,
+  .landscape-orientation .loadingAdventureElements .mapScroll,
+  .landscape-orientation .loadingAdventureElements .planet {
+    transform: scale(0.8);
+  }
+  
+  .landscape-orientation .loadingTitle {
+    font-size: 20px !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .landscape-orientation .loadingQuote {
+    font-size: 14px !important;
+    margin-bottom: 10px !important;
+    min-height: 30px !important;
+  }
+}
+
+/* Velmi malé obrazovky v landscape módu */
+@media (orientation: landscape) and (max-height: 350px) {
+  .landscape-orientation .loadingAdventureElements .compass,
+  .landscape-orientation .loadingAdventureElements .mapScroll,
+  .landscape-orientation .loadingAdventureElements .planet {
+    transform: scale(0.7);
+  }
+  
+  .landscape-orientation .loadingAdventureElements {
+    padding-right: 10px !important;
+    margin-right: 10px !important;
+  }
+  
+  .landscape-orientation .loadingTitle {
+    font-size: 18px !important;
+    margin-bottom: 6px !important;
+  }
+  
+  .landscape-orientation .loadingQuote {
+    font-size: 12px !important;
+    margin-bottom: 8px !important;
+    min-height: 25px !important;
+  }
+  
+  .landscape-orientation .loadingProgressContainer {
+    margin-bottom: 6px !important;
+  }
+  
+  .landscape-orientation .loadingText {
+    font-size: 11px !important;
+  }
+}
+
+/* Optimalizace pro Android zařízení */
+.android-device.landscape-orientation .loadingContainer {
+  padding: 10px !important;
+}
+
+.android-device.landscape-orientation .loadingAdventureElements {
+  transform: scale(0.9);
+}
+
+/* Priorita CSS tříd pro různé orientace */
+.landscape-orientation .landscapeContainer {
+  flex-direction: row !important;
+}
+
+.portrait-orientation .portraitContainer {
+  flex-direction: column !important;
 }

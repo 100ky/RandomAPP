@@ -1,0 +1,136 @@
+/* Styly pro testování responzivity - modularizovaná verze */
+
+/* Třída pro vynucení landscape módu */
+.forceLandscape {
+  --simulated-orientation: landscape;
+}
+
+/* Třída pro vynucení portrait módu */
+.forcePortrait {
+  --simulated-orientation: portrait;
+}
+
+/* Třída pro simulaci Android zařízení */
+.simulateAndroid {
+  --simulated-device: android;
+}
+
+/* Kontejner pro testovací stránku */
+.testContainer {
+  font-family: sans-serif;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Styl pro zobrazení statusu testu */
+.testInfo {
+  padding: 10px;
+  background-color: #f0f8ff;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+/* Kontrolky a ovládací prvky */
+.controlsContainer {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.controlsRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Tlačítka */
+.button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.activeButton {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: #4CAF50;
+  color: white;
+}
+
+.inactiveButton {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: #ddd;
+  color: #333;
+}
+
+.toggleButton {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: #2196F3;
+  color: white;
+}
+
+/* Třídy pro simulaci orientací a zařízení používané v testovací stránce */
+.testViewport {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Testovací overlay */
+.gridOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 255, 0.05) 0%, rgba(0, 0, 255, 0.05) 50%, transparent 50%, transparent 100%) 0 0 / 20px 20px,
+    linear-gradient(0deg, rgba(0, 0, 255, 0.05) 0%, rgba(0, 0, 255, 0.05) 50%, transparent 50%, transparent 100%) 0 0 / 20px 20px;
+}
+
+.screenCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translate(-50%, -50%);
+  font-size: 30px;
+  color: rgba(255, 0, 0, 0.7);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Pre formátování */
+.statusText {
+  font-family: monospace;
+  white-space: pre-wrap;
+  margin: 0;
+  padding: 5px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}

@@ -269,6 +269,32 @@
   
   .menu {
     width: 240px;
+    max-height: 85vh; /* Omezit maximální výšku menu */
+    overflow-y: auto; /* Přidat skrolování pro dlouhé menu */
+  }
+  
+  .statItem {
+    padding: 5px;
+    min-width: 100px;
+  }
+  
+  .menuHeader {
+    padding: 10px;
+  }
+  
+  .menuTitle {
+    font-size: 1.1rem;
+  }
+  
+  .menuContent {
+    padding: 10px;
+  }
+}
+
+/* Styly pro portrait orientaci */
+@media (orientation: portrait) {
+  .gameMenuContainer {
+    z-index: 101; /* Zajistit, že menu bude vždy nad jinými prvky */
   }
 }
 
@@ -277,5 +303,19 @@
   .userStats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .gameMenuContainer {
+    top: 5px;
+    left: 5px;
+  }
+  
+  .menuButton {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .menu {
+    max-height: 75vh; /* Omezit maximální výšku menu v landscape režimu */
   }
 }
