@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useGameStore } from '../store/gameStore';
+import styles from '../styles/GameMenu.module.css';
 
 interface GameMenuProps {
   onPauseGame: () => void;

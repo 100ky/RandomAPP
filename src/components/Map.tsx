@@ -13,6 +13,7 @@ import { avatars } from './AppMenu';
 import { useGameStore } from '../store/gameStore';
 import { createOfflineMapCache } from '../utils/mapHelpers';
 import { getRequiredAttributions } from '../utils/attributions';
+import styles from '../styles/Map.module.css';
 import GameMenu from './GameMenu';
 import GameControls from './GameControls';
 import PuzzleModal from './PuzzleModal';
@@ -847,8 +848,8 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         console.log(`Hádanka ${puzzleId} vyřešena za ${points} bodů`);
     };
       return (
-        <div className="map-container-wrapper" id="map-container">
-            <div ref={mapContainerRef} className="map-container" />
+        <div className={styles.mapContainerWrapper} id="map-container">
+            <div ref={mapContainerRef} className={styles.mapContainer} />
             
             {/* Herní menu pro ovládání hry */}
             <GameMenu 
@@ -874,21 +875,21 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
             
             {/* Indikátor offline režimu */}
             {offlineMode && (
-                <div className="offline-indicator">
+                <div className={styles.offlineIndicator}>
                     Offline režim aktivní
                 </div>
             )}
             
             {/* Indikátor stahování offline map */}
             {offlineTilesStatus.downloading && (
-                <div className="download-progress">
-                    <div className="progress-bar">
+                <div className={styles.downloadProgress}>
+                    <div className={styles.progressBar}>
                         <div 
-                            className="progress-filled"
+                            className={styles.progressFilled}
                             style={{ width: `${offlineTilesStatus.progress}%` }}
                         />
                     </div>
-                    <div className="progress-text">
+                    <div className={styles.progressText}>
                         Stahování map: {Math.round(offlineTilesStatus.progress)}%
                     </div>
                 </div>
@@ -896,13 +897,13 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
             
             {/* Indikátor pozastavení hry */}
             {isGamePaused && (
-                <div className="game-paused-indicator">
-                    <div className="game-paused-content">
+                <div className={styles.gamePausedIndicator}>
+                    <div className={styles.gamePausedContent}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
                             <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
                         </svg>
                         <p>Hra pozastavena</p>
-                        <button onClick={handleResumeGame} className="resume-button">Pokračovat</button>
+                        <button onClick={handleResumeGame} className={styles.resumeButton}>Pokračovat</button>
                     </div>
                 </div>
             )}
@@ -918,10 +919,10 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
               
             {/* Chybová zpráva geolokace */}
             {geolocationError && !hideGeolocationError && (
-                <div className="geolocation-error">
+                <div className={styles.geolocationError}>
                     <p>{geolocationError}</p>
-                    <div className="geolocation-error-buttons">
-                        <button onClick={centerOnVysokeMýto} className="center-button">Přiblížit na Vysoké Mýto</button>
+                    <div className={styles.geolocationErrorButtons}>
+                        <button onClick={centerOnVysokeMýto} className={styles.centerButton}>Přiblížit na Vysoké Mýto</button>
                         <button onClick={handleDismissGeolocationError}>Zavřít</button>
                     </div>
                 </div>
@@ -930,7 +931,7 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
             {/* Tlačítko pro přiblížení na Vysoké Mýto, viditelné jen když není aktivní geolokace */}
             {(!latitude || !longitude || geolocationError) && 
                 <button 
-                    className="vysokemyto-button"
+                    className={styles.vysokemytoButton}
                     onClick={centerOnVysokeMýto}
                     title="Přiblížit na Vysoké Mýto"
                 >                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
@@ -940,7 +941,7 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
             }
             
             {/* Atribuce mapových podkladů - vyžadováno licencí ODbL */}
-            <div className="map-attribution">
+            <div className={styles.mapAttribution}>
                 <div dangerouslySetInnerHTML={{ __html: getRequiredAttributions() }} />
             </div>
         </div>

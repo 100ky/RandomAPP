@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { avatars } from './AppMenu';
+import styles from '../styles/StartMenu.module.css';
 
 interface StartMenuProps {
   onStartGame: (avatarId: string, playerName: string) => void;
@@ -133,7 +134,7 @@ const StartMenu: React.FC<StartMenuProps> = ({ onStartGame }) => {
   };
 
   // Vytvoříme třídy podle vybraného avatara
-  const containerClassName = `start-container ${colorScheme.decorationClass}`;
+  const containerClassName = `${styles.startContainer} ${styles[colorScheme.decorationClass.replace('-theme', 'Theme')]}`;
 
   // Vrácení tematické zprávy podle vybraného avatara
   const getThemeMessage = () => {
@@ -154,13 +155,13 @@ const StartMenu: React.FC<StartMenuProps> = ({ onStartGame }) => {
   };
 
   return (
-    <div className="start-menu" style={dynamicStyles.startMenu}>
-      <h1 style={dynamicStyles.title}>Úniková hra Vysoké Mýto</h1>
-      <div className={containerClassName} style={dynamicStyles.startContainer}>
-        <div className="theme-message">{getThemeMessage()}</div>
+    <div className={styles.startMenu}>
+      <h1 className={styles.title}>Úniková hra Vysoké Mýto</h1>
+      <div className={containerClassName}>
+        <div className={styles.themeMessage}>{getThemeMessage()}</div>
         
-        <div className="player-info-section">
-          <div className="player-name-input">
+        <div className={styles.playerInfoSection}>
+          <div className={styles.playerNameInput}>
             <label htmlFor="player-name">Vaše jméno:</label>
             <input 
               type="text" 
@@ -168,23 +169,22 @@ const StartMenu: React.FC<StartMenuProps> = ({ onStartGame }) => {
               value={playerName} 
               onChange={(e) => setPlayerName(e.target.value)} 
               placeholder="Zadejte své jméno"
-              className={colorScheme.decorationClass}
               style={{ borderColor: colorScheme.accent }}
             />
           </div>
 
-          <div className="avatar-selection-section">
+          <div className={styles.avatarSelectionSection}>
             <h3>Vyberte si avatara:</h3>
-            <div className="avatar-grid">
+            <div className={styles.avatarGrid}>
               {avatars.map((avatar) => (
                 <div 
                   key={avatar.id}
-                  className={`avatar-option ${selectedAvatarId === avatar.id ? 'selected' : ''}`}
+                  className={`${styles.avatarOption} ${selectedAvatarId === avatar.id ? styles.selected : ''}`}
                   onClick={() => setSelectedAvatarId(avatar.id)}
                 >
-                  <div className="avatar-wrapper">
+                  <div className={styles.avatarWrapper}>
                     <img src={avatar.imageUrl} alt={avatar.name} />
-                    {selectedAvatarId === avatar.id && <div className="avatar-decoration"></div>}
+                    {selectedAvatarId === avatar.id && <div className={styles.avatarDecoration}></div>}
                   </div>
                   <span>{avatar.name}</span>
                 </div>
@@ -193,11 +193,10 @@ const StartMenu: React.FC<StartMenuProps> = ({ onStartGame }) => {
           </div>
         </div>
 
-        {error && <div className="error-message">{error}</div>}
+        {error && <div className={styles.errorMessage}>{error}</div>}
 
         <button 
-          className="start-game-button"
-          style={dynamicStyles.startButton}
+          className={styles.startGameButton}
           onClick={handleStartGame}
         >
           Začít dobrodružství

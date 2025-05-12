@@ -7,6 +7,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Marker } from 'maplibre-gl';
 import { SoundType, playSound } from '../utils/SoundManager';
+import styles from '../styles/LocationMarker.module.css';
 
 // Vlastnosti komponenty
 interface LocationMarkerProps {
@@ -68,18 +69,18 @@ const LocationMarker: React.FC<LocationMarkerProps> = ({
     // Funkce pro vytvoření markeru
     const createMarker = () => {
       const el = document.createElement('div');
-      el.className = 'user-marker-container';
+      el.className = styles.userMarkerContainer;
       elRef.current = el;
       
       // Vytvořit strukturu markeru s různými vrstvami pro efekty
       el.innerHTML = `
-        <div class="accuracy-circle"></div>
-        <div class="user-marker ${isGameActive ? 'game-active' : ''}">
-          <div class="direction-indicator"></div>
-          <div class="avatar ${avatarId || 'default'}">
-            <div class="pulse-effect"></div>
+        <div class="${styles.accuracyCircle}"></div>
+        <div class="${styles.userMarker} ${isGameActive ? styles.gameActive : ''}">
+          <div class="${styles.directionIndicator}"></div>
+          <div class="${styles.avatar} ${styles[avatarId || 'default']}">
+            <div class="${styles.pulseEffect}"></div>
           </div>
-          <div class="shadow"></div>
+          <div class="${styles.shadow}"></div>
         </div>
       `;
       
@@ -113,7 +114,7 @@ const LocationMarker: React.FC<LocationMarkerProps> = ({
       const el = elRef.current;
       
       // Aktualizace velikosti kruhu přesnosti
-      const accuracyCircle = el.querySelector('.accuracy-circle') as HTMLElement;
+      const accuracyCircle = el.querySelector(`.${styles.accuracyCircle}`) as HTMLElement;
       if (accuracyCircle) {
         // Převádíme přesnost (v metrech) na vizuální velikost
         // Používáme logaritmickou škálu pro lepší vizuální reprezentaci
@@ -132,14 +133,14 @@ const LocationMarker: React.FC<LocationMarkerProps> = ({
         
         // Přidat třídu pro animaci při pohybu
         if (isMoving) {
-          accuracyCircle.classList.add('moving');
+          accuracyCircle.classList.add(styles.moving);
         } else {
-          accuracyCircle.classList.remove('moving');
+          accuracyCircle.classList.remove(styles.moving);
         }
       }
       
       // Aktualizace indikátoru směru
-      const directionIndicator = el.querySelector('.direction-indicator') as HTMLElement;
+      const directionIndicator = el.querySelector(`.${styles.directionIndicator}`) as HTMLElement;
       if (directionIndicator && typeof heading === 'number' && !isNaN(heading)) {
         // Nastavit rotaci podle směru pohybu (heading)
         directionIndicator.style.transform = `rotate(${heading}deg)`;
@@ -149,37 +150,40 @@ const LocationMarker: React.FC<LocationMarkerProps> = ({
       }
       
       // Nastavení stavu aktivity
-      const userMarker = el.querySelector('.user-marker') as HTMLElement;
+      const userMarker = el.querySelector(`.${styles.userMarker}`) as HTMLElement;
       if (userMarker) {
         if (isGameActive) {
-          userMarker.classList.add('game-active');
+          userMarker.classList.add(styles.gameActive);
         } else {
-          userMarker.classList.remove('game-active');
+          userMarker.classList.remove(styles.gameActive);
         }
         
         // Přidat třídu pro animaci pohybu
         if (isMoving) {
-          userMarker.classList.add('moving');
+          userMarker.classList.add(styles.moving);
         } else {
-          userMarker.classList.remove('moving');
+          userMarker.classList.remove(styles.moving);
         }
       }
       
       // Avatarové třídy
-      const avatar = el.querySelector('.avatar') as HTMLElement;
+      const avatar = el.querySelector(`.${styles.avatar}`) as HTMLElement;
       if (avatar) {
-        // Odstranit všechny třídy avatarů
-        avatar.className = 'avatar';
+        // Odstranit všechny třídy avatarů a nastavit základní třídu
+        avatar.className = styles.avatar;
         
         // Přidat třídu pro aktuální avatar
-        avatar.classList.add(avatarId || 'default');
+        const avatarClass = styles[avatarId || 'default'];
+        if (avatarClass) {
+          avatar.classList.add(avatarClass);
+        }
         
         // Přidat třídy pro stavy
         if (isMoving) {
-          avatar.classList.add('moving');
+          avatar.classList.add(styles.moving);
         }
         if (isGameActive) {
-          avatar.classList.add('game-active');
+          avatar.classList.add(styles.gameActive);
         }
       }
     }

@@ -1,0 +1,44 @@
+/* Animace teček při načítání */
+.ellipsis {
+  display: inline-block;
+  width: 20px;
+}
+
+.ellipsis span {
+  opacity: 0;
+  animation: ellipsisDots 1.4s infinite;
+}
+
+.ellipsis span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.ellipsis span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.ellipsis span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes ellipsisDots {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.analogicLookingText {
+  font-family: var(--font-adventure);
+  display: inline-block;
+  position: relative;
+  margin-left: 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  animation: textNoise 0.5s steps(2) infinite;
+}
+
+/* Efekt rušení jako na starých CRT obrazovkách */
+@keyframes textNoise {
+  0%, 100% { text-shadow: 1px 0 0 rgba(255,255,255,0.5), -1px 0 0 rgba(255,0,0,0.5); }
+  50% { text-shadow: -1px 0 0 rgba(255,255,255,0.5), 1px 0 0 rgba(255,0,0,0.5); }
+}

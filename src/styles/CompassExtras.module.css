@@ -1,0 +1,70 @@
+/* Tento soubor obsahuje vylepšené styly pro načítací obrazovku */
+.compassRose {
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%238b5432' d='M50,0 L55,45 L100,50 L55,55 L50,100 L45,55 L0,50 L45,45 z'/%3E%3Cpath fill='none' stroke='%238b5432' stroke-width='1' d='M15,50 L85,50 M50,15 L50,85 M25,25 L75,75 M25,75 L75,25'/%3E%3Ccircle cx='50' cy='50' r='5' fill='%238b5432'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.7;
+  z-index: 2;
+}
+
+.compassMarkings {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 4;
+}
+
+.compassMarkings span {
+  position: absolute;
+  font-family: var(--font-adventure);
+  font-size: 14px;
+  font-weight: bold;
+  color: #5a3921;
+  text-shadow: 1px 1px 1px rgba(255, 215, 0, 0.3);
+}
+
+.compassN {
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.compassE {
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.compassS {
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.compassW {
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Vylepšení pro seznam animací */
+@keyframes planetFloat {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(180deg); }
+  100% { transform: translateY(5px) rotate(360deg); }
+}
+
+@keyframes cloudsSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes surfaceRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}

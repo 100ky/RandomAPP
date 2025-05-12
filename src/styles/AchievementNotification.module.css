@@ -1,0 +1,192 @@
+.achievement {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--white);
+  border-radius: 8px;
+  box-shadow: var(--shadow-strong);
+  padding: 15px 20px;
+  z-index: 1000;
+  max-width: 350px;
+  width: 90%;
+  border: 2px solid var(--accent-color);
+  animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+}
+
+/* Pergamenový efekt */
+.achievement::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%23a77c46' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+  opacity: 0.3;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.achievementHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.achievementIcon {
+  width: 40px;
+  height: 40px;
+  background-color: var(--accent-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  flex-shrink: 0;
+  border: 2px solid var(--white);
+  box-shadow: var(--shadow-light);
+  animation: pulse 2s infinite;
+}
+
+.achievementIcon svg {
+  width: 24px;
+  height: 24px;
+  color: var(--primary-dark);
+}
+
+.achievementTitle {
+  margin: 0;
+  font-family: var(--font-adventure);
+  color: var(--primary-dark);
+  font-size: 18px;
+  padding-right: 20px;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.closeButton {
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--primary-dark);
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.closeButton:hover {
+  opacity: 1;
+}
+
+.achievementBody {
+  color: var(--black);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.rewardInfo {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--primary-light);
+  font-weight: bold;
+  color: var(--primary-dark);
+}
+
+.rewardPoints {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 215, 0, 0.1);
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+.rewardPoints svg {
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+  color: var(--accent-color);
+}
+
+/* Vizuální efekty - světelné paprsky */
+.achievement::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, transparent 0%, rgba(255, 255, 255, 0.8) 100%);
+  opacity: 0;
+  z-index: -1;
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+/* Animace */
+@keyframes slideIn {
+  0% {
+    transform: translate(-50%, -50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 215, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+  }
+}
+
+@keyframes glowPulse {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Responzivní design */
+@media (max-width: 480px) {
+  .achievement {
+    width: 95%;
+    padding: 10px 15px;
+  }
+  
+  .achievementTitle {
+    font-size: 16px;
+  }
+  
+  .achievementIcon {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+/* Landscape režim */
+@media (orientation: landscape) and (max-height: 500px) {
+  .achievement {
+    top: 60px;
+  }
+}

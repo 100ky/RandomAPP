@@ -1,0 +1,281 @@
+.gameMenuContainer {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 100;
+  font-family: var(--font-body);
+}
+
+.menuButton {
+  width: 50px;
+  height: 50px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  color: var(--white);
+  border: 2px solid var(--accent-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-medium);
+  transition: all 0.3s ease;
+}
+
+.menuButton:hover {
+  background-color: var(--primary-dark);
+  transform: scale(1.05);
+}
+
+.menuButton svg {
+  width: 26px;
+  height: 26px;
+  transition: transform 0.5s ease;
+}
+
+.openMenu svg {
+  transform: rotate(90deg);
+}
+
+.menu {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  background-color: var(--white);
+  border-radius: 8px;
+  box-shadow: var(--shadow-strong);
+  width: 280px;
+  overflow: hidden;
+  transform-origin: top left;
+  animation: menuAppear 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 2px solid var(--accent-color);
+}
+
+/* Pergamenový vzhled pro menu */
+.menu::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='%23a77c46' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+  z-index: -1;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.menuHeader {
+  background: linear-gradient(to right, var(--primary-light), var(--primary-color), var(--primary-dark));
+  color: var(--white);
+  padding: 15px;
+  border-bottom: 2px solid var(--accent-color);
+}
+
+.menuTitle {
+  margin: 0;
+  font-family: var(--font-adventure);
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.menuContent {
+  padding: 15px;
+}
+
+.userStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--light-gray);
+}
+
+.statItem {
+  flex: 1;
+  min-width: 110px;
+  padding: 8px;
+  background-color: rgba(139, 69, 19, 0.05);
+  border-radius: 5px;
+  text-align: center;
+}
+
+.statLabel {
+  display: block;
+  color: var(--primary-dark);
+  font-size: 0.8rem;
+  margin-bottom: 3px;
+  font-weight: 600;
+  font-family: var(--font-adventure);
+}
+
+.statValue {
+  font-size: 1.1rem;
+  color: var(--black);
+  font-weight: 600;
+}
+
+.menuActions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.actionButton {
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-family: var(--font-adventure);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.actionButton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: all 0.6s ease;
+}
+
+.actionButton:hover::after {
+  left: 100%;
+}
+
+.actionButton:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-light);
+}
+
+.actionButton:active {
+  transform: translateY(1px);
+}
+
+.actionButton svg {
+  width: 18px;
+  height: 18px;
+}
+
+.pauseButton {
+  background-color: var(--primary-light);
+}
+
+.resumeButton {
+  background-color: var(--secondary-color);
+}
+
+.resumeButton:hover {
+  background-color: var(--secondary-dark);
+}
+
+.endButton {
+  background-color: var(--danger-color);
+}
+
+.endButton:hover {
+  background-color: var(--danger-dark);
+}
+
+.offlineButton {
+  background-color: var(--primary-color);
+  position: relative;
+}
+
+.downloadingState {
+  background-color: var(--medium-gray) !important;
+  cursor: not-allowed;
+}
+
+.downloadProgress {
+  height: 3px;
+  background-color: var(--accent-color);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition: width 0.3s ease;
+}
+
+.offlineModeActive {
+  display: inline-block;
+  background-color: var(--accent-color);
+  color: var(--primary-dark);
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 5px;
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+.menuFooter {
+  padding: 10px 15px;
+  border-top: 1px solid var(--light-gray);
+  font-size: 0.8rem;
+  text-align: center;
+  color: var(--primary-dark);
+}
+
+.menuFooter a {
+  color: var(--secondary-dark);
+  text-decoration: none;
+}
+
+.menuFooter a:hover {
+  text-decoration: underline;
+}
+
+/* Animace */
+@keyframes menuAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responzivní design */
+@media (max-width: 768px) {
+  .menu {
+    width: 260px;
+  }
+}
+
+@media (max-width: 480px) {
+  .menuButton {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .menuButton svg {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .menu {
+    width: 240px;
+  }
+}
+
+/* Landscape režim */
+@media (orientation: landscape) and (max-height: 500px) {
+  .userStats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

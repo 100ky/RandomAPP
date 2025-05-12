@@ -6,6 +6,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import { SoundManager, SoundType } from '../utils/SoundManager';
+import styles from '../styles/SoundControls.module.css';
 
 /**
  * Komponenta pro ovládání zvuku v aplikaci
@@ -45,11 +46,10 @@ const SoundControls: React.FC = () => {
             }
         }
     };
-    
-    return (
-        <div className="sound-controls">
-            <button 
-                className={`sound-toggle control-button-base ${isSoundEnabled ? 'sound-on' : 'sound-off'}`}
+     return (
+        <div className={styles.soundControls}>
+            <button
+                className={`${styles.soundToggle} ${isSoundEnabled ? styles.soundOn : styles.soundOff}`}
                 onClick={handleToggleSound}
                 title={isSoundEnabled ? 'Vypnout zvuk' : 'Zapnout zvuk'}
                 aria-label={isSoundEnabled ? 'Vypnout zvuk' : 'Zapnout zvuk'}

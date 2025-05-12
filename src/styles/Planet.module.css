@@ -1,0 +1,89 @@
+/* Vylepšení pro planetu */
+.planetRings {
+  position: absolute;
+  width: 140%;
+  height: 20px;
+  background: linear-gradient(90deg, 
+    rgba(255, 215, 0, 0.01) 0%, 
+    rgba(255, 215, 0, 0.1) 15%, 
+    rgba(255, 215, 0, 0.3) 50%, 
+    rgba(255, 215, 0, 0.1) 85%, 
+    rgba(255, 215, 0, 0.01) 100%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotateX(75deg);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
+  opacity: 0.7;
+}
+
+.planetRings::before, .planetRings::after {
+  content: "";
+  position: absolute;
+  width: 95%;
+  height: 6px;
+  background: rgba(255, 215, 0, 0.05);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+
+.planetRings::after {
+  width: 80%;
+  height: 3px;
+  background: rgba(255, 215, 0, 0.2);
+}
+
+.planetClouds {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-image: 
+    radial-gradient(circle at 60% 30%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 15%),
+    radial-gradient(circle at 25% 65%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 20%),
+    radial-gradient(circle at 75% 70%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 15%);
+  animation: cloudsSpin 30s linear infinite;
+}
+
+.planetSurface {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  opacity: 0.7;
+}
+
+.planetSurface::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 30%, #70a599 0%, transparent 10%),
+    radial-gradient(circle at 80% 40%, #70a599 0%, transparent 8%),
+    radial-gradient(circle at 40% 80%, #70a599 0%, transparent 12%);
+  animation: surfaceRotate 50s linear infinite;
+}
+
+@keyframes cloudsSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes surfaceRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes planetFloat {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(180deg); }
+  100% { transform: translateY(5px) rotate(360deg); }
+}

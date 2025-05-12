@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Puzzle } from '../types/game';
 import { updateSolvedPuzzle, isPuzzleSolved, getTotalPoints } from '../utils/progressTracker';
 import FullscreenToggle from './FullscreenToggle';
+import styles from '../styles/PuzzleModal.module.css';
 
 interface PuzzleModalProps {
   puzzle: Puzzle | null;
@@ -116,19 +117,19 @@ const PuzzleModal: React.FC<PuzzleModalProps> = ({ puzzle, onClose, onSolve }) =
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className={styles.modalOverlay} onClick={onClose}>
       <div 
-        className={`puzzle-modal ${isFullscreenMode ? 'puzzle-fullscreen' : ''}`} 
+        className={`${styles.puzzleModal} ${isFullscreenMode ? styles.fullscreenMode : ''}`} 
         onClick={(e) => e.stopPropagation()}
         id="puzzle-content"
       >
-        <button className="close-button" onClick={onClose}>×</button>
+        <button className={styles.closeButton} onClick={onClose}>×</button>
         
         {/* Hlavička hádanky */}
-        <div className="puzzle-header">
-          <h2>{puzzle.title}</h2>
-          <div className="puzzle-difficulty">
-            <span className={`difficulty ${getDifficultyClass(puzzle.difficulty)}`}>
+        <div className={styles.modalHeader}>
+          <h2 className={styles.puzzleTitle}>{puzzle.title}</h2>
+          <div className={styles.puzzleDifficulty}>
+            <span className={`${styles.difficulty} ${styles[getDifficultyClass(puzzle.difficulty)]}`}>
               {puzzle.difficulty === 'easy' ? 'Lehká' : 
                puzzle.difficulty === 'medium' ? 'Střední' : 'Těžká'}
             </span>
@@ -137,11 +138,11 @@ const PuzzleModal: React.FC<PuzzleModalProps> = ({ puzzle, onClose, onSolve }) =
 
         {/* Obrázek hádanky (pokud existuje) */}
         {puzzle.image && (
-          <div className="puzzle-image-container">
+          <div className={styles.puzzleImageContainer}>
             <img 
               src={puzzle.image} 
               alt={puzzle.title} 
-              className="puzzle-image"
+              className={styles.puzzleImage}
             />
             {/* Přidat fullscreen toggle pokud je obrázek */}
             <FullscreenToggle 
@@ -153,57 +154,59 @@ const PuzzleModal: React.FC<PuzzleModalProps> = ({ puzzle, onClose, onSolve }) =
         )}
 
         {/* Obsah hádanky */}
-        <div className="puzzle-content">
-          <div className="puzzle-description">{puzzle.description}</div>
-          <div className="puzzle-question">{puzzle.question}</div>
+        <div className={styles.modalContent}>
+          <div className={styles.puzzleDescription}>{puzzle.description}</div>
+          <div className={styles.puzzleQuestion}>{puzzle.question}</div>
         </div>
 
         {/* Sekce pro odpověď (pouze pokud hádanka není vyřešena) */}
         {!solved ? (
           <>
-            <form onSubmit={handleAnswerSubmit}>
-              <div className="answer-section">
+            <form onSubmit={handleAnswerSubmit} className={styles.answerForm}>
+              <div className={styles.formGroup}>
+                <label htmlFor="puzzle-answer" className={styles.answerLabel}>Tvá odpověď:</label>
                 <input
                   type="text"
-                  className="answer-input"
+                  id="puzzle-answer"
+                  className={styles.answerInput}
                   placeholder="Zadej svou odpověď..."
                   value={answer}
                   onChange={(e) => setAnswer(e.target.value)}
                 />
                 <button 
                   type="submit" 
-                  className="submit-button"
+                  className={styles.submitButton}
                   disabled={!answer.trim()}
                 >
-                  Odeslat
+                  Odeslat odpověď
                 </button>
               </div>
             </form>
 
             {/* Zpětná vazba po odpovědi */}
             {feedback && (
-              <div className={`feedback ${feedback.correct ? 'correct' : 'incorrect'}`}>
+              <div className={`${styles.feedback} ${feedback.correct ? styles.correct : styles.incorrect}`}>
                 {feedback.message}
               </div>
             )}
 
             {/* Sekce s nápovědami */}
-            <div className="hints-section">
+            <div className={styles.hintSection}>
               {!showHints ? (
                 <button 
-                  className="hint-button" 
+                  className={styles.hintToggle} 
                   onClick={() => setShowHints(true)}
                 >
                   Potřebuji nápovědu
                 </button>
               ) : (
-                <div className="hint-container">
-                  <div className="hint-label">Nápověda {currentHintIndex + 1} z {puzzle.hints.length}:</div>
-                  <div className="hint-text">{puzzle.hints[currentHintIndex]}</div>
+                <div className={styles.hintContent}>
+                  <div className={styles.hintLabel}>Nápověda {currentHintIndex + 1} z {puzzle.hints.length}:</div>
+                  <div className={styles.hintText}>{puzzle.hints[currentHintIndex]}</div>
                   
                   {currentHintIndex < puzzle.hints.length - 1 && (
                     <button 
-                      className="next-hint-button"
+                      className={styles.nextHintButton}
                       onClick={showNextHint}
                     >
                       Další nápověda
@@ -214,28 +217,28 @@ const PuzzleModal: React.FC<PuzzleModalProps> = ({ puzzle, onClose, onSolve }) =
             </div>
 
             {/* Statistiky hádanky */}
-            <div className="puzzle-stats">
-              <div className="stat">
-                <span className="stat-label">Hodnota:</span>
-                <span className="stat-value">{puzzle.points} bodů</span>
+            <div className={styles.puzzleStats}>
+              <div className={styles.stat}>
+                <span className={styles.statLabel}>Hodnota:</span>
+                <span className={styles.statValue}>{puzzle.points} bodů</span>
               </div>
-              <div className="stat">
-                <span className="stat-label">Pokusy:</span>
-                <span className="stat-value">{attempts}</span>
+              <div className={styles.stat}>
+                <span className={styles.statLabel}>Pokusy:</span>
+                <span className={styles.statValue}>{attempts}</span>
               </div>
-              <div className="stat">
-                <span className="stat-label">Čas:</span>
-                <span className="stat-value">{formatTime(timeTaken)}</span>
+              <div className={styles.stat}>
+                <span className={styles.statLabel}>Čas:</span>
+                <span className={styles.statValue}>{formatTime(timeTaken)}</span>
               </div>
             </div>
           </>
         ) : (
           /* Zobrazení po vyřešení hádanky */
-          <div className="puzzle-solved">
-            <div className="success-message">Hádanka úspěšně vyřešena!</div>
+          <div className={styles.puzzleSolved}>
+            <div className={styles.successMessage}>Hádanka úspěšně vyřešena!</div>
             <p>Získal jsi {puzzle.points} bodů.</p>
             <p>Celkové skóre: {getTotalPoints()} bodů</p>
-            <button className="continue-button" onClick={onClose}>
+            <button className={styles.continueButton} onClick={onClose}>
               Pokračovat
             </button>
           </div>
@@ -243,7 +246,7 @@ const PuzzleModal: React.FC<PuzzleModalProps> = ({ puzzle, onClose, onSolve }) =
         
         {/* Informace o už vyřešené hádance (pokud přijde hráč znovu) */}
         {solved && !feedback?.correct && (
-          <div className="already-solved">
+          <div className={styles.alreadySolved}>
             <p>Tuto hádanku jsi již vyřešil.</p>
           </div>
         )}
