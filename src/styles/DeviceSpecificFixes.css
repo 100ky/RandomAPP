@@ -12,10 +12,9 @@
 
 /* Samsung zařízení - specifické úpravy pro landscape režim */
 .android-device.samsung-device.landscape-orientation .fullScreen {
-  /* Řeší problémy s výškou v landscape režimu na některých Samsung telefonech */
-  height: 100% !important;
+  /* Řeší problémy s výškou v landscape režimu na některých Samsung telefonech */  height: 100% !important;
   height: -webkit-fill-available !important;
-  height: fill-available !important;
+  height: stretch !important;
 }
 
 /* Specifické úpravy pro Samsung Galaxy */

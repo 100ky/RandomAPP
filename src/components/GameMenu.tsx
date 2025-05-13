@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useGameStore } from '../store/gameStore';
 import styles from '../styles/GameMenu.module.css';
+import ThemeToggle from './ThemeToggle';
 
 interface GameMenuProps {
   onPauseGame: () => void;
@@ -165,6 +166,12 @@ const GameMenu: React.FC<GameMenuProps> = ({
                   </svg>
                   Ukončit hru
                 </button>
+              </li>
+              <li className={styles.themeToggleContainer}>
+                <div className={styles.themeLabel}>
+                  <span>Barevný režim</span>
+                </div>
+                <ThemeToggle className={styles.menuThemeToggle} />
               </li>
             </ul>
           </div>

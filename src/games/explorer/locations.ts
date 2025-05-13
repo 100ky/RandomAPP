@@ -1,11 +1,10 @@
 import { POILocation } from '../../types/game';
 
 // Lokace pro únikovou hru Průzkumníka ve Vysokém Mýtě
-export const explorerLocations: POILocation[] = [
-  {
+export const explorerLocations: POILocation[] = [  {
     id: 'namesti',
     name: "Náměstí Přemysla Otakara II",
-    coordinates: { lat: 49.9533, lng: 16.1617 },
+    coordinates: { lat: 49.9533, lng: 16.1615 },
     description: "Téměř čtvercové náměstí (rozměry cca 150×130 m, plocha 1,95 ha) se sítí pravoúhlých ulic typickou pro gotické městské plánování. Lemuje ho 47 původních domů a dominuje mu radnice (Měšťanský dům) a mariánský morový sloup.",
     shortDescription: "Historické centrum města",
     radius: 25, 
@@ -26,11 +25,10 @@ export const explorerLocations: POILocation[] = [
       points: 50,
       image: '/assets/puzzles/morovy_sloup.jpg'
     }
-  },
-  {
+  },  {
     id: 'chramsvvavrince',
     name: "Chrám sv. Vavřince",
-    coordinates: { lat: 49.9536, lng: 16.1622 },
+    coordinates: { lat: 49.9535, lng: 16.1623 },
     description: "Trojlodní vrcholně gotický chrám z tesaného kamene se dvěma věžemi z 13. století. Po požárech v letech 1461 a 1774 získal významné vybavení, zejména pozdně barokní hlavní oltář s největším obrazem Petra Brandla v Čechách a unikátní secesní freskovou výzdobu.",
     shortDescription: "Gotický kostel",
     radius: 20,
@@ -51,11 +49,10 @@ export const explorerLocations: POILocation[] = [
       points: 75,
       image: '/assets/puzzles/chram.jpg'
     }
-  },
-  {
+  },  {
     id: 'prazskabranka',
     name: "Pražská brána",
-    coordinates: { lat: 49.9544, lng: 16.1580 },
+    coordinates: { lat: 49.9544, lng: 16.1582 },
     description: "Gotická městská brána z 13. století, jedna ze tří dochovaných bran Vysokého Mýta. Z věže je vyhlídka na historické jádro města a za dobré viditelnosti i Orlické hory. Před branou stojí ocelová socha krále Přemysla Otakara II.",
     shortDescription: "Historická západní brána",
     radius: 15,
@@ -76,8 +73,7 @@ export const explorerLocations: POILocation[] = [
       points: 100,
       image: '/assets/puzzles/prazska_brana.jpg'
     }
-  },
-  {
+  },  {
     id: 'litomyslskabranka',
     name: "Litomyšlská (Státní) brána",
     coordinates: { lat: 49.9530, lng: 16.1650 },
@@ -101,11 +97,10 @@ export const explorerLocations: POILocation[] = [
       points: 125,
       image: '/assets/puzzles/litomyslska_brana.jpg'
     }
-  },
-  {
+  },  {
     id: 'regionalnimuzeum',
     name: "Regionální muzeum",
-    coordinates: { lat: 49.9532, lng: 16.1601 },
+    coordinates: { lat: 49.9531, lng: 16.1601 },
     description: "Muzeum s expozicí historie města a regionu, archeologických nálezů a městské architektury.",
     shortDescription: "Muzeum historie města",
     radius: 20,
@@ -126,11 +121,10 @@ export const explorerLocations: POILocation[] = [
       points: 150,
       image: '/assets/puzzles/muzeum.jpg'
     }
-  },
-  {
+  },  {
     id: 'vodarenskabasta',
     name: "Vodárenská bašta",
-    coordinates: { lat: 49.9522, lng: 16.1596 },
+    coordinates: { lat: 49.9520, lng: 16.1596 },
     description: "Hranolová kamenná věž v severozápadním rohu historických hradeb, původně z 2. pol. 14. stol. Ve 2. pol. 18. stol. byla upravena na vodárnu, zásobovala městské kašny pitnou vodou.",
     shortDescription: "Historická vodárenská věž",
     radius: 15,
@@ -151,11 +145,10 @@ export const explorerLocations: POILocation[] = [
       points: 75,
       image: '/assets/puzzles/vodarna.jpg'
     }
-  },
-  {
+  },  {
     id: 'choceňskavez',
     name: "Choceňská (Karaska) věž",
-    coordinates: { lat: 49.9532, lng: 16.1645 },
+    coordinates: { lat: 49.9528, lng: 16.1636 },
     description: "Pozůstatek původní dvouvěžové Choceňské brány na východním okraji centra. Postavena 14. stol., původní spojená brána shořela v roce 1844 a byla stržena, zůstala věž Karaska (výška 22 m) s renesanční barokní nástavbou kopule.",
     shortDescription: "Historická věž Karaska",
     radius: 15,
@@ -175,8 +168,7 @@ export const explorerLocations: POILocation[] = [
       points: 100,
       image: '/assets/puzzles/karaska.jpg'
     }
-  },
-  {
+  },  {
     id: 'jungmannovysady',
     name: "Jungmannovy sady",
     coordinates: { lat: 49.9540, lng: 16.1600 },
@@ -199,11 +191,10 @@ export const explorerLocations: POILocation[] = [
       points: 150,
       image: '/assets/puzzles/jungmannovy_sady.jpg'
     }
-  },
-  {
+  },  {
     id: 'socha_premysla_otakara',
     name: "Socha Přemysla Otakara II.",
-    coordinates: { lat: 49.9545, lng: 16.1575 },
+    coordinates: { lat: 49.9542, lng: 16.1578 },
     description: "Originální ocelová socha (výška 2,5 m) od Karla Bureše z roku 2012 před Pražskou branou. Král drží v podpaží listinu zakládající město. Jedná se o historicky první sochu krále Přemysla Otakara II. v ČR.",
     shortDescription: "Socha zakladatele města",
     radius: 10,

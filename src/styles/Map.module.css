@@ -11,6 +11,8 @@
   height: 100%;
   position: relative;
   z-index: 5;
+  /* Optimalizace pro dotykové ovládání */
+  touch-action: pan-x pan-y;
 }
 
 /* Přidání textury mapy pro dobrodružný vzhled */

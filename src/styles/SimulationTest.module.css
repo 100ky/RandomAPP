@@ -1,0 +1,222 @@
+/* Styly pro testovací simulaci */
+
+.container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Přidaná třída pro kontejner simulace, který může obsahovat avatar */
+.simulationContainer {
+  position: relative;
+}
+
+.mapContainer {
+  flex: 2;
+  height: 100%;
+  position: relative;
+  overflow: hidden; /* Zajistí, že obsah nepřeteče */
+}
+
+.controlPanel {
+  flex: 1;
+  min-width: 320px;
+  max-width: 400px;
+  height: 100%;
+  overflow-y: auto;
+  background-color: #f5f5f5;
+  padding: 16px;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.controlPanel h2 {
+  margin: 0 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.controlPanel h3 {
+  margin: 0 0 8px 0;
+  color: var(--secondary-color);
+}
+
+.stats {
+  background-color: white;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.locationSelection {
+  background-color: white;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.locationList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.locationButtons {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+}
+
+.locationButton {
+  flex: 1;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.locationButton:hover {
+  background-color: #f0f0f0;
+  border-color: #bbb;
+}
+
+.locationButton.visited {
+  background-color: #e6f4ea;
+  border-color: #34a853;
+}
+
+.teleportButton {
+  width: 30px;
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.teleportButton:hover {
+  background-color: var(--primary-dark);
+}
+
+.locationButton.visited::after {
+  content: '✓';
+  margin-left: 8px;
+  color: #34a853;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.resetButton, .homeButton {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.resetButton {
+  background-color: #ff5722;
+  color: white;
+}
+
+.homeButton {
+  background-color: #2196f3;
+  color: white;
+}
+
+.resetButton:hover, .homeButton:hover {
+  filter: brightness(1.1);
+}
+
+.locationDetail {
+  background-color: white;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  margin-top: 16px;
+  border-left: 4px solid var(--secondary-color);
+}
+
+.puzzleInfo {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+}
+
+.solveButton {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.solveButton:hover {
+  filter: brightness(1.1);
+}
+
+.currentPosition {
+  background-color: white;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 8px;
+}
+
+.currentPosition h3 {
+  grid-column: span 2;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  
+  .mapContainer {
+    flex: 1;
+  }
+  
+  .controlPanel {
+    flex: auto;
+    max-width: none;
+    height: 40%;
+  }
+}
+
+/* Wrapper pro AppMenu v simulaci */
+.appMenuWrapper {
+  position: fixed;
+  z-index: 1200;
+  top: 15px;
+  left: 15px;
+}

@@ -40,11 +40,25 @@ class SoundManager {
   
   /**
    * Privátní konstruktor (singleton)
-   */
-  private constructor() {
-    // Načíst uživatelská nastavení z localStorage, pokud existují
-    this.soundEnabled = localStorage.getItem('sound_enabled') !== 'false';
-    this.volume = parseFloat(localStorage.getItem('sound_volume') || '1');
+   */  private constructor() {
+    // Bezpečný přístup k localStorage s kontrolou dostupnosti (řeší problém při SSR)
+    let storageEnabled = false;
+    let soundEnabledValue = true;
+    let volumeValue = 1;
+
+    try {
+      storageEnabled = typeof window !== 'undefined' && window.localStorage !== undefined;
+      if (storageEnabled) {
+        soundEnabledValue = localStorage.getItem('sound_enabled') !== 'false';
+        volumeValue = parseFloat(localStorage.getItem('sound_volume') || '1');
+      }
+    } catch (e) {
+      console.warn('localStorage není dostupný:', e);
+    }
+
+    // Nastavení výchozích hodnot
+    this.soundEnabled = soundEnabledValue;
+    this.volume = volumeValue;
     
     // Inicializovat cache pro audio elementy
     this.cache = new Map();
@@ -106,15 +120,20 @@ class SoundManager {
       return Promise.resolve();
     }
   }
-  
-  /**
+    /**
    * Zapnutí/vypnutí zvuku
    * 
    * @param enabled True pro zapnutí zvuku, false pro vypnutí
    */
   public setEnabled(enabled: boolean): void {
     this.soundEnabled = enabled;
-    localStorage.setItem('sound_enabled', enabled.toString());
+    try {
+      if (typeof window !== 'undefined' && window.localStorage !== undefined) {
+        localStorage.setItem('sound_enabled', enabled.toString());
+      }
+    } catch (e) {
+      console.warn('Nelze uložit nastavení zvuku:', e);
+    }
   }
   
   /**
@@ -124,7 +143,13 @@ class SoundManager {
    */
   public setVolume(volume: number): void {
     this.volume = Math.max(0, Math.min(1, volume));
-    localStorage.setItem('sound_volume', this.volume.toString());
+    try {
+      if (typeof window !== 'undefined' && window.localStorage !== undefined) {
+        localStorage.setItem('sound_volume', this.volume.toString());
+      }
+    } catch (e) {
+      console.warn('Nelze uložit nastavení hlasitosti:', e);
+    }
   }
   
   /**

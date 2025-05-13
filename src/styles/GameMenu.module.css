@@ -544,3 +544,29 @@
     max-height: 75vh; /* Omezit maximální výšku menu v landscape režimu */
   }
 }
+
+/* Přepínač barevného režimu */
+.themeToggleContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 15px !important;
+}
+
+.themeLabel {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-adventure);
+}
+
+.menuThemeToggle {
+  margin-left: auto;
+}
+
+/* Responzivní design */
+@media (max-width: 480px) {
+  .themeToggleContainer {
+    padding: 8px 10px !important;
+  }
+}

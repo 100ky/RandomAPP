@@ -1,0 +1,219 @@
+/* ExplorerMarker styly */
+
+.explorerMarkerContainer {
+  position: absolute;
+  transform-origin: center bottom;
+  z-index: 200;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.3));
+}
+
+.explorerMarkerContainer:hover {
+  transform: scale(1.05);
+}
+
+.explorerMarker {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.explorerIcon {
+  width: 100%;
+  height: 100%;
+  transform-origin: bottom center;
+}
+
+/* Animace pro pulzování */
+.pulse .pulseCircle {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 18px;
+  background-color: rgba(33, 150, 243, 0.2);
+  border: 2px solid rgba(33, 150, 243, 0.4);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+  z-index: -1;
+}
+
+/* Animace pro různé části postavičky */
+.head {
+  animation: tiltHead 3s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.backpack {
+  animation: moveBackpack 3s ease-in-out infinite;
+  transform-origin: top;
+}
+
+.moving .head {
+  animation: moveHead 0.5s ease-in-out infinite;
+}
+
+.moving .backpack {
+  animation: moveBackpack 0.5s ease-in-out infinite alternate;
+}
+
+/* Animace pro chůzi - fáze kroků */
+.leftLeg.step0 {
+  transform: rotate(-15deg) translateX(0.5px);
+  transform-origin: top;
+}
+
+.rightLeg.step0 {
+  transform: rotate(15deg) translateX(-0.5px);
+  transform-origin: top;
+}
+
+.leftLeg.step1 {
+  transform: rotate(0deg);
+}
+
+.rightLeg.step1 {
+  transform: rotate(0deg);
+}
+
+.leftLeg.step2 {
+  transform: rotate(15deg) translateX(-0.5px);
+  transform-origin: top;
+}
+
+.rightLeg.step2 {
+  transform: rotate(-15deg) translateX(0.5px);
+  transform-origin: top;
+}
+
+.leftLeg.step3 {
+  transform: rotate(0deg);
+}
+
+.rightLeg.step3 {
+  transform: rotate(0deg);
+}
+
+.leftArm.step0 {
+  transform: rotate(-25deg) translateX(0.5px);
+  transform-origin: top;
+}
+
+.rightArm.step0 {
+  transform: rotate(25deg) translateX(-0.5px);
+  transform-origin: top;
+}
+
+.leftArm.step1 {
+  transform: rotate(-10deg);
+  transform-origin: top;
+}
+
+.rightArm.step1 {
+  transform: rotate(10deg);
+  transform-origin: top;
+}
+
+.leftArm.step2 {
+  transform: rotate(25deg) translateX(-0.5px);
+  transform-origin: top;
+}
+
+.rightArm.step2 {
+  transform: rotate(-25deg) translateX(0.5px);
+  transform-origin: top;
+}
+
+.leftArm.step3 {
+  transform: rotate(10deg);
+  transform-origin: top;
+}
+
+.rightArm.step3 {
+  transform: rotate(-10deg);
+  transform-origin: top;
+}
+
+/* Animace pro stání na místě */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes tiltHead {
+  0%, 100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(2deg);
+  }
+  75% {
+    transform: rotate(-2deg);
+  }
+}
+
+@keyframes moveBackpack {
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.95);
+  }
+}
+
+@keyframes moveHead {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1px);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: translateX(-50%) scale(0.5);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateX(-50%) scale(1.2);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(-50%) scale(0.5);
+    opacity: 0.8;
+  }
+}
+
+/* Responzivní styly */
+@media (max-width: 480px) {
+  .explorerMarkerContainer {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Styly pro landscape orientaci na malých displejích */
+@media (orientation: landscape) and (max-height: 500px) {
+  .explorerMarkerContainer {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .pulse .pulseCircle {
+    width: 16px;
+    height: 16px;
+  }
+}

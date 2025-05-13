@@ -1,0 +1,68 @@
+.pageTransitionContainer {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.page {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 300ms ease-in-out, opacity 300ms ease-in-out;
+}
+
+.visiblePage {
+  opacity: 1;
+  transform: translateX(0);
+  z-index: 10;
+}
+
+.hiddenPage {
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Animace přechodů */
+.transitioning.transition-fade .page {
+  opacity: 0;
+}
+
+.transitioning.transition-slide-left .page {
+  transform: translateX(-100%);
+}
+
+.transitioning.transition-slide-right .page {
+  transform: translateX(100%);
+}
+
+.transitioning.transition-slide-up .page {
+  transform: translateY(-100%);
+}
+
+.transitioning.transition-slide-down .page {
+  transform: translateY(100%);
+}
+
+/* Plynulý přechod barev při změně tema */
+:root, :root[data-theme="light"], :root[data-theme="dark"] {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Responzivní přizpůsobení pro různé velikosti obrazovek */
+@media (max-width: 480px) {
+  .transitioning.transition-slide-left .page,
+  .transitioning.transition-slide-right .page {
+    transition-duration: 250ms; /* Rychlejší přechody na mobilech */
+  }
+}
+
+/* Použití hardware akcelerace pro plynulejší animace */
+.page, .pageTransitionContainer {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}

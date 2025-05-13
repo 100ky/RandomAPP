@@ -24,6 +24,8 @@ import { createUserMarker, useUserMarker } from '../utils/markerUtils';
 import SoundControls from './SoundControls';
 import MapSettings from './MapSettings';
 import { getLocationsByAvatarId } from '../games/gameManager';
+import UserLocationMarker from './UserLocationMarker';
+import ExplorerMarker from './ExplorerMarker';
 
 /**
  * Props pro komponentu Map
@@ -32,12 +34,26 @@ interface MapProps {
     selectedAvatarId: string | null;        // ID vybraného avatara uživatelem
     animateToUserLocation?: boolean;        // Zda má mapa automaticky animovat k poloze uživatele
     onEndGame?: () => void;                 // Callback funkce volaná při ukončení hry
+    simulationProps?: {                     // Volitelné props pro simulační režim
+        enabled: boolean;
+        location: {
+            latitude: number;
+            longitude: number;
+            heading: number;
+            speed: number;
+        };
+    };
 }
 
 /**
  * Hlavní komponenta pro zobrazení a interakci s mapou
  */
-const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = false, onEndGame }) => {
+const Map: React.FC<MapProps> = ({ 
+    selectedAvatarId, 
+    animateToUserLocation = false, 
+    onEndGame,
+    simulationProps
+}) => {
     // Reference na DOM elementy a objekty mapy
     const mapContainerRef = useRef<HTMLDivElement | null>(null);    // Reference na DOM kontejner pro mapu
     const mapRef = useRef<maplibre.Map | null>(null);               // Reference na instanci mapy
@@ -383,8 +399,7 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                 mapContainer.classList.add('portrait-view');
             }
         }
-        
-        // Aktualizovat pozici markerů a vyskakovacích oken
+          // Aktualizovat pozici markerů a vyskakovacích oken
         if (markersRef.current && markersRef.current.length > 0) {
             markersRef.current.forEach(marker => {
                 const popup = marker.getPopup();
@@ -592,30 +607,15 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         // Uložit poslední pozici pro budoucí výpočty
         lastPositionRef.current = { lat: latitude, lng: longitude };
 
-        // Pokud už existuje marker, odstranit ho
-        if (userMarkerRef.current) {
-            userMarkerRef.current.remove();
-            userMarkerRef.current = null;
-        }
+        // POZNÁMKA: Starý marker uživatele již nevytváříme, místo toho používáme ExplorerMarker v UserLocationMarker komponentě
+        // Nemusíme proto odstraňovat ani vytvářet marker pomocí MapLibre API
 
-        // Vytvořit nový marker s naší utilitou
-        if (mapRef.current) {
-            userMarkerRef.current = createUserMarker({
-                map: mapRef.current,
-                position: userCoordinates,
-                accuracy: accuracy || undefined,
-                heading: heading || undefined,
-                isGameActive: isGameRunning,
-                avatarId: selectedAvatarId
-            });
-            
-            // Kontrola, zda je uživatel v blízkosti některého z bodů zájmu
-            if (isGameRunning) {
-                checkProximityToLocations(userCoordinates);
-            }
+        // Kontrola, zda je uživatel v blízkosti některého z bodů zájmu
+        if (mapRef.current && isGameRunning) {
+            checkProximityToLocations([longitude, latitude]);
         }
         
-        // Zde není potřeba vracet JSX element, protože marcery vytváříme imperativně
+        // Zde není potřeba vracet JSX element, protože markery vytváříme imperativně
         return;
     }, [latitude, longitude, accuracy, heading, selectedAvatarId, mapLoaded, isGameRunning, 
         animateToUserLocation, addDistance, updateStepsCount, checkProximityToLocations]);
@@ -703,6 +703,30 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         // na skrytí všech bodů na mapě a jejich popisků
     }, [playerProgress.visitedLocations, selectedAvatarId]);
     
+    // Funkce pro správné zpracování dotykových událostí
+    const setupTouchHandlers = useCallback(() => {
+        if (!mapContainerRef.current) return;
+        
+        const preventDefaultTouchMove = (e: TouchEvent) => {
+            // Zabrání nechtěnému scrollování stránky, když uživatel manipuluje s mapou
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        };
+        
+        const mapContainer = mapContainerRef.current;
+        mapContainer.addEventListener('touchmove', preventDefaultTouchMove, { passive: false });
+        
+        return () => {
+            mapContainer.removeEventListener('touchmove', preventDefaultTouchMove);
+        };
+    }, []);
+
+    useEffect(() => {
+        const cleanup = setupTouchHandlers();
+        return cleanup;
+    }, [setupTouchHandlers]);
+
     // Inicializace mapy při načtení komponenty
     useEffect(() => {
         // Inicializace mapy pouze pokud ještě nebyla vytvořena
@@ -757,8 +781,7 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                 }
                 return { url };
             };
-            
-            // Vytvoření instance mapy
+              // Vytvoření instance mapy
             mapRef.current = new maplibre.Map({
                 container: mapContainerRef.current,
                 style: {
@@ -788,12 +811,20 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                 },
                 center: initialCenter as [number, number],
                 zoom: initialZoom,
-                transformRequest
+                transformRequest,
+                // Přidání nastavení pro lepší dotykové ovládání
+                dragRotate: false, // Vypnutí rotace mapy tahem
+                touchPitch: false, // Vypnutí změny sklonu mapy dotekem
+                cooperativeGestures: true, // Zapnutí kooperativních gest pro lepší scrollování stránky
             });
-            
-            // Počkat na načtení mapy před přidáním vrstev
+              // Počkat na načtení mapy před přidáním vrstev
             mapRef.current.on('load', () => {
                 if (!mapRef.current) return;
+                
+                // Konfigurace dotykového ovládání pro eliminaci touchmove varování
+                if (mapRef.current.touchZoomRotate) {
+                    mapRef.current.touchZoomRotate.disableRotation();
+                }
                 
                 // Přidat body zájmu jako markery
                 addLocationMarkers();
@@ -1115,10 +1146,27 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                         justifyContent: 'center'
                     }}
                 ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" style={{display: 'block', margin: 'auto'}}>
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
+                        <path d="M12 2C8.13 2 5 13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
                     </svg>
                 </button>
-            }
+            }            {/* Nový průzkumník jako marker pozice uživatele - viditelný jen když je dostupná geolokace a mapa je načtená */}
+            {mapLoaded && mapRef.current && (
+                simulationProps?.enabled ? (
+                    // V simulačním režimu zobrazíme marker se simulovanými daty
+                    <UserLocationMarker 
+                        map={mapRef.current}
+                        simulationMode={true}
+                        simulatedLocation={simulationProps.location} 
+                    />
+                ) : (
+                    // V běžném režimu zobrazíme marker s reálnou geolokací
+                    latitude && longitude && (
+                        <UserLocationMarker 
+                            map={mapRef.current} 
+                        />
+                    )
+                )
+            )}
         </div>
     );
 };

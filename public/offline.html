@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#8B4513">
+  <title>Offline - Průzkumník Vysokého Mýta</title>
+  <link rel="icon" href="/assets/icons/favicon-32x32.png">
+  <style>
+    /* Základní styly pro offline stránku */
+    :root {
+      --primary-color: #8B4513;
+      --primary-dark: #6B3100;
+      --primary-light: #A06235;
+      --accent-color: #FFD700;
+      --accent-dark: #DAA520;
+      --background-color: #FFF8E1;
+      --text-color: #3E2723;
+    }
+
+    /* Tmavý režim na základě systémového nastavení */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --primary-color: #A06235;
+        --primary-dark: #8B4513;
+        --primary-light: #C08C5B;
+        --accent-color: #FFD700;
+        --accent-dark: #DAA520;
+        --background-color: #342E1E;
+        --text-color: #FFF8E1;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      font-family: 'Georgia', serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      height: 100%;
+      width: 100%;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .logo {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 20px;
+      border-radius: 50%;
+      border: 4px solid var(--accent-color);
+      padding: 10px;
+      background-color: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo img {
+      max-width: 80px;
+      max-height: 80px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 16px;
+      color: var(--primary-color);
+    }
+
+    p {
+      margin-bottom: 24px;
+      font-size: 16px;
+      line-height: 1.5;
+      max-width: 500px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 12px 24px;
+      margin: 8px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .button:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .offline-icon {
+      font-size: 40px;
+      margin-bottom: 16px;
+      color: var(--accent-dark);
+    }
+
+    /* Pulsující animace */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo pulse">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="72" height="72" fill="#FFD700">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+      </svg>
+    </div>
+    
+    <h1>Jste offline</h1>
+    
+    <p>Vypadá to, že jste momentálně bez připojení k internetu. 
+       Některé funkce Průzkumníka Vysokého Mýta vyžadují připojení k internetu.</p>
+    
+    <p>Pokud jste si stáhli offline mapy, můžete i nadále používat základní navigaci a prohlížet již objevená místa.</p>
+    
+    <div>
+      <button id="retryButton" class="button">
+        Zkusit znovu připojení
+      </button>
+      <a href="/" class="button">
+        Zpět na úvodní obrazovku
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Jednoduchý skript pro opětovné načtení stránky při kliknutí na tlačítko
+    document.getElementById('retryButton').addEventListener('click', function() {
+      window.location.reload();
+    });
+    
+    // Detekce, zda se připojení obnovilo
+    window.addEventListener('online', function() {
+      window.location.reload();
+    });
+  </script>
+</body>
+</html>

@@ -18,12 +18,8 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
-  },
-  // Umožní přístup k serveru z jiných zařízení v síti
-  server: {
-    host: '0.0.0.0',
-    port: 3000,
-  },
+  },  // Nastavení pro vývojový server se řeší přímo v package.json, 
+  // ne zde v next.config.js
   // Přidání CORS hlaviček pro vyřešení problémů s manifest.json
   async headers() {
     return [

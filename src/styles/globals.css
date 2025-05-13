@@ -42,6 +42,66 @@
   --font-body: 'Quattrocento', 'Georgia', serif;   /* Font pro běžný text */
 }
 
+/* Tmavý režim - barevné schéma */
+:root[data-theme="dark"] {
+  /* Základní dobrodružné barevné schéma - tmavý režim */
+  --primary-color: #A06235;      /* Světlejší hnědá jako hlavní barva v tmavém režimu */
+  --primary-dark: #8B4513;      /* Původní hnědá jako tmavší v tmavém režimu */
+  --primary-light: #C08C5B;     /* Ještě světlejší hnědá */
+  
+  --secondary-color: #32CD32;   /* Světlejší zelená jako hlavní v tmavém režimu */
+  --secondary-dark: #228B22;    /* Původní zelená jako tmavší v tmavém režimu */
+  --secondary-light: #5CFF5C;   /* Ještě světlejší zelená */
+  
+  --accent-color: #FFD700;      /* Zlatá zůstává stejná */
+  --accent-dark: #DAA520;       /* Tmavší zlatá zůstává stejná */
+  --accent-light: #FFF8DC;      /* Velmi světlá zlatá zůstává stejná */
+  
+  /* Neutrální barvy - invertované */
+  --background-color: #342E1E;  /* Tmavé pozadí s nádechem hnědé */
+  --light-gray: #3A3428;        /* Tmavá varianta světlé béžové */
+  --medium-gray: #4A3C2B;       /* Tmavá varianta pískové šedé */
+  --dark-gray: #6B5549;         /* Světlejší varianta tmavě hnědé šedé */
+  --black: #FFF8E1;             /* Původní pozadí jako "černá" v tmavém režimu */
+  --white: #2D2016;             /* Velmi tmavá s nádechem hnědé jako "bílá" v tmavém režimu */
+  
+  /* Stíny a efekty - přizpůsobené tmavému režimu */
+  --shadow-light: 0 2px 6px rgba(0, 0, 0, 0.4);
+  --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.5);
+  --shadow-strong: 0 6px 12px rgba(0, 0, 0, 0.6);
+}
+
+/* Detekce preferovaného schématu z nastavení systému */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* Základní dobrodružné barevné schéma - tmavý režim */
+    --primary-color: #A06235;      /* Světlejší hnědá jako hlavní barva v tmavém režimu */
+    --primary-dark: #8B4513;      /* Původní hnědá jako tmavší v tmavém režimu */
+    --primary-light: #C08C5B;     /* Ještě světlejší hnědá */
+    
+    --secondary-color: #32CD32;   /* Světlejší zelená jako hlavní v tmavém režimu */
+    --secondary-dark: #228B22;    /* Původní zelená jako tmavší v tmavém režimu */
+    --secondary-light: #5CFF5C;   /* Ještě světlejší zelená */
+    
+    --accent-color: #FFD700;      /* Zlatá zůstává stejná */
+    --accent-dark: #DAA520;       /* Tmavší zlatá zůstává stejná */
+    --accent-light: #FFF8DC;      /* Velmi světlá zlatá zůstává stejná */
+    
+    /* Neutrální barvy - invertované */
+    --background-color: #342E1E;  /* Tmavé pozadí s nádechem hnědé */
+    --light-gray: #3A3428;        /* Tmavá varianta světlé béžové */
+    --medium-gray: #4A3C2B;       /* Tmavá varianta pískové šedé */
+    --dark-gray: #6B5549;         /* Světlejší varianta tmavě hnědé šedé */
+    --black: #FFF8E1;             /* Původní pozadí jako "černá" v tmavém režimu */
+    --white: #2D2016;             /* Velmi tmavá s nádechem hnědé jako "bílá" v tmavém režimu */
+    
+    /* Stíny a efekty - přizpůsobené tmavému režimu */
+    --shadow-light: 0 2px 6px rgba(0, 0, 0, 0.4);
+    --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.5);
+    --shadow-strong: 0 6px 12px rgba(0, 0, 0, 0.6);
+  }
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -282,4 +342,45 @@ h2 {
   right: 0;
   border-top: none;
   border-left: none;
+}
+
+/* Optimalizace dotykových událostí pro map-libregl */
+.maplibregl-map {
+  touch-action: pan-x pan-y;
+}
+
+/* Vylepšené styly pro ovládání mapy */
+.maplibregl-ctrl-group {
+  background-color: var(--white);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--medium-gray);
+}
+
+.maplibregl-ctrl-group button {
+  width: 32px;
+  height: 32px;
+}
+
+.maplibregl-ctrl button.maplibregl-ctrl-zoom-in .maplibregl-ctrl-icon,
+.maplibregl-ctrl button.maplibregl-ctrl-zoom-out .maplibregl-ctrl-icon,
+.maplibregl-ctrl button.maplibregl-ctrl-compass .maplibregl-ctrl-icon {
+  background-color: var(--primary-light);
+  -webkit-mask-size: 20px 20px;
+  mask-size: 20px 20px;
+}
+
+/* Zvětšení dotykových bodů pro ovládací prvky */
+@media (max-width: 480px) {
+  .maplibregl-ctrl-group button {
+    width: 36px;
+    height: 36px;
+    margin: 2px;
+  }
+}
+
+/* Oprava touchmove událostí */
+.maplibregl-cooperative-gesture-screen {
+  pointer-events: all !important;
+  touch-action: none !important;
+  background-color: transparent !important;
 }

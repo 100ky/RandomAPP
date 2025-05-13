@@ -1,18 +1,65 @@
 {
-  "name": "Vymýto - Úniková hra",
-  "short_name": "Vymýto",
-  "description": "Venkovní mobilní úniková hra s mapou",
+  "name": "Průzkumník Vysokého Mýta",
+  "short_name": "Průzkumník VM",
+  "description": "Interaktivní průvodce historií a zajímavostmi města Vysoké Mýto",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#4285f4",
-  "orientation": "any",
+  "background_color": "#FFF8E1",
+  "theme_color": "#8B4513",  "orientation": "any",
+  "categories": ["entertainment", "education", "travel", "navigation"],
+  "shortcuts": [
+    {
+      "name": "Mapa města",
+      "url": "/?mode=map",
+      "description": "Otevře interaktivní mapu města Vysoké Mýto",
+      "icons": [{ "src": "/icons/map-icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Dosažené úspěchy",
+      "url": "/?mode=achievements",
+      "description": "Zobrazí přehled vašich dosažených úspěchů",
+      "icons": [{ "src": "/icons/achievement-icon-96x96.png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "web",
+      "url": "https://www.mesto-vm.cz/"
+    }
+  ],
+  "prefer_related_applications": false,
+  "screenshots": [
+    {
+      "src": "/assets/screenshots/map-view.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "label": "Mapový pohled na body zájmu"
+    },
+    {
+      "src": "/assets/screenshots/location-detail.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "label": "Detail historického místa"
+    }
+  ],
   "icons": [
     {
       "src": "/icons/icon-72x72.png",
       "sizes": "72x72",
       "type": "image/png",
       "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/icons/icon-96x96.png",

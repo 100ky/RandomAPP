@@ -1,0 +1,133 @@
+/**
+ * Styly pro zvětšené dotykové plochy - zlepšení přístupnosti
+ * Tyto styly jsou navrženy pro lepší použitelnost na dotykových zařízeních
+ */
+
+/* Minimální doporučená velikost dotykového prvku (W3C WCAG) */
+.touchFriendly {
+  --min-touch-target: 44px;
+}
+
+/* Zvětšení dotykových ploch tlačítek */
+button.touchTarget,
+.touchTarget {
+  min-width: var(--min-touch-target);
+  min-height: var(--min-touch-target);
+  padding: 12px;
+}
+
+/* Zvětšení mezer mezi interaktivními prvky */
+.touchSpacing > * + * {
+  margin-left: 8px;
+}
+
+.touchSpacingVertical > * + * {
+  margin-top: 8px;
+}
+
+/* Zvětšené interaktivní prvky pro mapu */
+.mapControl {
+  min-width: 48px;
+  min-height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Přidání vizuální zpětné vazby při doteku */
+.touchFeedback:active {
+  transform: scale(0.95);
+  opacity: 0.9;
+  transition: transform 0.1s, opacity 0.1s;
+}
+
+/* Zvětšení aktivní plochy odkazů */
+a.touchLink {
+  display: inline-block;
+  position: relative;
+}
+
+a.touchLink::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  bottom: -10px;
+  left: -10px;
+  z-index: -1;
+}
+
+/* Zvýraznění aktivních prvků - pro snazší čitelnost */
+.focusVisible:focus-visible {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Pro uživatele s motorickými obtížemi - pomalejší animace/přechody */
+@media (prefers-reduced-motion: reduce) {
+  .accessibleMotion * {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+}
+
+/* Snížení složitosti pro uživatele s kognitivními obtížemi */
+.simplifiedInteraction {
+  --simplified-spacing: 16px;
+  --simplified-font-size: 1.1rem;
+}
+
+.simplifiedInteraction button,
+.simplifiedInteraction input,
+.simplifiedInteraction select {
+  font-size: var(--simplified-font-size);
+  margin: var(--simplified-spacing) 0;
+}
+
+/* Podpora pro uživatele s poruchami zraku - přidání outlinů */
+.enhancedOutlines * {
+  outline: 1px solid transparent;
+}
+
+.enhancedOutlines *:hover {
+  outline-color: var(--accent-color);
+}
+
+/* Vyšší kontrast pro lepší čitelnost */
+.highContrast {
+  --high-contrast-text: #000000;
+  --high-contrast-bg: #ffffff;
+  --high-contrast-link: #0000EE;
+  --high-contrast-button: #0000EE;
+  --high-contrast-focus: #FF0000;
+}
+
+.highContrast[data-theme="dark"] {
+  --high-contrast-text: #FFFFFF;
+  --high-contrast-bg: #000000;
+  --high-contrast-link: #6699FF;
+  --high-contrast-button: #6699FF;
+  --high-contrast-focus: #FF6600;
+}
+
+/* Aplikace vysokého kontrastu na prvky */
+.highContrast {
+  color: var(--high-contrast-text);
+  background-color: var(--high-contrast-bg);
+}
+
+.highContrast a {
+  color: var(--high-contrast-link);
+}
+
+.highContrast button {
+  background-color: var(--high-contrast-button);
+  color: var(--high-contrast-bg);
+}
+
+.highContrast button:focus,
+.highContrast a:focus,
+.highContrast input:focus {
+  outline: 3px solid var(--high-contrast-focus);
+}
