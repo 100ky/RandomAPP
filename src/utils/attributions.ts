@@ -29,14 +29,19 @@ export const mapAttributions = {
 
 /**
  * Vrátí HTML kód pro zobrazení povinných atribucí na mapě
+ * Bez duplicit - každá atribuce se zobrazí pouze jednou
  */
 export const getRequiredAttributions = (): string => {
-  const requiredAttributions = Object.values(mapAttributions)
+  // Získáme unikátní atribuce (bez duplicit) podle html obsahu
+  const uniqueAttributions = Object.values(mapAttributions)
     .filter(attr => attr.required)
+    .filter((attr, index, self) => 
+      index === self.findIndex(a => a.html === attr.html)
+    )
     .map(attr => attr.html)
     .join(' | ');
     
-  return requiredAttributions;
+  return uniqueAttributions;
 };
 
 /**

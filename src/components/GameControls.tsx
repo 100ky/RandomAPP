@@ -83,6 +83,7 @@ const GameControls: React.FC<{ onStart: () => void; onStop: () => void; isGameRu
                     onClick={onStop}
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
+                    style={{ display: 'none' }} /* Tlačítko stop úplně skryto */
                 >
                     <div className="button-content">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">

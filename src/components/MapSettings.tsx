@@ -19,8 +19,6 @@ export type MapLayerType = 'streets' | 'satellite' | 'terrain' | 'dark';
  */
 interface MapSettingsProps {
   centerOnUser: () => void;                    // Funkce pro vycentrování mapy na aktuální polohu uživatele
-  toggleFullscreen: (isFullscreen: boolean) => void; // Funkce pro přepínání režimu celé obrazovky
-  isFullscreen: boolean;                       // Indikátor, zda je mapa v režimu celé obrazovky
   downloadOfflineMap?: () => void;             // Funkce pro stažení offline verze mapy
   isOfflineMapDownloaded?: boolean;            // Indikátor, zda byla offline mapa již stažena
   isDownloadingOfflineMap?: boolean;           // Indikátor, zda právě probíhá stahování mapy
@@ -31,6 +29,10 @@ interface MapSettingsProps {
   togglePointsOfInterest?: () => void;         // Přepínání viditelnosti bodů zájmu
   weatherEnabled?: boolean;                    // Indikátor, zda je povoleno zobrazení počasí
   toggleWeather?: () => void;                  // Přepínání zobrazení počasí
+  onPauseGame?: () => void;                    // Funkce pro pozastavení hry
+  onEndGame?: () => void;                      // Funkce pro ukončení hry
+  isGameRunning?: boolean;                     // Indikátor, zda je hra aktivní
+  isPaused?: boolean;                          // Indikátor, zda je hra pozastavena
 }
 
 /**
@@ -49,8 +51,6 @@ const formatDistance = (meters: number): string => {
  */
 const MapSettings: React.FC<MapSettingsProps> = ({
   centerOnUser,
-  toggleFullscreen,
-  isFullscreen,
   downloadOfflineMap = () => {},
   isOfflineMapDownloaded = false,
   isDownloadingOfflineMap = false,
@@ -60,7 +60,11 @@ const MapSettings: React.FC<MapSettingsProps> = ({
   showPointsOfInterest = true,
   togglePointsOfInterest,
   weatherEnabled = false,
-  toggleWeather
+  toggleWeather,
+  onPauseGame,
+  onEndGame,
+  isGameRunning = false,
+  isPaused = false
 }) => {
   // Stav určující, zda je menu nastavení otevřené
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -108,19 +112,6 @@ const MapSettings: React.FC<MapSettingsProps> = ({
 
   return (
     <div className={styles.settingsContainer}>
-      {/* Statistiky hry */}
-      <div className={styles.statsContainer}>
-        <div className={styles.statItem}>
-          <span>Vyřešeno:</span> {playerProgress.solvedPuzzles}/{playerProgress.totalPuzzles}
-        </div>
-        <div className={styles.statItem}>
-          <span>Vzdálenost:</span> {formatDistance(playerProgress.distanceTraveled)}
-        </div>
-        <div className={styles.statItem}>
-          <span>Skóre:</span> {playerProgress.score} bodů
-        </div>
-      </div>
-
       {/* Tlačítko pro otevření menu */}
       <button className={styles.settingsButton} onClick={toggleMenu} aria-label="Nastavení mapy">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -231,22 +222,39 @@ const MapSettings: React.FC<MapSettingsProps> = ({
               </li>
             )}
 
-            {/* Přepínač celé obrazovky */}
-            <li>
-              <button onClick={() => {
-                toggleFullscreen(!isFullscreen);
-                setIsOpen(false);
-              }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  {isFullscreen ? (
-                    <path d="M8 3v3a2 2 0 01-2 2H3m18 0h-3a2 2 0 01-2-2V3m0 18v-3a2 2 0 012-2h3M3 16h3a2 2 0 012 2v3" />
-                  ) : (
-                    <path d="M3 8h3a2 2 0 002-2V3m13 5h-3a2 2 0 01-2-2V3m0 18v-3a2 2 0 012-2h3M3 16h3a2 2 0 012 2v3" />
-                  )}
-                </svg>
-                {isFullscreen ? 'Ukončit celou obrazovku' : 'Zobrazit na celé obrazovce'}
-              </button>
-            </li>
+            {/* Pozastavení/pokračování hry - zobrazeno pouze když je hra aktivní */}
+            {isGameRunning && (
+              <li>
+                <button onClick={() => {
+                  if (onPauseGame && !isPaused) {
+                    onPauseGame();
+                    setIsOpen(false);
+                  }
+                }}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                  </svg>
+                  Pozastavit hru
+                </button>
+              </li>
+            )}
+            
+            {/* Ukončení hry - zobrazeno pouze když je hra aktivní */}
+            {isGameRunning && (
+              <li>
+                <button onClick={() => {
+                  if (window.confirm('Opravdu chcete ukončit hru?') && onEndGame) {
+                    onEndGame();
+                    setIsOpen(false);
+                  }
+                }}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M6 6h12v12H6z"/>
+                  </svg>
+                  Ukončit hru
+                </button>
+              </li>
+            )}
           </ul>
         </div>
       )}

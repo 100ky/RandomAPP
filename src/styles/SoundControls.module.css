@@ -1,7 +1,7 @@
 .soundControls {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  top: 10px;
+  right: 60px;
   z-index: 50;
 }
 

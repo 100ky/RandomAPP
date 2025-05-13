@@ -144,9 +144,8 @@
 @media (orientation: landscape) {
   .game-controls {
     bottom: 20px;
-    right: 20px;
-    left: auto;
-    transform: none;
+    left: -10%; /* Změna z 50% na 30% posune tlačítko více doleva */
+    transform: translateX(-50%);
   }
 }
 

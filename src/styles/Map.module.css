@@ -117,25 +117,26 @@
   right: 5px;
   bottom: 5px;
   font-size: 11px;
-  background-color: rgba(255, 252, 245, 0.7);
-  padding: 3px 6px;
-  border-radius: 4px;
+  background-color: rgba(255, 252, 245, 0.85);
+  padding: 4px 8px;
+  border-radius: 6px;
   z-index: 20;
   max-width: 300px;
-  box-shadow: var(--shadow-light);
-  border: 1px solid var(--medium-gray);
-  font-family: var(--font-body);
-  color: var(--dark-gray);
+  box-shadow: var(--shadow-medium, 0 2px 6px rgba(0, 0, 0, 0.15));
+  border: 1px solid var(--accent-color, #FFC107);
+  font-family: var(--font-body, sans-serif);
+  color: var(--dark-gray, #444);
 }
 
 .mapAttribution a {
-  color: var(--primary-color);
+  color: var(--primary-color, #2196F3);
   text-decoration: none;
+  font-weight: 600;
 }
 
 .mapAttribution a:hover {
   text-decoration: underline;
-  color: var(--accent-color);
+  color: var(--primary-dark, #0c7eba);
 }
 
 /* Indikátor offline režimu */
@@ -572,5 +573,79 @@
   
   .vysokemytoButton {
     bottom: 140px;
+  }
+}
+
+/* Styly pro tabulku se statistikami */
+.statsTable {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  padding: 8px 15px;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  min-width: 220px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.statsItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.statsLabel {
+  font-size: 10px;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 2px;
+}
+
+.statsValue {
+  font-size: 14px;
+  font-weight: bold;
+  color: #222;
+}
+
+@media (orientation: landscape) {
+  .statsTable {
+    bottom: 20px;
+  }
+}
+
+/* Animace pro zobrazení/skrytí tabulky */
+.statsTableFadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.statsTableFadeOut {
+  animation: fadeOut 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, 20px);
   }
 }

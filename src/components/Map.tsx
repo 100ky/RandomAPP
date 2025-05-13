@@ -22,6 +22,7 @@ import ScannerButton from './ScannerButton';
 import { SoundType, playSound } from '../utils/SoundManager';
 import { createUserMarker, useUserMarker } from '../utils/markerUtils';
 import SoundControls from './SoundControls';
+import MapSettings from './MapSettings';
 import { getLocationsByAvatarId } from '../games/gameManager';
 
 /**
@@ -52,6 +53,9 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
     
     // Stav pro sledování, zda je hra spuštěna
     const [isGameRunning, setIsGameRunning] = useState(false);
+    
+    // Stav pro zobrazení tabulky se statistikami
+    const [showStatsTable, setShowStatsTable] = useState(false);
     
     // Použití hooku pro geolokaci - sledování polohy uživatele
     const { 
@@ -132,6 +136,14 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                     mapContainer.classList.remove('game-starting');
                     mapContainer.classList.add('game-active');
                 }
+                
+                // Zobrazit tabulku statistik
+                setShowStatsTable(true);
+                
+                // Po 5 sekundách tabulku skrýt
+                setTimeout(() => {
+                    setShowStatsTable(false);
+                }, 5000);
             }, 600);
             
             // Přidat zvukový efekt při startu hry
@@ -1057,9 +1069,32 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                 </div>
             )}
 
-            {/* Tlačítko pro skenování QR kódů - zobrazeno pouze když je hra aktivní */}
+            {/* Tlačítko pro skenování QR kódů - dočasně skryto 
             {isGameRunning && (
                 <ScannerButton onScan={handleQRCodeScan} />
+            )} */}
+            
+            {/* Nastavení mapy - ozubené tlačítko v pravém horním rohu */}
+            <MapSettings 
+                centerOnUser={centerOnUser}
+                onPauseGame={handlePauseGame}
+                onEndGame={handleEndGame}
+                isGameRunning={isGameRunning}
+                isPaused={isGamePaused}
+            />
+            
+            {/* Tabulka se statistikami hráče */}
+            {isGameRunning && showStatsTable && (
+                <div className={`${styles.statsTable} ${styles.statsTableFadeIn}`}>
+                    <div className={styles.statsItem}>
+                        <div className={styles.statsLabel}>KROKY</div>
+                        <div className={styles.statsValue}>{playerProgress.steps}</div>
+                    </div>
+                    <div className={styles.statsItem}>
+                        <div className={styles.statsLabel}>VZDÁLENOST</div>
+                        <div className={styles.statsValue}>{formatDistance(playerProgress.distanceMeters)}</div>
+                    </div>
+                </div>
             )}
 
             {/* Tlačítko pro přiblížení na Vysoké Mýto, viditelné jen když není aktivní geolokace */}
@@ -1073,11 +1108,6 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                     </svg>
                 </button>
             }
-            
-            {/* Atribuce mapových podkladů - vyžadováno licencí ODbL */}
-            <div className={styles.mapAttribution}>
-                <div dangerouslySetInnerHTML={{ __html: getRequiredAttributions() }} />
-            </div>
         </div>
     );
 };
