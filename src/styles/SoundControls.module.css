@@ -1,7 +1,7 @@
 .soundControls {
   position: fixed;
   top: 10px;
-  right: 60px;
+  right: 10px;
   z-index: 50;
 }
 
@@ -52,6 +52,65 @@
 .soundToggle:active {
   transform: scale(0.95);
   box-shadow: var(--shadow-light);
+}
+
+/* Úpravy pro landscape mód */
+@media (orientation: landscape) {
+  .soundControls {
+    top: 8px;
+    right: 8px;
+  }
+  
+  .soundToggle {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .soundToggle svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* Optimalizace animací pro landscape orientaci */
+  .soundToggle:hover {
+    transform: scale(1.05); /* Méně výrazná animace */
+    box-shadow: var(--shadow-medium),
+                0 0 10px rgba(255, 215, 0, 0.3);
+  }
+}
+
+@media (orientation: landscape) and (max-height: 450px) {
+  .soundControls {
+    top: 6px;
+    right: 6px;
+  }
+  
+  .soundToggle {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .soundToggle svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  /* Optimalizace animací pro výkon */
+  .soundOn {
+    animation: pulseSound 3s infinite; /* Delší interval animace pro lepší výkon */
+  }
+}
+
+@media (orientation: landscape) and (max-height: 380px) {
+  /* Pro extrémně malé displeje */
+  .soundToggle::after {
+    display: none; /* Odstranění dekorativní animace */
+  }
+  
+  .soundToggle:hover {
+    transform: none; /* Odstranění hover efektů pro zlepšení výkonu */
+    box-shadow: var(--shadow-medium);
+  }
 }
 
 .soundToggle svg {

@@ -108,13 +108,32 @@ const MapSettings: React.FC<MapSettingsProps> = ({
   const hasLayerSupport = !!onMapLayerChange;
   const hasPoiSupport = !!togglePointsOfInterest;
   const hasWeatherSupport = !!toggleWeather;
-  const hasOfflineSupport = !!downloadOfflineMap;
+  const hasOfflineSupport = !!downloadOfflineMap;  // Nastavení stylu pro tlačítka v landscape a portrait režimu
+  const buttonStyle: React.CSSProperties = {
+    position: 'fixed',
+    right: '10px',
+    left: 'auto',
+    top: '10px',
+    width: '56px', /* Zvětšeno na 56px */
+    height: '56px', /* Zvětšeno na 56px */
+    zIndex: 50,
+  };
 
   return (
-    <div className={styles.settingsContainer}>
-      {/* Tlačítko pro otevření menu */}
-      <button className={styles.settingsButton} onClick={toggleMenu} aria-label="Nastavení mapy">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <div className={styles.settingsContainer} style={buttonStyle}>
+      {/* Tlačítko pro otevření menu */}      <button 
+        className={styles.settingsButton} 
+        onClick={toggleMenu} 
+        aria-label="Nastavení mapy" 
+        style={{
+          width: '100%', 
+          height: '100%', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center'
+        }}
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="36" height="36" style={{display: 'block'}}> {/* Ikona zvětšena na 36px */}
           <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
           <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
         </svg>

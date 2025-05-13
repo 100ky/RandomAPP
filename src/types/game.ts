@@ -13,6 +13,9 @@ export interface Puzzle {
     choices?: string[]; // pro multiple-choice hádanky
 }
 
+export type BadgeCategory = 'exploration' | 'puzzle' | 'activity' | 'special';
+export type BadgeRarity = 'common' | 'uncommon' | 'rare' | 'legendary';
+
 export interface POILocation {
   id: string;
   name: string;
@@ -83,8 +86,8 @@ export interface Badge {
     name: string;
     description: string;
     icon: string;
-    category: 'exploration' | 'puzzle' | 'activity' | 'special';
-    rarity: 'common' | 'uncommon' | 'rare' | 'legendary';
+    category: BadgeCategory;
+    rarity: BadgeRarity;
     earnCondition: string;
     points: number;
     isSecret?: boolean;

@@ -17,10 +17,11 @@ interface BadgeProps {
 const Badge: FC<BadgeProps> = ({ badgeId, size = 'medium', showProgress = false, onClick }) => {
   const gameStore = useGameStore();
   const hasBadge = gameStore.hasBadge(badgeId);
-  const badgeProgress = gameStore.getBadgeProgress(badgeId);
+  const currentProgress = gameStore.getBadgeProgress(badgeId);
   
   // Získáme data odznaku
   const badge = getBadgeById(badgeId);
+    // Vypočítáme procento postupu již není potřeba, přesunuto dolů
   
   if (!badge) {
     return null;
@@ -37,12 +38,11 @@ const Badge: FC<BadgeProps> = ({ badgeId, size = 'medium', showProgress = false,
         <div className={styles.icon}>?</div>
         <div className={styles.name}>???</div>
       </div>
-    );
-  }
+    );  }
   
-  // Výpočet progresu u odznaků s postupným získáváním
+  // Výpočet procentuálního postupu
   const maxProgress = badge.maxProgress || 1;
-  const progressPercent = Math.min(100, Math.round((badgeProgress / maxProgress) * 100));
+  const progressPercent = Math.min(100, Math.round((currentProgress / maxProgress) * 100));
   
   return (
     <div 
@@ -59,11 +59,9 @@ const Badge: FC<BadgeProps> = ({ badgeId, size = 'medium', showProgress = false,
         {hasBadge && (
           <div className={styles.rarityTag}>{badge.rarity}</div>
         )}
-        
-        {!hasBadge && showProgress && badge.isProgressBased && (
-          <div className={styles.progressContainer}>
-            <div className={styles.progressBar} style={{ width: `${progressPercent}%` }} />
-            <div className={styles.progressText}>{progress}/{maxProgress}</div>
+            {!hasBadge && showProgress && badge.isProgressBased && (
+          <div className={styles.progressContainer}>            <div className={styles.progressBar} style={{ width: `${progressPercent}%` }} />
+            <div className={styles.progressText}>{currentProgress}/{maxProgress}</div>
           </div>
         )}
       </div>

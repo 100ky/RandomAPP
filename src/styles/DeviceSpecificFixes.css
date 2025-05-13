@@ -1,4 +1,14 @@
-/* DeviceSpecificFixes.css - Specifické úpravy pro různé typy zařízení */
+/* DeviceSpecificFixes.css - Specifické úpravy pro různé typy zařízení 
+ *
+ * Tento soubor obsahuje specifické úpravy pro různé typy zařízení a orientace:
+ * 
+ * 1. Úpravy pro Samsung zařízení v landscape režimu
+ * 2. Optimalizace pro zařízení s výřezem v obrazovce (notch)
+ * 3. Optimalizace výkonu pro starší Android zařízení
+ * 4. Optimalizace pro zařízení s malou výškou obrazovky (landscape)
+ * 5. Speciální úpravy pro iPhone SE a jiná velmi malá zařízení
+ * 6. Redukce efektů a animací pro zlepšení výkonu na slabších zařízeních
+ */
 
 /* Samsung zařízení - specifické úpravy pro landscape režim */
 .android-device.samsung-device.landscape-orientation .fullScreen {
@@ -6,6 +16,35 @@
   height: 100% !important;
   height: -webkit-fill-available !important;
   height: fill-available !important;
+}
+
+/* Specifické úpravy pro Samsung Galaxy */
+.android-device.samsung-device.landscape-orientation .game-controls {
+  bottom: 8px !important;
+  transform-origin: bottom right !important;
+}
+
+.android-device.samsung-device.landscape-orientation .menuButton,
+.android-device.samsung-device.landscape-orientation .soundToggle {
+  width: 42px !important;
+  height: 42px !important;
+}
+
+/* Zvláštní úprava pro telefony s výměnným poměrem 20:9 (např. Samsung Galaxy S20) */
+@media (orientation: landscape) and (min-aspect-ratio: 20/9) {
+  .game-controls {
+    right: 15px !important; 
+  }
+  
+  .soundControls {
+    top: 10px !important;
+    right: 10px !important;
+  }
+  
+  .gameMenuContainer {
+    top: 10px !important;
+    left: 10px !important;
+  }
 }
 
 /* Opravy pro zařízení s výřezem v obrazovce (notch) */
@@ -39,4 +78,95 @@
 
 .low-performance-device .fullScreen::before {
   display: none !important;
+}
+
+/* Optimalizace pro iPhony (řešení "notch" výřezu) */
+@supports (-webkit-touch-callout: none) {
+  .landscape-orientation .gameMenuContainer {
+    left: max(10px, env(safe-area-inset-left)) !important;
+    top: max(10px, env(safe-area-inset-top)) !important;
+  }
+  
+  .landscape-orientation .soundControls {
+    right: max(10px, env(safe-area-inset-right)) !important; 
+    top: max(10px, env(safe-area-inset-top)) !important;
+  }
+  
+  /* Menu tlačítka pro iPhone v landscape režimu */
+  .landscape-orientation .menu {
+    max-height: 75vh !important; /* Omezení velikosti pro iPhony */
+    overflow-y: auto !important;
+  }
+}
+
+/* Řešení focusu pro dotykové obrazovky */
+@media (hover: none) and (pointer: coarse) {
+  .game-button:focus {
+    outline: none !important;
+  }
+  
+  /* Redukce efektů pro dotykové ovládání */
+  .touch-device .button-glow {
+    opacity: 0.5;
+  }
+}
+
+/* Optimalizace pro nízkou výšku obrazovky */
+@media (orientation: landscape) and (max-height: 380px) {
+  .landscape-orientation .menu {
+    max-height: 75vh !important;
+  }
+  
+  .landscape-orientation .actionButton {
+    padding: 5px 8px !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .landscape-orientation .menuButton,
+  .landscape-orientation .soundToggle {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  
+  .landscape-orientation .menuButton svg,
+  .landscape-orientation .soundToggle svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
+
+/* Speciální úpravy pro iPhone SE a podobně velmi malá zařízení */
+@media (orientation: landscape) and (max-height: 350px) {
+  /* Extrémně redukované velikosti ovládacích prvků */
+  .landscape-orientation .menuButton,
+  .landscape-orientation .soundToggle {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  
+  .landscape-orientation .menuButton svg,
+  .landscape-orientation .soundToggle svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+  
+  /* Přesunutí herních ovládacích prvků na stranu */
+  .landscape-orientation .game-controls {
+    transform: scale(0.6) !important;
+    right: 0 !important;
+    bottom: 0 !important;
+  }
+  
+  /* Zmenšení menu */
+  .landscape-orientation .menu {
+    width: 200px !important;
+    max-height: 70vh !important;
+  }
+  
+  /* Odstranění některých dekorativních prvků pro lepší výkon */
+  .landscape-orientation .button-glow,
+  .landscape-orientation .pulse-animation::before,
+  .landscape-orientation .soundToggle::after {
+    display: none !important;
+  }
 }

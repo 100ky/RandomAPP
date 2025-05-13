@@ -1,0 +1,176 @@
+/* 
+ * ScreenSizeSimulator.css
+ * Tento soubor obsahuje utility třídy pro simulaci různých velikostí obrazovky
+ * Připojte tento soubor pouze během vývoje a testování
+ */
+
+/* Simulace velikosti obrazovky podobné iPhone SE v landscape režimu */
+.simulate-iphone-se {
+  width: 568px !important;
+  height: 320px !important;
+  overflow: auto;
+  border: 3px solid #ff6347;
+  position: relative;
+}
+
+.simulate-iphone-se::before {
+  content: "iPhone SE (568x320)";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  background: #ff6347;
+  color: white;
+  padding: 2px 6px;
+  font-size: 10px;
+  z-index: 9999;
+}
+
+/* Simulace velikosti obrazovky Samsung Galaxy S10 v landscape režimu */
+.simulate-galaxy-s10 {
+  width: 760px !important;
+  height: 360px !important;
+  overflow: auto;
+  border: 3px solid #4682b4;
+  position: relative;
+}
+
+.simulate-galaxy-s10::before {
+  content: "Galaxy S10 (760x360)";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  background: #4682b4;
+  color: white;
+  padding: 2px 6px;
+  font-size: 10px;
+  z-index: 9999;
+}
+
+/* Simulace velikosti obrazovky malého Android telefonu v landscape režimu */
+.simulate-small-android {
+  width: 640px !important;
+  height: 320px !important;
+  overflow: auto;
+  border: 3px solid #32cd32;
+  position: relative;
+}
+
+.simulate-small-android::before {
+  content: "Small Android (640x320)";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  background: #32cd32;
+  color: white;
+  padding: 2px 6px;
+  font-size: 10px;
+  z-index: 9999;
+}
+
+/* Simulace velikosti obrazovky extrémně malého telefonu v landscape režimu */
+.simulate-tiny-device {
+  width: 480px !important;
+  height: 280px !important;
+  overflow: auto;
+  border: 3px solid #9932cc;
+  position: relative;
+}
+
+.simulate-tiny-device::before {
+  content: "Tiny Device (480x280)";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  background: #9932cc;
+  color: white;
+  padding: 2px 6px;
+  font-size: 10px;
+  z-index: 9999;
+}
+
+/* Simulace velikosti obrazovky pro poměr stran 20:9 (jako Samsung S20) */
+.simulate-ratio-20-9 {
+  width: 800px !important;
+  height: 360px !important;
+  overflow: auto;
+  border: 3px solid #ff8c00;
+  position: relative;
+}
+
+.simulate-ratio-20-9::before {
+  content: "Ratio 20:9 (800x360)";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  background: #ff8c00;
+  color: white;
+  padding: 2px 6px;
+  font-size: 10px;
+  z-index: 9999;
+}
+
+/* Ovládací panel pro přepínání simulací */
+.simulator-controls {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 10000;
+  font-family: sans-serif;
+}
+
+.simulator-controls h3 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+}
+
+.simulator-controls button {
+  display: block;
+  margin: 5px 0;
+  padding: 5px 10px;
+  width: 100%;
+  background: #333;
+  color: white;
+  border: 1px solid #666;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.simulator-controls button:hover {
+  background: #555;
+}
+
+/* Poznámka: Aby simulátor fungoval správně, přidejte následující JavaScript k testovací stránce:
+
+document.addEventListener('DOMContentLoaded', () => {
+  const controls = document.createElement('div');
+  controls.className = 'simulator-controls';
+  controls.innerHTML = `
+    <h3>Simulátor velikosti obrazovky</h3>
+    <button data-class="simulate-iphone-se">iPhone SE</button>
+    <button data-class="simulate-galaxy-s10">Galaxy S10</button>
+    <button data-class="simulate-small-android">Malý Android</button>
+    <button data-class="simulate-tiny-device">Velmi malé zařízení</button>
+    <button data-class="simulate-ratio-20-9">Poměr 20:9</button>
+    <button data-class="">Vypnout simulaci</button>
+  `;
+  document.body.appendChild(controls);
+  
+  const container = document.querySelector('.fullScreen') || document.body;
+  
+  controls.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      container.className = container.className.split(' ')
+        .filter(c => !c.startsWith('simulate-')).join(' ');
+      if (btn.dataset.class) {
+        container.classList.add(btn.dataset.class);
+      }
+    });
+  });
+});
+
+*/

@@ -6,9 +6,17 @@
   font-family: var(--font-body);
 }
 
+/* Úpravy pro landscape mód */
+@media (orientation: landscape) {
+  .gameMenuContainer {
+    top: 8px;
+    left: 8px;
+  }
+}
+
 .menuButton {
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   background-color: var(--primary-color);
   border-radius: 50%;
   color: var(--white);
@@ -21,14 +29,26 @@
   transition: all 0.3s ease;
 }
 
+@media (orientation: landscape) {
+  .menuButton {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .menuButton svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
 .menuButton:hover {
   background-color: var(--primary-dark);
   transform: scale(1.05);
 }
 
 .menuButton svg {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   transition: transform 0.5s ease;
 }
 
@@ -38,16 +58,41 @@
 
 .menu {
   position: absolute;
-  top: 60px;
+  top: 56px;
   left: 0;
   background-color: var(--white);
   border-radius: 8px;
   box-shadow: var(--shadow-strong);
-  width: 280px;
+  width: 260px;
   overflow: hidden;
   transform-origin: top left;
   animation: menuAppear 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border: 2px solid var(--accent-color);
+}
+
+@media (orientation: landscape) {
+  .menu {
+    top: 48px;
+    width: 240px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 450px) {
+  .menu {
+    top: 46px;
+    width: 220px;
+    max-height: 75vh;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 380px) {
+  .menu {
+    top: 42px;
+    width: 210px;
+    max-height: 70vh;
+  }
 }
 
 /* Pergamenový vzhled pro menu */
@@ -79,8 +124,56 @@
   text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
+@media (orientation: landscape) {
+  .menuHeader {
+    padding: 10px;
+  }
+  
+  .menuTitle {
+    font-size: 1rem;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 450px) {
+  .menuHeader {
+    padding: 8px;
+  }
+  
+  .menuTitle {
+    font-size: 0.95rem;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 380px) {
+  .menuHeader {
+    padding: 6px;
+  }
+  
+  .menuTitle {
+    font-size: 0.9rem;
+  }
+}
+
 .menuContent {
   padding: 15px;
+}
+
+@media (orientation: landscape) {
+  .menuContent {
+    padding: 10px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 450px) {
+  .menuContent {
+    padding: 8px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 380px) {
+  .menuContent {
+    padding: 6px;
+  }
 }
 
 .userStats {
@@ -94,11 +187,52 @@
 
 .statItem {
   flex: 1;
-  min-width: 110px;
-  padding: 8px;
+  min-width: 100px;
+  padding: 6px;
   background-color: rgba(139, 69, 19, 0.05);
   border-radius: 5px;
   text-align: center;
+}
+
+@media (orientation: landscape) {
+  .userStats {
+    gap: 6px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+  }
+  
+  .statItem {
+    min-width: 80px;
+    padding: 4px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 450px) {
+  .userStats {
+    gap: 5px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+  
+  .statItem {
+    min-width: 75px;
+    padding: 3px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 380px) {
+  .userStats {
+    gap: 4px;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    flex-wrap: wrap; /* Na extrémně malých displejích umožní přetečení */
+  }
+  
+  .statItem {
+    min-width: 70px;
+    padding: 2px;
+    font-size: 0.75rem;
+  }
 }
 
 .statLabel {
@@ -110,10 +244,49 @@
   font-family: var(--font-adventure);
 }
 
+@media (orientation: landscape) {
+  .statLabel {
+    font-size: 0.75rem;
+    margin-bottom: 2px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 450px) {
+  .statLabel {
+    font-size: 0.7rem;
+    margin-bottom: 1px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 380px) {
+  .statLabel {
+    font-size: 0.65rem;
+    margin-bottom: 0;
+  }
+}
+
 .statValue {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--black);
   font-weight: 600;
+}
+
+@media (orientation: landscape) {
+  .statValue {
+    font-size: 0.95rem;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 450px) {
+  .statValue {
+    font-size: 0.9rem;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 380px) {
+  .statValue {
+    font-size: 0.85rem;
+  }
 }
 
 .menuActions {
@@ -127,16 +300,50 @@
   color: var(--white);
   border: none;
   border-radius: 4px;
-  padding: 10px 15px;
+  padding: 8px 12px;
   cursor: pointer;
   font-family: var(--font-adventure);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
+}
+
+@media (orientation: landscape) {
+  .actionButton {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    gap: 6px;
+  }
+  
+  .actionButton svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 450px) {
+  .actionButton {
+    padding: 5px 8px;
+    font-size: 0.78rem;
+    gap: 5px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 380px) {
+  .actionButton {
+    padding: 4px 7px;
+    font-size: 0.75rem;
+    gap: 4px;
+  }
+  
+  .actionButton svg {
+    width: 13px;
+    height: 13px;
+  }
 }
 
 .actionButton::after {
@@ -165,8 +372,26 @@
 }
 
 .actionButton svg {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
+}
+
+/* Optimalizace pro landscape orientaci */
+@media (orientation: landscape) {
+  .actionButton::after {
+    transition: all 0.4s ease; /* Rychlejší animace na mobilních zařízeních */
+  }
+}
+
+@media (orientation: landscape) and (max-height: 400px) {
+  /* Odstranění některých animací pro zlepšení výkonu */
+  .actionButton::after {
+    display: none;
+  }
+  
+  .actionButton:hover {
+    transform: translateY(-1px); /* Méně výrazná animace */
+  }
 }
 
 .pauseButton {

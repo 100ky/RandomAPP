@@ -99,12 +99,11 @@ const BadgeCollection: React.FC = () => {
           </label>
         </div>
       </div>
-      
-      <div className={styles.badgeStats}>
+        <div className={styles.badgeStats}>
         <div className={styles.statItem}>
           <span className={styles.statLabel}>Získáno:</span>
           <span className={styles.statValue}>
-            {Object.keys(playerProgress.badges).length} z {badges.length}
+            {playerProgress.badges ? Object.keys(playerProgress.badges).length : 0} z {badges.length}
           </span>
         </div>
       </div>
@@ -120,11 +119,12 @@ const BadgeCollection: React.FC = () => {
             </h2>
             <div className={styles.badgeGrid}>
               {categoryBadges.map(badge => (
-                <div key={badge.id} className={styles.badgeWrapper}>
-                  <Badge 
-                    badge={badge} 
-                    isUnlocked={hasBadge(badge.id)} 
-                    showInfo={true}
+                <div key={badge.id} className={styles.badgeWrapper}>                  <Badge 
+                    badgeId={badge.id}
+                    showProgress={true}
+                    onClick={(badge) => {
+                      // Tady můžete přidat akci, která se má provést po kliknutí
+                    }}
                   />
                 </div>
               ))}

@@ -1097,13 +1097,24 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                 </div>
             )}
 
-            {/* Tlačítko pro přiblížení na Vysoké Mýto, viditelné jen když není aktivní geolokace */}
-            {(!latitude || !longitude || geolocationError) && 
+            {/* Tlačítko pro přiblížení na Vysoké Mýto, viditelné jen když není aktivní geolokace */}            {(!latitude || !longitude || geolocationError) && 
                 <button 
                     className={styles.vysokemytoButton}
                     onClick={centerOnVysokeMýto}
-                    title="Přiblížit na Vysoké Mýto"
-                >                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                    title="Přiblížit na Vysoké Mýto"                    
+                    style={{
+                        position: 'fixed',
+                        right: '10px',
+                        left: 'auto',
+                        top: '126px', // Pod tlačítkem zvuku
+                        width: '48px',
+                        height: '48px',
+                        zIndex: 50,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}
+                ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" style={{display: 'block', margin: 'auto'}}>
                         <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
                     </svg>
                 </button>
