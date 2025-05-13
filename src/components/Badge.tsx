@@ -15,8 +15,9 @@ interface BadgeProps {
  * Komponenta pro zobrazení jednotlivého odznaku
  */
 const Badge: FC<BadgeProps> = ({ badgeId, size = 'medium', showProgress = false, onClick }) => {
-  const hasBadge = useGameStore(state => state.hasBadge(badgeId));
-  const getBadgeProgress = useGameStore(state => state.getBadgeProgress(badgeId));
+  const gameStore = useGameStore();
+  const hasBadge = gameStore.hasBadge(badgeId);
+  const badgeProgress = gameStore.getBadgeProgress(badgeId);
   
   // Získáme data odznaku
   const badge = getBadgeById(badgeId);
@@ -40,9 +41,8 @@ const Badge: FC<BadgeProps> = ({ badgeId, size = 'medium', showProgress = false,
   }
   
   // Výpočet progresu u odznaků s postupným získáváním
-  const progress = getBadgeProgress(badgeId);
   const maxProgress = badge.maxProgress || 1;
-  const progressPercent = Math.min(100, Math.round((progress / maxProgress) * 100));
+  const progressPercent = Math.min(100, Math.round((badgeProgress / maxProgress) * 100));
   
   return (
     <div 

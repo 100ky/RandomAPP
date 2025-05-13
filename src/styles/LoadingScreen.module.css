@@ -26,17 +26,38 @@
   margin-top: -5px;
 }
 
+.locationInfo {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  max-width: 85%;
+  margin: 5px 0 10px 0;
+  font-weight: 500;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
 /* Media queries pro orientaci na šířku */
 @media (orientation: landscape) {
   .loadingContent {
     flex-direction: column;
     margin-left: 20px;
+    width: 100%;
+    max-width: 50vw;
   }
   
   .quote {
     font-size: 14px;
     min-height: 40px;
+    max-width: 100%;
   }
+}
+
+/* Speciální třída pro Samsung zařízení v landscape módu */
+.samsungLandscape {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding: 10px 15px !important;
+  height: 100vh !important;
 }
 
 /* Pro velmi malé displeje */

@@ -1,0 +1,128 @@
+/* QR Scanner styly */
+.scannerContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 1500;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: white;
+}
+
+.scannerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.scannerHeader h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.reader {
+  width: 100%;
+  height: 300px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.reader video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scannerFooter {
+  padding: 15px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.scanBorder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 250px;
+  height: 250px;
+  border: 2px solid #4CAF50;
+  border-radius: 10px;
+  box-shadow: 0 0 0 5000px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.scanBorder::before,
+.scanBorder::after {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border: 2px solid #4CAF50;
+}
+
+.scanBorder::before {
+  top: -2px;
+  left: -2px;
+  border-bottom: none;
+  border-right: none;
+}
+
+.scanBorder::after {
+  bottom: -2px;
+  right: -2px;
+  border-top: none;
+  border-left: none;
+}
+
+/* Animace skenování */
+.scanLine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: rgba(76, 175, 80, 0.7);
+  animation: scan 2s ease-in-out infinite;
+}
+
+@keyframes scan {
+  0% {
+    top: 0;
+  }
+  50% {
+    top: 100%;
+  }
+  100% {
+    top: 0;
+  }
+}
+
+@media (orientation: landscape) {
+  .reader {
+    height: 60vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .scannerHeader h3 {
+    font-size: 16px;
+  }
+}

@@ -1,8 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { avatars } from './AppMenu';
-import styles from '../styles/StartMenu.module.css';
-
-interface StartMenuProps {
+import styles from '../styles/StartMenu.module.cs  // Vrácení tematické zprávy podle vybraného avatara
+  const getThemeMessage = () => {
+    switch(selectedAvatarId) {
+      case 'Bivoj':
+        return "Síla a odvaha! Objevte tajemství královského města Vysoké Mýto!";
+      case 'princezna':
+        return "Vaše Výsosti, historické památky Vysokého Mýta čekají na Vaši pozornost!";
+      case 'ninja':
+        return "Tiše a bystře prozkoumejte každý kout královského města Vysoké Mýto.";
+      case 'detective':
+        return "Odhalte skrytá tajemství historických památek Vysokého Mýta!";
+      case 'explorer':
+        return "Prozkoumejte královské město Vysoké Mýto a jeho dávnou historii!";
+      default:
+        return "Vyberte si avatara pro zahájení průzkumu Vysokého Mýta!";
+    }
+  };artMenuProps {
   onStartGame: (avatarId: string, playerName: string) => void;
 }
 
@@ -156,9 +170,15 @@ const StartMenu: React.FC<StartMenuProps> = ({ onStartGame }) => {
 
   return (
     <div className={styles.startMenu}>
-      <h1 className={styles.title}>Úniková hra Vysoké Mýto</h1>
+      <h1 className={styles.title}>Průzkumník Vysokého Mýta</h1>
       <div className={containerClassName}>
         <div className={styles.themeMessage}>{getThemeMessage()}</div>
+        
+        <div className={styles.missionDescription}>
+          <h3>Vaše mise</h3>
+          <p>Vydejte se na dobrodružnou cestu historickým královským městem Vysoké Mýto. Navštivte významné památky, řešte zajímavé hádanky a objevujte tajemství staletých staveb.</p>
+          <p>Při průzkumu vás čeká 9 unikátních lokací s úkoly inspirovanými skutečnými historickými fakty. Použijte svůj důvtip, znalosti a pozorovací schopnosti!</p>
+        </div>
         
         <div className={styles.playerInfoSection}>
           <div className={styles.playerNameInput}>
@@ -199,7 +219,7 @@ const StartMenu: React.FC<StartMenuProps> = ({ onStartGame }) => {
           className={styles.startGameButton}
           onClick={handleStartGame}
         >
-          Začít dobrodružství
+          Vydat se na průzkum
         </button>
       </div>
     </div>

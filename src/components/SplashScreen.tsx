@@ -7,28 +7,40 @@ interface SplashScreenProps {
   onFinish: () => void;
 }
 
-const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {  const [isExiting, setIsExiting] = useState(false);
+const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
+  const [isExiting, setIsExiting] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-  const { isLandscape, isAndroid, isSamsung, isLowPerformance } = useOrientation();
+  const [isClient, setIsClient] = useState(false);
+  const { isLandscape, isAndroid, isSamsung, isLowPerformance } = useEnhancedOrientation();
+  
+  // Používáme useEffect pro nastavení klientského renderování
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   
   // Přidáme přizpůsobení pro výšku/orientaci obrazovky jako optimalizovaný useCallback
   const getContentClasses = useCallback(() => {
     let classes = `${baseStyles.content} ${baseStyles.adventureCorner} ${isLoaded ? splashStyles.loaded : ''}`;
     
-    // Přidáváme třídy pro orientaci
-    classes += isLandscape ? ` ${baseStyles.landscapeContent}` : ` ${baseStyles.portraitContent}`;
-    
-    // Přidáváme třídy pro speciální typy zařízení
-    if (isSamsung && isLandscape) {
-      classes += ` ${splashStyles.samsungLandscape}`;
-    }
-    
-    if (isLowPerformance) {
-      classes += ` ${splashStyles.optimizedPerformance}`;
+    // Přidáváme třídy pro orientaci pouze na klientovi
+    // Na serveru vždy použijeme portrait, abychom předešli hydratačním chybám
+    if (!isClient) {
+      classes += ` ${baseStyles.portraitContent}`;
+    } else {
+      classes += isLandscape ? ` ${baseStyles.landscapeContent}` : ` ${baseStyles.portraitContent}`;
+      
+      // Přidáváme třídy pro speciální typy zařízení - pouze na klientovi
+      if (isSamsung && isLandscape) {
+        classes += ` ${splashStyles.samsungLandscape}`;
+      }
+      
+      if (isLowPerformance) {
+        classes += ` ${splashStyles.optimizedPerformance}`;
+      }
     }
     
     return classes;
-  }, [isLandscape, isLoaded, isSamsung, isLowPerformance, baseStyles.content, baseStyles.adventureCorner, 
+  }, [isClient, isLandscape, isLoaded, isSamsung, isLowPerformance, baseStyles.content, baseStyles.adventureCorner, 
       baseStyles.landscapeContent, baseStyles.portraitContent, splashStyles.loaded, 
       splashStyles.samsungLandscape, splashStyles.optimizedPerformance]);
 
@@ -49,9 +61,9 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {  const [is
   }, [onFinish]);
   return (
     <div className={`${baseStyles.fullScreen} ${baseStyles.fadeIn} ${isExiting ? baseStyles.fadeOut : ''} 
-      ${isAndroid ? baseStyles.androidOptimized : ''} 
-      ${isLowPerformance ? baseStyles.lowPerformanceMode : ''} 
-      ${isSamsung && isLandscape ? baseStyles.samsungLandscapeMode : ''}`}>
+      ${isClient && isAndroid ? baseStyles.androidOptimized : ''} 
+      ${isClient && isLowPerformance ? baseStyles.lowPerformanceMode : ''} 
+      ${isClient && isSamsung && isLandscape ? baseStyles.samsungLandscapeMode : ''}`}>
       <div className={getContentClasses()}>
         <div className={baseStyles.compass}>
           <div className={baseStyles.needle}></div>
@@ -59,11 +71,14 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {  const [is
         
         <div className={splashStyles.textContent}>
           <h1 className={baseStyles.title}>
-            Úniková hra
+            Průzkumník
           </h1>
           <h2 className={baseStyles.subtitle}>
-            Vysoké Mýto
+            Vysokého Mýta
           </h2>
+          <p className={splashStyles.description}>
+            Objevte tajemství královského města
+          </p>
         </div>
       </div>
     </div>

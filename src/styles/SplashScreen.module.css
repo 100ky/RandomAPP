@@ -15,13 +15,17 @@
 @media (orientation: landscape) {
   .textContent {
     margin-left: 20px;
+    width: 100%;
+    max-width: 50vw;
   }
 }
 
 /* Speciální třídy pro různé typy zařízení */
 .samsungLandscape {
   max-width: 100% !important;
+  width: 100% !important;
   padding: 10px 15px !important;
+  height: 100vh !important;
 }
 
 .optimizedPerformance {

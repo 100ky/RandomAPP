@@ -9,6 +9,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as maplibre from 'maplibre-gl';
 import useGeolocation from '../hooks/useGeolocation';
 import { pointsOfInterest } from '../data/cityBoundary';
+import { puzzleLocations, POILocation } from '../data/puzzleLocations';
 import { avatars } from './AppMenu';
 import { useGameStore } from '../store/gameStore';
 import { createOfflineMapCache } from '../utils/mapHelpers';
@@ -17,6 +18,7 @@ import styles from '../styles/Map.module.css';
 import GameMenu from './GameMenu';
 import GameControls from './GameControls';
 import PuzzleModal from './PuzzleModal';
+import ScannerButton from './ScannerButton';
 import { Puzzle } from '../types/game';
 import { SoundType, playSound } from '../utils/SoundManager';
 import { createUserMarker, useUserMarker } from '../utils/markerUtils';
@@ -43,6 +45,7 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
     const animationStartedRef = useRef<boolean>(false);             // Reference pro sledování, zda byla animace spuštěna
     const lastPositionRef = useRef<{lat: number, lng: number} | null>(null);  // Reference na poslední pozici uživatele
     const stepCounterTimeoutRef = useRef<NodeJS.Timeout | null>(null);        // Reference na timeout pro počítání kroků
+    const [showQRScanner, setShowQRScanner] = useState<boolean>(false); // Stav pro zobrazení QR skeneru
     
     // Připojení k Zustand storu pro správu herního stavu
     const { visitLocation, playerProgress, addSteps, addDistance, startGame, isGameActive, resetStats } = useGameStore();
@@ -174,6 +177,36 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
             onEndGame();
         }
     }, [onEndGame]);
+    
+    /**
+     * Zpracuje naskenovaný QR kód a otevře odpovídající hádanku
+     * @param qrCode Hodnota naskenovaného QR kódu
+     */
+    const handleQRCodeScan = useCallback((qrCode: string) => {
+        // Hledat lokaci podle QR kódu
+        const location = puzzleLocations.find(loc => loc.qrCode === qrCode);
+        
+        if (location) {
+            console.log(`QR kód naskenován: ${qrCode}, nalezena lokace: ${location.name}`);
+            
+            // Zobrazit oznámení o objevení lokace
+            showLocationDiscoveryNotification(location.name);
+            
+            // Přehrát zvuk objevení
+            playSound(SoundType.DISCOVER);
+            
+            // Zaznamenat návštěvu do stavu hry
+            visitLocation(location.id);
+            
+            // Otevřít příslušnou hádanku
+            setActivePuzzle(location.puzzle);
+        } else {
+            // Pokud QR kód neodpovídá žádné lokaci
+            console.log(`QR kód naskenován: ${qrCode}, ale nebyla nalezena odpovídající lokace`);
+            // Můžete zde přidat zprávu pro uživatele
+            alert('Tento QR kód není součástí hry. Zkuste naskenovat jiný.');
+        }
+    }, [visitLocation]);
       // Detekce orientace zařízení
     const [isLandscape, setIsLandscape] = useState<boolean>(false);
     const [deviceType, setDeviceType] = useState<string>('unknown');
@@ -1001,6 +1034,11 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                         <button onClick={handleDismissGeolocationError}>Zavřít</button>
                     </div>
                 </div>
+            )}
+
+            {/* Tlačítko pro skenování QR kódů - zobrazeno pouze když je hra aktivní */}
+            {isGameRunning && (
+                <ScannerButton onScan={handleQRCodeScan} />
             )}
 
             {/* Tlačítko pro přiblížení na Vysoké Mýto, viditelné jen když není aktivní geolokace */}

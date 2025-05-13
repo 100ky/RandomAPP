@@ -127,7 +127,9 @@
   flex-direction: row;
   justify-content: space-around;
   gap: 30px;
-  max-height: 80vh;
+  max-height: 100vh;
+  width: 100%;
+  padding: 0 20px;
 }
 
 /* Optimalizace pro Android */
@@ -159,6 +161,18 @@
 
 /* Media queries pro responzivitu */
 @media (orientation: landscape) {
+  .fullScreen {
+    height: 100vh;
+    height: -webkit-fill-available;
+    width: 100vw;
+    overflow: hidden;
+  }
+  
+  .content {
+    height: 100vh;
+    width: 100%;
+    max-width: 100%;
+  }
   .landscapeContent {
     padding: 15px;
     flex-direction: row !important;
