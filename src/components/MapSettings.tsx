@@ -6,8 +6,62 @@
  * a stažení offline verze mapy. Také zobrazuje statistiky hráče - kroky a vzdálenost.
  */
 import React, { useState, useRef, useEffect } from 'react';
-import { useGameStore } from '../store/gameStore';
 import styles from '../styles/MapSettings.module.css';
+import ToggleThemeButton from './ToggleThemeButton';
+
+// Interface pro props ikon
+interface IconProps {
+  size?: number;
+  className?: string;
+}
+
+// Komponenty ikon - náhrada za import z lucide-react
+const CogIcon: React.FC<IconProps> = ({ size = 24, className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"></path>
+    <path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"></path>
+    <path d="M12 2v2"></path>
+    <path d="M12 22v-2"></path>
+    <path d="m17 20.66-1-1.73"></path>
+    <path d="M11 10.27 7 3.34"></path>
+    <path d="m20.66 17-1.73-1"></path>
+    <path d="m3.34 7 1.73 1"></path>
+    <path d="M14 12h8"></path>
+    <path d="M2 12h2"></path>
+    <path d="m20.66 7-1.73 1"></path>
+    <path d="m3.34 17 1.73-1"></path>
+    <path d="m17 3.34-1 1.73"></path>
+    <path d="m7 20.66-1-1.73"></path>
+  </svg>
+);
+
+const MapPinIcon: React.FC<IconProps> = ({ size = 18, className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+    <circle cx="12" cy="10" r="3"></circle>
+  </svg>
+);
+
+const DownloadIcon: React.FC<IconProps> = ({ size = 18, className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+    <polyline points="7 10 12 15 17 10"></polyline>
+    <line x1="12" y1="15" x2="12" y2="3"></line>
+  </svg>
+);
+
+const PlayIcon: React.FC<IconProps> = ({ size = 18, className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+  </svg>
+);
+
+const PauseIcon: React.FC<IconProps> = ({ size = 18, className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <rect x="6" y="4" width="4" height="16"></rect>
+    <rect x="14" y="4" width="4" height="16"></rect>
+  </svg>
+);
 
 /**
  * Typ definující dostupné mapové vrstvy
@@ -33,6 +87,12 @@ interface MapSettingsProps {
   onEndGame?: () => void;                      // Funkce pro ukončení hry
   isGameRunning?: boolean;                     // Indikátor, zda je hra aktivní
   isPaused?: boolean;                          // Indikátor, zda je hra pozastavena
+  onCenterMap: () => void;                     // Funkce pro centrování mapy
+  onDownloadMap: () => void;                   // Funkce pro stažení mapy
+  isGamePaused: boolean;                       // Indikátor, zda je hra pozastavena
+  onTogglePauseGame: () => void;               // Funkce pro přepnutí pozastavení hry
+  currentZoom: number;                         // Aktuální zoom mapy
+  currentPosition: { lat: number; lng: number }; // Aktuální pozice na mapě
 }
 
 /**
@@ -64,14 +124,18 @@ const MapSettings: React.FC<MapSettingsProps> = ({
   onPauseGame,
   onEndGame,
   isGameRunning = false,
-  isPaused = false
+  isPaused = false,
+  onCenterMap,
+  onDownloadMap,
+  isGamePaused,
+  onTogglePauseGame,
+  currentZoom,
+  currentPosition,
 }) => {
   // Stav určující, zda je menu nastavení otevřené
   const [isOpen, setIsOpen] = useState<boolean>(false);
   // Reference na DOM element menu pro detekci kliknutí mimo menu
   const menuRef = useRef<HTMLDivElement>(null);
-  // Přístup k hernímu stavu a statistikám hráče
-  const playerProgress = useGameStore(state => state.playerProgress);
 
   // Zavření menu při kliknutí mimo něj
   useEffect(() => {
@@ -97,184 +161,50 @@ const MapSettings: React.FC<MapSettingsProps> = ({
     };
   }, [isOpen]);
 
-  /**
-   * Přepíná stav otevření/zavření menu nastavení
-   */
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
-
-  // Povolení prvků v menu podle podporovaných funkcí
-  const hasLayerSupport = !!onMapLayerChange;
-  const hasPoiSupport = !!togglePointsOfInterest;
-  const hasWeatherSupport = !!toggleWeather;
-  const hasOfflineSupport = !!downloadOfflineMap;  // Nastavení stylu pro tlačítka v landscape a portrait režimu
-  const buttonStyle: React.CSSProperties = {
-    position: 'fixed',
-    right: '10px',
-    left: 'auto',
-    top: '10px',
-    width: '56px', /* Zvětšeno na 56px */
-    height: '56px', /* Zvětšeno na 56px */
-    zIndex: 50,
-  };
-
   return (
-    <div className={styles.settingsContainer} style={buttonStyle}>
-      {/* Tlačítko pro otevření menu */}      <button 
-        className={styles.settingsButton} 
-        onClick={toggleMenu} 
-        aria-label="Nastavení mapy" 
-        style={{
-          width: '100%', 
-          height: '100%', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center'
-        }}
+    <div className={styles.mapSettingsContainer} ref={menuRef}>
+      <button
+        className={`${styles.settingsButton} ${isOpen ? styles.open : ''}`}
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label="Nastavení mapy"
+        aria-expanded={isOpen}
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="36" height="36" style={{display: 'block'}}> {/* Ikona zvětšena na 36px */}
-          <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
-          <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
-        </svg>
+        <CogIcon size={24} />
       </button>
-
-      {/* Menu s nastavením */}
       {isOpen && (
-        <div className={styles.menuContainer} ref={menuRef}>
+        <div className={styles.menu} role="menu">
           <ul className={styles.menuList}>
-            {/* Centrování mapy na uživatele */}
-            <li>
-              <button onClick={() => {
-                centerOnUser();
-                setIsOpen(false);
-              }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 3L14.5 21a.55.55 0 01-1 0L10 14l-6.5-3.5a.55.55 0 010-1L21 3" />
-                </svg>
+            <li className={styles.menuItem} role="none">
+              <button onClick={onCenterMap} className={styles.menuButton} role="menuitem">
+                <MapPinIcon size={18} className={styles.menuIcon} />
                 Centrovat na mé místo
               </button>
             </li>
-
-            {/* Podmenu pro výběr mapové vrstvy */}
-            {hasLayerSupport && (
-              <li className={styles.submenuContainer}>
-                <div className={styles.submenuTitle}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                  </svg>
-                  Mapová vrstva
-                </div>
-                <div className={styles.submenuItems}>
-                  <button 
-                    className={`${styles.layerButton} ${currentMapLayer === 'streets' ? styles.activeLayer : ''}`}
-                    onClick={() => onMapLayerChange && onMapLayerChange('streets')}
-                  >
-                    Ulice
-                  </button>
-                  <button 
-                    className={`${styles.layerButton} ${currentMapLayer === 'satellite' ? styles.activeLayer : ''}`}
-                    onClick={() => onMapLayerChange && onMapLayerChange('satellite')}
-                  >
-                    Satelitní
-                  </button>
-                  <button 
-                    className={`${styles.layerButton} ${currentMapLayer === 'terrain' ? styles.activeLayer : ''}`}
-                    onClick={() => onMapLayerChange && onMapLayerChange('terrain')}
-                  >
-                    Terénní
-                  </button>
-                  <button 
-                    className={`${styles.layerButton} ${currentMapLayer === 'dark' ? styles.activeLayer : ''}`}
-                    onClick={() => onMapLayerChange && onMapLayerChange('dark')}
-                  >
-                    Tmavý
-                  </button>
-                </div>
-              </li>
-            )}
-
-            {/* Přepínač bodů zájmu */}
-            {hasPoiSupport && (
-              <li>
-                <button onClick={() => togglePointsOfInterest && togglePointsOfInterest()}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  {showPointsOfInterest ? 'Skrýt body zájmu' : 'Zobrazit body zájmu'}
-                </button>
-              </li>
-            )}
-
-            {/* Přepínač počasí */}
-            {hasWeatherSupport && (
-              <li>
-                <button onClick={() => toggleWeather && toggleWeather()}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                  </svg>
-                  {weatherEnabled ? 'Vypnout počasí' : 'Zobrazit počasí'}
-                </button>
-              </li>
-            )}
-
-            {/* Stažení offline mapy */}
-            {hasOfflineSupport && (
-              <li>
-                <button 
-                  disabled={isOfflineMapDownloaded || isDownloadingOfflineMap}
-                  onClick={() => {
-                    downloadOfflineMap();
-                    // Necháme menu otevřené, aby uživatel viděl stav stahování
-                  }}
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                  {isOfflineMapDownloaded 
-                    ? 'Offline mapa stažena' 
-                    : isDownloadingOfflineMap 
-                      ? `Stahování (${downloadProgress}%)` 
-                      : 'Stáhnout mapu offline'}
-                </button>
-              </li>
-            )}
-
-            {/* Pozastavení/pokračování hry - zobrazeno pouze když je hra aktivní */}
-            {isGameRunning && (
-              <li>
-                <button onClick={() => {
-                  if (onPauseGame && !isPaused) {
-                    onPauseGame();
-                    setIsOpen(false);
-                  }
-                }}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-                  </svg>
-                  Pozastavit hru
-                </button>
-              </li>
-            )}
-            
-            {/* Ukončení hry - zobrazeno pouze když je hra aktivní */}
-            {isGameRunning && (
-              <li>
-                <button onClick={() => {
-                  if (window.confirm('Opravdu chcete ukončit hru?') && onEndGame) {
-                    onEndGame();
-                    setIsOpen(false);
-                  }
-                }}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M6 6h12v12H6z"/>
-                  </svg>
-                  Ukončit hru
-                </button>
-              </li>
-            )}
+            <li className={styles.menuItem} role="none">
+              <button onClick={onDownloadMap} className={styles.menuButton} role="menuitem">
+                <DownloadIcon size={18} className={styles.menuIcon} />
+                Stáhnout mapu offline
+              </button>
+            </li>
+            <li className={styles.menuItem} role="none">
+              <button onClick={onTogglePauseGame} className={styles.menuButton} role="menuitem">
+                {isGamePaused ? (
+                  <PlayIcon size={18} className={styles.menuIcon} />
+                ) : (
+                  <PauseIcon size={18} className={styles.menuIcon} />
+                )}
+                {isGamePaused ? 'Pokračovat ve hře' : 'Pozastavit hru'}
+              </button>
+            </li>
+            {/* Přidání tlačítka pro přepínání motivu */}
+            <li className={`${styles.menuItem} ${styles.themeToggleMenuItem}`} role="none">
+              <ToggleThemeButton className={styles.menuButton} />
+            </li>
           </ul>
+          <div className={styles.menuFooter}>
+            <p>Zoom: {currentZoom.toFixed(2)}</p>
+            <p>Pozice: {currentPosition.lat.toFixed(4)}, {currentPosition.lng.toFixed(4)}</p>
+          </div>
         </div>
       )}
     </div>

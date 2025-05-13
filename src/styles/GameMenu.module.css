@@ -552,21 +552,84 @@
   align-items: center;
   justify-content: space-between;
   padding: 5px 15px !important;
+  transition: background-color 0.3s ease;
 }
 
-.themeLabel {
-  display: flex;
-  align-items: center;
-  font-family: var(--font-adventure);
+.themeToggleContainer:hover {
+  background-color: var(--primary-light);
 }
 
 .menuThemeToggle {
   margin-left: auto;
 }
 
-/* Responzivní design */
+/* Styly pro tlačítko přepínání tmavého režimu v menu */
+:global(.menu-theme-toggle-button) {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  color: currentColor;
+  font-family: var(--font-adventure);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+:global(.menu-theme-toggle-button svg) {
+  min-width: 20px;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+:global(.menu-theme-toggle-button:hover svg) {
+  transform: rotate(12deg);
+}
+
+/* Styly pro nové tlačítko přepínání tmavého režimu v menu */
+:global(.theme-toggle-menu-item) {
+  padding: 0 !important;
+  transition: background-color 0.3s ease;
+}
+
+:global(.theme-toggle-menu-item:hover) {
+  background-color: var(--primary-light);
+}
+
+:global(.menu-theme-toggle-button) {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  border: none;
+  background: none;
+  color: currentColor;
+  font-family: var(--font-adventure);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  font-size: inherit;
+}
+
+:global(.menu-theme-toggle-button svg) {
+  min-width: 20px;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+:global(.menu-theme-toggle-button:hover svg) {
+  transform: rotate(12deg);
+}
+
+/* Responsivní styly pro menší obrazovky a tmavý režim */
 @media (max-width: 480px) {
-  .themeToggleContainer {
-    padding: 8px 10px !important;
+  :global(.menu-theme-toggle-button) {
+    padding: 10px 12px;
+    font-size: 14px;
   }
 }

@@ -11,8 +11,23 @@
   height: 100%;
   position: relative;
   z-index: 5;
-  /* Optimalizace pro dotykové ovládání */
+  /* Optimalizace pro dotykové a myší ovládání */
   touch-action: pan-x pan-y;
+  cursor: grab; /* Základní kurzor pro mapu - symbolizuje možnost tažení */
+}
+
+/* Kurzor při aktivním tažení mapy */
+.mapContainer:active {
+  cursor: grabbing;
+}
+
+/* Stylování interaktivních prvků na mapě */
+.mapContainer :global(.maplibregl-map) {
+  outline: none; /* Odstraní aktivní rámeček pro lepší vzhled */
+}
+
+.mapContainer :global(.maplibregl-canvas) {
+  outline: none;
 }
 
 /* Přidání textury mapy pro dobrodružný vzhled */

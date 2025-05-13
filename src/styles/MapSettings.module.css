@@ -38,78 +38,46 @@
   color: var(--primary-dark, #6B3100);
 }
 
+.mapSettingsContainer {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1001; /* Zvýšený z-index, aby byl nad ostatními prvky mapy */
+}
+
 .settingsButton {
-  background-color: var(--primary-color, #8B4513);
-  color: var(--white, #FFFcF5);
-  border: none;
+  background-color: var(--map-background-color, #fff);
+  color: var(--map-text-color, #333);
+  border: 1px solid var(--map-border-color, #ccc);
   border-radius: 50%;
-  width: 48px; /* Upraveno na 48px */
-  height: 48px; /* Upraveno na 48px */
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: var(--shadow-medium, 0 4px 8px rgba(139, 69, 19, 0.3));
-  transition: all 0.3s ease;
-  border: 2px solid var(--accent-color, #FFD700);
-  position: relative;
-  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.settingsButton:hover {
-  transform: scale(1.1);
-  box-shadow: var(--shadow-strong, 0 6px 12px rgba(139, 69, 19, 0.4));
-  background-color: var(--primary-dark, #6B3100);
+.settingsButton:hover,
+.settingsButton.open {
+  background-color: var(--map-hover-background-color, #f0f0f0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.settingsButton::after {
-  content: '';
+.menu {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 5px;
-  height: 5px;
-  background: var(--accent-light, #FFF8DC);
-  opacity: 0;
-  border-radius: 100%;
-  transform: scale(1, 1) translate(-50%);
-  transform-origin: 50% 50%;
-}
-
-.settingsButton:active::after {
-  animation: ripple 0.6s ease-out;
-}
-
-@keyframes ripple {
-  0% {
-    transform: scale(0, 0);
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(20, 20);
-    opacity: 0;
-  }
-}
-
-.settingsButton svg {
-  width: 32px; /* Upraveno na 32px */
-  height: 32px; /* Upraveno na 32px */
-}
-
-.menuContainer {
-  position: absolute;
-  top: 50px;
+  top: 50px; /* Odsazení od tlačítka ozubeného kola */
   right: 0;
-  background-color: var(--background-color, #FFF8E1);
-  border-radius: 12px;
-  box-shadow: var(--shadow-strong, 0 6px 12px rgba(139, 69, 19, 0.4));
-  min-width: 220px;
-  z-index: 20;
-  max-height: calc(100vh - 100px);
-  overflow-y: auto;
-  border: 2px solid var(--accent-color, #FFD700);
-  animation: menuAppear 0.3s ease;
-  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%238B4513' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+  background-color: var(--map-background-color, #fff);
+  color: var(--map-text-color, #333);
+  border: 1px solid var(--map-border-color, #ccc);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  width: 280px; /* Širší menu pro lepší přehlednost */
+  overflow: hidden; /* Zajistí, že vnitřní prvky nepřesáhnou border-radius */
 }
 
 .menuList {
@@ -118,124 +86,57 @@
   margin: 0;
 }
 
-.menuList li {
-  border-bottom: 1px solid var(--medium-gray, #D2B48C);
-  position: relative;
+.menuItem {
+  border-bottom: 1px solid var(--map-divider-color, #eee);
 }
 
-.menuList li:last-child {
+.menuItem:last-child {
   border-bottom: none;
 }
 
-.menuList button {
+.menuButton {
+  background-color: transparent;
+  color: var(--map-text-color, #333);
+  border: none;
   padding: 12px 15px;
   width: 100%;
   text-align: left;
-  background: none;
-  border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  font-family: var(--font-adventure, 'Cinzel', 'Georgia', serif);
-  color: var(--primary-dark, #6B3100);
-  letter-spacing: 0.5px;
-  position: relative;
-  overflow: hidden;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
 }
 
-.menuList button:hover {
-  background-color: var(--light-gray, #F5F5DC);
-  transform: translateX(2px);
+.menuButton:hover {
+  background-color: var(--map-hover-background-color, #f0f0f0);
 }
 
-.menuList button:active {
-  background-color: var(--medium-gray, #D2B48C);
+.menuIcon {
+  margin-right: 12px;
+  color: var(--map-icon-color, #555);
 }
 
-.menuList button::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: var(--accent-color, #FFD700);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s ease;
+/* Styly pro položku přepínače motivu */
+.themeToggleMenuItem {
+  /* Můžete přidat specifické styly, pokud je potřeba, např. odsazení */
+  padding: 5px 0; /* Menší vertikální padding pro toto tlačítko */
 }
 
-.menuList button:hover::after {
-  transform: scaleX(1);
+.themeToggleMenuItem .menuButton {
+  justify-content: space-between; /* Rozmístí ikonu a text */
 }
 
-.menuList button:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
+.menuFooter {
+  padding: 10px 15px;
+  background-color: var(--map-footer-background-color, #f9f9f9);
+  border-top: 1px solid var(--map-divider-color, #eee);
+  font-size: 0.85rem;
+  color: var(--map-footer-text-color, #666);
 }
 
-.menuList button svg {
-  margin-right: 10px;
-  color: var(--accent-color, #FFD700);
-  filter: drop-shadow(0 1px 1px rgba(139, 69, 19, 0.3));
-  transition: transform 0.3s ease;
-}
-
-.menuList button:hover svg {
-  transform: scale(1.1) rotate(5deg);
-}
-
-/* Styly pro submenu */
-.submenuContainer {
-  border-bottom: 1px solid var(--light-gray, #eee);
-  padding: 0;
-}
-
-.submenuTitle {
-  padding: 12px 15px;
-  font-size: 14px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  background-color: var(--accent-light, #FFF8DC);
-  font-family: var(--font-adventure, 'Cinzel', 'Georgia', serif);
-  color: var(--primary-dark, #6B3100);
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid var(--accent-dark, #DAA520);
-}
-
-.submenuTitle svg {
-  margin-right: 10px;
-  color: var(--accent-color, #FFD700);
-  filter: drop-shadow(0 1px 1px rgba(139, 69, 19, 0.3));
-}
-
-.submenuItems {
-  padding: 8px 15px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.layerButton {
-  padding: 8px !important;
-  font-size: 13px !important;
-  text-align: center !important;
-  border: 1px solid var(--medium-gray, #D2B48C) !important;
-  border-radius: 6px;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-light, 0 2px 6px rgba(139, 69, 19, 0.2));
-  background-color: var(--white, #FFFcF5) !important;
-}
-
-.activeLayer {
-  background-color: var(--primary-color, #8B4513) !important;
-  color: var(--white, #FFFcF5) !important;
-  border: 1px solid var(--accent-color, #FFD700) !important;
-  box-shadow: var(--shadow-medium, 0 4px 8px rgba(139, 69, 19, 0.3)) !important;
-  transform: scale(1.05);
+.menuFooter p {
+  margin: 5px 0;
 }
 
 /* Animace pro progress bar a menu */
@@ -269,11 +170,11 @@
     width: 150px;
   }
   
-  .menuContainer {
+  .menu {
     max-width: 250px;
   }
   
-  .menuList li button {
+  .menuButton {
     font-size: 13px;
   }
 }
@@ -287,21 +188,16 @@
   }
   
   .settingsButton {
-    width: 48px; /* Upraveno na 48px */
-    height: 48px; /* Upraveno na 48px */
+    width: 40px;
+    height: 40px;
   }
   
-  .settingsButton svg {
-    width: 32px; /* Upraveno na 32px */
-    height: 32px; /* Upraveno na 32px */
-  }
-  
-  .menuContainer {
+  .menu {
     max-width: 200px;
     right: 5px;
   }
   
-  .menuList li button {
+  .menuButton {
     padding: 8px 12px;
     font-size: 12px;
   }
@@ -349,7 +245,7 @@
     transform-origin: top right;
   }
   
-  .menuContainer {
+  .menu {
     max-height: 80vh;
     overflow-y: auto;
   }

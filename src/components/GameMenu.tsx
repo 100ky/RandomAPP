@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useGameStore } from '../store/gameStore';
 import styles from '../styles/GameMenu.module.css';
-import ThemeToggle from './ThemeToggle';
+import ToggleThemeButton from './ToggleThemeButton';
 
 interface GameMenuProps {
   onPauseGame: () => void;
@@ -158,20 +158,15 @@ const GameMenu: React.FC<GameMenuProps> = ({
                     'Offline mapy staženy' : 
                     'Stáhnout offline mapy'}
                 </button>
-              </li>
-              <li>
+              </li>              <li>
                 <button onClick={handleEndGame}>
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                     <path d="M6 6h12v12H6z"/>
                   </svg>
                   Ukončit hru
                 </button>
-              </li>
-              <li className={styles.themeToggleContainer}>
-                <div className={styles.themeLabel}>
-                  <span>Barevný režim</span>
-                </div>
-                <ThemeToggle className={styles.menuThemeToggle} />
+              </li>              <li className="menu-item theme-toggle-menu-item">
+                <ToggleThemeButton />
               </li>
             </ul>
           </div>

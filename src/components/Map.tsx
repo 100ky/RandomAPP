@@ -809,13 +809,13 @@ const Map: React.FC<MapProps> = ({
                         }
                     ]
                 },
-                center: initialCenter as [number, number],
-                zoom: initialZoom,
+                center: initialCenter as [number, number],                zoom: initialZoom,
                 transformRequest,
-                // Přidání nastavení pro lepší dotykové ovládání
+                // Přidání nastavení pro lepší ovládání
                 dragRotate: false, // Vypnutí rotace mapy tahem
                 touchPitch: false, // Vypnutí změny sklonu mapy dotekem
-                cooperativeGestures: true, // Zapnutí kooperativních gest pro lepší scrollování stránky
+                cooperativeGestures: false, // Vypnutí kooperativních gest pro umožnění normálního ovládání myší
+                scrollZoom: true, // Povolení zoomování kolečkem myši
             });
               // Počkat na načtení mapy před přidáním vrstev
             mapRef.current.on('load', () => {
@@ -825,6 +825,22 @@ const Map: React.FC<MapProps> = ({
                 if (mapRef.current.touchZoomRotate) {
                     mapRef.current.touchZoomRotate.disableRotation();
                 }
+                
+                // Přidání posluchačů událostí pro zlepšení ovládání myší
+                mapRef.current.getCanvas().style.cursor = 'grab';
+                
+                // Změna kurzoru při tažení mapy
+                mapRef.current.on('mousedown', () => {
+                    if (mapRef.current) {
+                        mapRef.current.getCanvas().style.cursor = 'grabbing';
+                    }
+                });
+                
+                mapRef.current.on('mouseup', () => {
+                    if (mapRef.current) {
+                        mapRef.current.getCanvas().style.cursor = 'grab';
+                    }
+                });
                 
                 // Přidat body zájmu jako markery
                 addLocationMarkers();
@@ -1146,7 +1162,7 @@ const Map: React.FC<MapProps> = ({
                         justifyContent: 'center'
                     }}
                 ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" style={{display: 'block', margin: 'auto'}}>
-                        <path d="M12 2C8.13 2 5 13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
+                        <path d="M12 2C8.13 2 5 13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12-2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
                     </svg>
                 </button>
             }            {/* Nový průzkumník jako marker pozice uživatele - viditelný jen když je dostupná geolokace a mapa je načtená */}

@@ -21,6 +21,13 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     applyDeviceOptimizations();
     
+    // Nastavení výchozího světlého režimu při prvním načtení aplikace
+    const savedTheme = localStorage.getItem('color-theme');
+    if (!savedTheme) {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('color-theme', 'light');
+    }
+    
     // Pro testování - vypisovat informace o zařízení do konzole v dev režimu
     if (process.env.NODE_ENV === 'development') {
       // @ts-ignore

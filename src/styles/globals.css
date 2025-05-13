@@ -40,6 +40,16 @@
   /* Fonty */
   --font-adventure: 'Cinzel', 'Georgia', serif;    /* Dobrodružný nadpisový font */
   --font-body: 'Quattrocento', 'Georgia', serif;   /* Font pro běžný text */
+
+  /* Proměnné pro komponenty map a menu nastavení - světlý režim */
+  --map-background-color: #fff;
+  --map-text-color: #333;
+  --map-border-color: #ccc;
+  --map-hover-background-color: #f0f0f0;
+  --map-icon-color: #555;
+  --map-divider-color: #eee;
+  --map-footer-background-color: #f9f9f9;
+  --map-footer-text-color: #666;
 }
 
 /* Tmavý režim - barevné schéma */
@@ -69,6 +79,16 @@
   --shadow-light: 0 2px 6px rgba(0, 0, 0, 0.4);
   --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.5);
   --shadow-strong: 0 6px 12px rgba(0, 0, 0, 0.6);
+
+  /* Proměnné pro komponenty map a menu nastavení - tmavý režim */
+  --map-background-color: #2d2d2d;
+  --map-text-color: #f5f5f5;
+  --map-border-color: #444;
+  --map-hover-background-color: #3a3a3a;
+  --map-icon-color: #bbb;
+  --map-divider-color: #444;
+  --map-footer-background-color: #252525;
+  --map-footer-text-color: #aaa;
 }
 
 /* Detekce preferovaného schématu z nastavení systému */
