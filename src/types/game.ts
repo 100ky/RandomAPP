@@ -13,6 +13,19 @@ export interface Puzzle {
     choices?: string[]; // pro multiple-choice hádanky
 }
 
+export interface POILocation {
+  id: string;
+  name: string;
+  coordinates: { lat: number; lng: number };
+  description: string;
+  shortDescription?: string;
+  radius: number;
+  puzzle: Omit<Puzzle, 'locationId'> & { locationId?: string };
+  qrCode?: string;
+  image?: string;
+  unlockType: 'gps' | 'qr' | 'both';
+}
+
 export interface Location {
     id: string;
     name: string;

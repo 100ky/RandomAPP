@@ -1,22 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { avatars } from './AppMenu';
-import styles from '../styles/StartMenu.module.cs  // Vrácení tematické zprávy podle vybraného avatara
-  const getThemeMessage = () => {
-    switch(selectedAvatarId) {
-      case 'Bivoj':
-        return "Síla a odvaha! Objevte tajemství královského města Vysoké Mýto!";
-      case 'princezna':
-        return "Vaše Výsosti, historické památky Vysokého Mýta čekají na Vaši pozornost!";
-      case 'ninja':
-        return "Tiše a bystře prozkoumejte každý kout královského města Vysoké Mýto.";
-      case 'detective':
-        return "Odhalte skrytá tajemství historických památek Vysokého Mýta!";
-      case 'explorer':
-        return "Prozkoumejte královské město Vysoké Mýto a jeho dávnou historii!";
-      default:
-        return "Vyberte si avatara pro zahájení průzkumu Vysokého Mýta!";
-    }
-  };artMenuProps {
+import styles from '../styles/StartMenu.module.css';
+
+interface StartMenuProps {
   onStartGame: (avatarId: string, playerName: string) => void;
 }
 
@@ -154,17 +140,17 @@ const StartMenu: React.FC<StartMenuProps> = ({ onStartGame }) => {
   const getThemeMessage = () => {
     switch(selectedAvatarId) {
       case 'Bivoj':
-        return "Síla a odvaha! Připraven přemoci kance?";
+        return "Síla a odvaha! Objevte tajemství královského města Vysoké Mýto!";
       case 'princezna':
-        return "Vaše Výsosti, kouzelné dobrodružství čeká!";
+        return "Vaše Výsosti, historické památky Vysokého Mýta čekají na Vaši pozornost!";
       case 'ninja':
-        return "Tiše a rychle, stíny jsou tvým spojencem.";
+        return "Tiše a bystře prozkoumejte každý kout královského města Vysoké Mýto.";
       case 'detective':
-        return "Každá hádanka je výzvou pro tvůj bystrý intelekt.";
+        return "Odhalte skrytá tajemství historických památek Vysokého Mýta!";
       case 'explorer':
-        return "Neprozkoumaná území čekají na své objevitele!";
+        return "Prozkoumejte královské město Vysoké Mýto a jeho dávnou historii!";
       default:
-        return "Vítejte v únikové hře!";
+        return "Vyberte si avatara pro zahájení průzkumu Vysokého Mýta!";
     }
   };
 

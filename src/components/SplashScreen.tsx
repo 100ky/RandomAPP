@@ -5,18 +5,40 @@ import { useEnhancedOrientation } from '../hooks/useEnhancedOrientation';
 
 interface SplashScreenProps {
   onFinish: () => void;
+  selectedAvatarId: string | null;
 }
 
-const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
+const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish, selectedAvatarId }) => {
   const [isExiting, setIsExiting] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [avatarName, setAvatarName] = useState('Průzkumník');
   const { isLandscape, isAndroid, isSamsung, isLowPerformance } = useEnhancedOrientation();
   
   // Používáme useEffect pro nastavení klientského renderování
   useEffect(() => {
     setIsClient(true);
   }, []);
+  
+  // Efekt pro získání názvu avatara podle jeho ID
+  useEffect(() => {
+    // Import avatarGames z gameManager pro získání informací o avatarovi
+    const getAvatarName = async () => {
+      if (selectedAvatarId) {
+        try {
+          const { getGameConfigByAvatarId } = await import('../games/gameManager');
+          const avatarConfig = getGameConfigByAvatarId(selectedAvatarId);
+          if (avatarConfig) {
+            setAvatarName(avatarConfig.name);
+          }
+        } catch (error) {
+          console.error('Nepodařilo se načíst informace o avatarovi:', error);
+        }
+      }
+    };
+    
+    getAvatarName();
+  }, [selectedAvatarId]);
   
   // Přidáme přizpůsobení pro výšku/orientaci obrazovky jako optimalizovaný useCallback
   const getContentClasses = useCallback(() => {
@@ -71,7 +93,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
         
         <div className={splashStyles.textContent}>
           <h1 className={baseStyles.title}>
-            Průzkumník
+            {avatarName}
           </h1>
           <h2 className={baseStyles.subtitle}>
             Vysokého Mýta

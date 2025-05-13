@@ -6,9 +6,10 @@ import LoadingScreen from '../components/LoadingScreen';
 import AppMenu from '../components/AppMenu';
 import SplashScreen from '../components/SplashScreen';
 import AvatarSelection from '../components/AvatarSelection';
+import LogoScreen from '../components/LogoScreen';
 
 // Definice možných stavů aplikace
-type AppState = 'loading' | 'splash' | 'avatar-selection' | 'game';
+type AppState = 'loading' | 'logo' | 'avatar-selection' | 'splash' | 'game';
 
 const Home: React.FC = () => {
     // Stav aplikace - načítání, splash screen, výběr avatara nebo hra
@@ -24,29 +25,36 @@ const Home: React.FC = () => {
     // Při prvním načtení zobrazit načítací obrazovku
     useEffect(() => {
         const loadingTimeout = setTimeout(() => {
-            // Po načtení přejít na splash screen
-            setAppState('splash');
+            // Po načtení přejít na obrazovku s logem
+            setAppState('logo');
         }, 3000);
 
         return () => clearTimeout(loadingTimeout);
     }, []);
 
-    // Handler pro ukončení splash screenu
-    const handleSplashFinish = () => {
+    // Handler pro ukončení obrazovky s logem
+    const handleLogoFinish = () => {
         setAppState('avatar-selection');
     };
     
-    // Funkce volaná po výběru avatara
-    const handleAvatarSelect = (avatarId: string) => {
+    // Handler pro ukončení obrazovky výběru avatara
+    const handleAvatarSelectionFinish = (avatarId: string) => {
         setSelectedAvatarId(avatarId);
-        
-        // Lze také odvodit výchozí jméno hráče podle avatara
+        // Nastavit jméno hráče podle avatara
         const defaultName = avatarId || 'Hráč';
         setPlayerName(defaultName);
-        
-        // Přepnout do herního režimu
+        // Přejít na splash screen s tématem vybraného avatara
+        setAppState('splash');
+    };
+    
+    // Handler pro ukončení splash screenu
+    const handleSplashFinish = () => {
+        // Po splash screenu přejít do hry
         setAppState('game');
     };
+    
+    // Funkce volaná po výběru avatara (používáme handleAvatarSelectionFinish místo této funkce)
+    const handleAvatarSelect = handleAvatarSelectionFinish;
 
     // Funkce pro změnu avatara během hry
     const handleAvatarChange = (avatar: {id: string, name: string, imageUrl: string}) => {
@@ -75,10 +83,14 @@ const Home: React.FC = () => {
         switch (appState) {
             case 'loading':
                 return <LoadingScreen />;
-            case 'splash':
-                return <SplashScreen onFinish={handleSplashFinish} />;
+            case 'logo':
+                return <LogoScreen onContinue={handleLogoFinish} />;
             case 'avatar-selection':
-                return <AvatarSelection onSelect={handleAvatarSelect} />;            case 'game':                return (
+                return <AvatarSelection onSelect={handleAvatarSelect} />;
+            case 'splash':
+                return <SplashScreen onFinish={handleSplashFinish} selectedAvatarId={selectedAvatarId} />;
+            case 'game':
+                return (
                     <div className="container">
                         <Map 
                             selectedAvatarId={selectedAvatarId}

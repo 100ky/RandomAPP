@@ -7,9 +7,10 @@
 import React from 'react';
 import Image from 'next/image';
 import styles from '@/styles/AppMenu.module.css';
+import { getAvailableAvatars } from '../games/gameManager';
 
-// Definice dostupných avatarů - seznam všech herních postav, které si může uživatel vybrat
-export const avatars = [
+// Definice dostupných avatarů - seznam všech dostupných avatarů z game manageru
+export const avatarData = [
   {
     id: 'explorer',
     name: 'Průzkumník',
@@ -36,6 +37,12 @@ export const avatars = [
     imageUrl: '/assets/avatars/Ninja.png'
   }
 ];
+
+// Filtrujeme avatary a zobrazujeme pouze dostupné (momentálně pouze průzkumník)
+export const avatars = avatarData.filter(avatar => {
+  const availableGames = getAvailableAvatars();
+  return availableGames.some(game => game.id === avatar.id);
+});
 
 /**
  * Typová definice props pro AppMenu komponentu

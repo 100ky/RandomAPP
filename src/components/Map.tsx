@@ -9,7 +9,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as maplibre from 'maplibre-gl';
 import useGeolocation from '../hooks/useGeolocation';
 import { pointsOfInterest } from '../data/cityBoundary';
-import { puzzleLocations, POILocation } from '../data/puzzleLocations';
+import { POILocation, Puzzle } from '../types/game';
 import { avatars } from './AppMenu';
 import { useGameStore } from '../store/gameStore';
 import { createOfflineMapCache } from '../utils/mapHelpers';
@@ -19,10 +19,10 @@ import GameMenu from './GameMenu';
 import GameControls from './GameControls';
 import PuzzleModal from './PuzzleModal';
 import ScannerButton from './ScannerButton';
-import { Puzzle } from '../types/game';
 import { SoundType, playSound } from '../utils/SoundManager';
 import { createUserMarker, useUserMarker } from '../utils/markerUtils';
 import SoundControls from './SoundControls';
+import { getLocationsByAvatarId } from '../games/gameManager';
 
 /**
  * Props pro komponentu Map
@@ -183,8 +183,13 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
      * @param qrCode Hodnota naskenovaného QR kódu
      */
     const handleQRCodeScan = useCallback((qrCode: string) => {
+        if (!selectedAvatarId) return;
+
+        // Získat lokace podle vybraného avatara
+        const avatarLocations = getLocationsByAvatarId(selectedAvatarId);
+        
         // Hledat lokaci podle QR kódu
-        const location = puzzleLocations.find(loc => loc.qrCode === qrCode);
+        const location = avatarLocations.find(loc => loc.qrCode === qrCode);
         
         if (location) {
             console.log(`QR kód naskenován: ${qrCode}, nalezena lokace: ${location.name}`);
@@ -199,14 +204,20 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
             visitLocation(location.id);
             
             // Otevřít příslušnou hádanku
-            setActivePuzzle(location.puzzle);
+            if (location.puzzle) {
+                const puzzleWithLocationId: Puzzle = {
+                    ...location.puzzle,
+                    locationId: location.id
+                };
+                setActivePuzzle(puzzleWithLocationId);
+            }
         } else {
             // Pokud QR kód neodpovídá žádné lokaci
             console.log(`QR kód naskenován: ${qrCode}, ale nebyla nalezena odpovídající lokace`);
             // Můžete zde přidat zprávu pro uživatele
             alert('Tento QR kód není součástí hry. Zkuste naskenovat jiný.');
         }
-    }, [visitLocation]);
+    }, [visitLocation, selectedAvatarId]);
       // Detekce orientace zařízení
     const [isLandscape, setIsLandscape] = useState<boolean>(false);
     const [deviceType, setDeviceType] = useState<string>('unknown');
@@ -301,22 +312,26 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         if (mapRef.current && mapLoaded) {
             // Dát mapě čas na přizpůsobení se novým rozměrům
             setTimeout(() => {
-                mapRef.current?.resize();
-                
-                // Pokud máme souřadnice uživatele, vycentrovat mapu
-                if (latitude && longitude) {
-                    mapRef.current.flyTo({
-                        center: [longitude, latitude],
-                        speed: 0.8,
-                        essential: true
-                    });
+                if (mapRef.current) {
+                    mapRef.current.resize();
+                    
+                    // Pokud máme souřadnice uživatele, vycentrovat mapu
+                    if (latitude && longitude) {
+                        mapRef.current.flyTo({
+                            center: [longitude, latitude],
+                            speed: 0.8,
+                            essential: true
+                        });
+                    }
                 }
                 
                 // Přeuspořádat UI prvky pro různé orientace
                 adjustUIForOrientation(isLandscape);
             }, 200);
         }
-    }, [isLandscape, mapLoaded, latitude, longitude]);    /**
+    }, [isLandscape, mapLoaded, latitude, longitude]);
+    
+    /**
      * Upraví rozložení UI prvků podle orientace zařízení
      * @param landscape Zda je zařízení v landscape orientaci
      */
@@ -438,20 +453,24 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
         const lat = Array.isArray(userCoordinates) ? userCoordinates[1] : userCoordinates.lat;
         const lng = Array.isArray(userCoordinates) ? userCoordinates[0] : userCoordinates.lng;
         
-        if (!lng || !lat) return;
+        if (!lng || !lat || !selectedAvatarId) return;
         
-        pointsOfInterest.forEach(location => {
+        // Získat lokace podle vybraného avatara
+        const avatarLocations = getLocationsByAvatarId(selectedAvatarId);
+        
+        avatarLocations.forEach(location => {
             const distanceToLocation = calculateDistance(
                 lat, // latitude
                 lng, // longitude
-                location.coordinates[1], // point latitude
-                location.coordinates[0]  // point longitude
+                location.coordinates.lat, // point latitude
+                location.coordinates.lng  // point longitude
             );
             
-            // Pokud je uživatel v okruhu 50 metrů od lokace, zaznamenat návštěvu
-            if (distanceToLocation <= 50) {
-                // Zkontrolovat, zda uživatel již lokaci navštívil
-                if (!playerProgress.visitedLocations.includes(location.id)) {
+            // Pokud je uživatel v okruhu lokace (daném poloměrem radius), zaznamenat návštěvu
+            if (distanceToLocation <= location.radius) {
+                // Zkontrolovat, zda uživatel již lokaci navštívil a zda typ odemknutí lokace dovoluje GPS objevení
+                if (!playerProgress.visitedLocations.includes(location.id) && 
+                    (location.unlockType === 'gps' || location.unlockType === 'both')) {
                     visitLocation(location.id);
                     
                     // Zobrazit oznámení o objevení nové lokace
@@ -492,7 +511,7 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                 }
             }
         });
-    }, [playerProgress.visitedLocations, visitLocation]);
+    }, [playerProgress.visitedLocations, visitLocation, selectedAvatarId]);
     
     /**
      * Výpočet vzdálenosti mezi dvěma body pomocí Haversine formule
@@ -655,20 +674,22 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
     };
 
     /**
-     * Funkce pro přidání markerů lokací na mapu je nyní prázdná,
-          * Funkce pro přidání markerů lokací na mapu je nyní prázdná, 
-     * aby se odstranily body na mapě a jejich popisky
+     * Funkce pro přidání markerů lokací na mapu podle vybraného avatara
+     * Zobrazí pouze lokace, které jsou dostupné pro daného avatara
      */
     const addLocationMarkers = useCallback(() => {
-        if (!mapRef.current) return;
+        if (!mapRef.current || !selectedAvatarId) return;
         
         // Odstranit existující markery
         markersRef.current.forEach(marker => marker.remove());
         markersRef.current = [];
         
-        // Již nebudeme přidávat žádné markery na mapu
-        // Tím skryjeme všechny body na mapě s popisky
-    }, [playerProgress.visitedLocations]);
+        // Získat lokace podle vybraného avatara
+        const avatarLocations = getLocationsByAvatarId(selectedAvatarId);
+        
+        // Nebudeme přidávat žádné markery na mapu - stále dodržujeme požadavek
+        // na skrytí všech bodů na mapě a jejich popisků
+    }, [playerProgress.visitedLocations, selectedAvatarId]);
     
     // Inicializace mapy při načtení komponenty
     useEffect(() => {
@@ -805,7 +826,7 @@ const Map: React.FC<MapProps> = ({ selectedAvatarId, animateToUserLocation = fal
                 mapRef.current = null;
             }
         };
-    }, [animateToUserLocation, latitude, longitude, geolocationError, addLocationMarkers]);
+    }, [animateToUserLocation, latitude, longitude, geolocationError, addLocationMarkers, selectedAvatarId]);
     
     // Efekt pro monitorování a reakci na chyby geolokace
     useEffect(() => {
