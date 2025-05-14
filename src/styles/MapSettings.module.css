@@ -193,8 +193,11 @@
   }
   
   .menu {
-    max-width: 200px;
+    max-width: 90vw; /* Využití větší části šířky obrazovky */
+    width: 220px; /* Mírné zvětšení oproti původním 200px pro lepší čitelnost */
     right: 5px;
+    max-height: 70vh; /* Omezení výšky a povolení scrollu */
+    overflow-y: auto;
   }
   
   .menuButton {
@@ -246,8 +249,20 @@
   }
   
   .menu {
-    max-height: 80vh;
+    max-width: 240px; /* Omezení šířky menu v landscape */
+    max-height: 75vh; /* Upraveno z 80vh pro konzistenci s ostatními úpravami */
     overflow-y: auto;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 380px) {
+  .settingsContainer {
+    transform: scale(0.8); /* Mírně menší škálování */
+    transform-origin: top right;
+  }
+  .menu {
+    max-width: 220px; /* Další zmenšení šířky */
+    max-height: 65vh; /* Další omezení výšky */
   }
 }
 

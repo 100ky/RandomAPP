@@ -68,6 +68,7 @@
   transform-origin: top left;
   animation: menuAppear 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border: 2px solid var(--accent-color);
+  max-width: 90vw; /* Omezení maximální šířky */
 }
 
 @media (orientation: landscape) {
@@ -83,15 +84,15 @@
   .menu {
     top: 46px;
     width: 220px;
-    max-height: 75vh;
+    max-height: 70vh; /* Mírné snížení max-height */
   }
 }
 
 @media (orientation: landscape) and (max-height: 380px) {
   .menu {
     top: 42px;
-    width: 210px;
-    max-height: 70vh;
+    width: 200px; /* Mírné zmenšení šířky */
+    max-height: 65vh; /* Mírné snížení max-height */
   }
 }
 
@@ -295,15 +296,15 @@
   gap: 10px;
 }
 
-.actionButton {
+.actionButton, .adventureButton { /* Aplikování i na .adventureButton, pokud je použit v menu */
   background-color: var(--primary-color);
   color: var(--white);
   border: none;
   border-radius: 4px;
-  padding: 8px 12px;
+  padding: 10px 18px; /* Menší padding pro tlačítka v menu */
   cursor: pointer;
   font-family: var(--font-adventure);
-  font-size: 0.85rem;
+  font-size: 1rem; /* Menší font pro tlačítka v menu */
   display: flex;
   align-items: center;
   gap: 8px;
@@ -313,7 +314,7 @@
 }
 
 @media (orientation: landscape) {
-  .actionButton {
+  .actionButton, .adventureButton {
     padding: 6px 10px;
     font-size: 0.8rem;
     gap: 6px;
@@ -326,18 +327,16 @@
 }
 
 @media (orientation: landscape) and (max-height: 450px) {
-  .actionButton {
-    padding: 5px 8px;
-    font-size: 0.78rem;
-    gap: 5px;
+  .actionButton, .adventureButton {
+    padding: 8px 15px;
+    font-size: 0.9rem;
   }
 }
 
 @media (orientation: landscape) and (max-height: 380px) {
-  .actionButton {
-    padding: 4px 7px;
-    font-size: 0.75rem;
-    gap: 4px;
+  .actionButton, .adventureButton {
+    padding: 6px 12px;
+    font-size: 0.85rem;
   }
   
   .actionButton svg {

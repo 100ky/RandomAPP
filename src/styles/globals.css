@@ -1,10 +1,5 @@
 /* Import fontů */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Quattrocento:wght@400;700&display=swap');
-@import url('./GameControls.css');
-@import url('./MobileUIFixes.css');
-@import url('./OrientationFixes.css');
-@import url('./SmallScreenFixes.css');
-@import url('./AndroidFixes.css');
 
 /* Resetovací styly */
 :root {
@@ -24,22 +19,25 @@
   --warning-color: #FF8C00;     /* Oranžová výstraha */
   --danger-color: #B22222;      /* Červená - nebezpečí */
   
-  /* Neutrální barvy */
-  --background-color: #FFF8E1;  /* Jemně béžové pozadí - pergamen */
-  --light-gray: #F5F5DC;        /* Světle béžová */
-  --medium-gray: #D2B48C;       /* Písková šedá */
-  --dark-gray: #5D4037;         /* Tmavě hnědá šedá */
-  --black: #3E2723;             /* Téměř černá s nádechem hnědé */
-  --white: #FFFcF5;             /* Téměř bílá s nádechem krémové */
+  /* Neutrální barvy - AKTUALIZOVÁNO */
+  --background-color: #f8f9fa;  /* Čistší, světle šedé pozadí */
+  --light-gray: #e9ecef;        /* Světlejší šedá */
+  --medium-gray: #ced4da;       /* Střední šedá */
+  --dark-gray: #495057;         /* Tmavší šedá */
+  --black: #212529;             /* Téměř černá */
+  --white: #ffffff;             /* Čistě bílá */
   
-  /* Stíny a efekty */
-  --shadow-light: 0 2px 6px rgba(139, 69, 19, 0.2);
-  --shadow-medium: 0 4px 8px rgba(139, 69, 19, 0.3);
-  --shadow-strong: 0 6px 12px rgba(139, 69, 19, 0.4);
+  /* Stíny a efekty - AKTUALIZOVÁNO na neutrální */
+  --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.075);
+  --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-strong: 0 6px 12px rgba(0, 0, 0, 0.15);
   
   /* Fonty */
   --font-adventure: 'Cinzel', 'Georgia', serif;    /* Dobrodružný nadpisový font */
   --font-body: 'Quattrocento', 'Georgia', serif;   /* Font pro běžný text */
+
+  /* Nová proměnná pro textový stín dobrodružných prvků */
+  --adventure-text-shadow: 1px 1px 2px color-mix(in srgb, var(--primary-dark) 30%, transparent);
 
   /* Proměnné pro komponenty map a menu nastavení - světlý režim */
   --map-background-color: #fff;
@@ -67,18 +65,21 @@
   --accent-dark: #DAA520;       /* Tmavší zlatá zůstává stejná */
   --accent-light: #FFF8DC;      /* Velmi světlá zlatá zůstává stejná */
   
-  /* Neutrální barvy - invertované */
-  --background-color: #342E1E;  /* Tmavé pozadí s nádechem hnědé */
-  --light-gray: #3A3428;        /* Tmavá varianta světlé béžové */
-  --medium-gray: #4A3C2B;       /* Tmavá varianta pískové šedé */
-  --dark-gray: #6B5549;         /* Světlejší varianta tmavě hnědé šedé */
-  --black: #FFF8E1;             /* Původní pozadí jako "černá" v tmavém režimu */
-  --white: #2D2016;             /* Velmi tmavá s nádechem hnědé jako "bílá" v tmavém režimu */
+  /* Neutrální barvy - invertované - AKTUALIZOVÁNO */
+  --background-color: #212529;  /* Tmavé pozadí */
+  --light-gray: #343a40;        /* Tmavší šedá */
+  --medium-gray: #495057;       /* Střední tmavá šedá */
+  --dark-gray: #adb5bd;         /* Světlejší šedá (pro text na tmavém pozadí) */
+  --black: #f8f9fa;             /* Světlá barva pro text */
+  --white: #121212;             /* Velmi tmavé pozadí pro prvky */
   
-  /* Stíny a efekty - přizpůsobené tmavému režimu */
-  --shadow-light: 0 2px 6px rgba(0, 0, 0, 0.4);
-  --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.5);
-  --shadow-strong: 0 6px 12px rgba(0, 0, 0, 0.6);
+  /* Stíny a efekty - přizpůsobené tmavému režimu - AKTUALIZOVÁNO na neutrální */
+  --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.25);
+  --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.3);
+  --shadow-strong: 0 6px 12px rgba(0, 0, 0, 0.35);
+
+  /* Přizpůsobení adventure-text-shadow pro tmavý režim */
+  --adventure-text-shadow: 1px 1px 2px color-mix(in srgb, var(--primary-dark) 30%, transparent);
 
   /* Proměnné pro komponenty map a menu nastavení - tmavý režim */
   --map-background-color: #2d2d2d;
@@ -107,18 +108,21 @@
     --accent-dark: #DAA520;       /* Tmavší zlatá zůstává stejná */
     --accent-light: #FFF8DC;      /* Velmi světlá zlatá zůstává stejná */
     
-    /* Neutrální barvy - invertované */
-    --background-color: #342E1E;  /* Tmavé pozadí s nádechem hnědé */
-    --light-gray: #3A3428;        /* Tmavá varianta světlé béžové */
-    --medium-gray: #4A3C2B;       /* Tmavá varianta pískové šedé */
-    --dark-gray: #6B5549;         /* Světlejší varianta tmavě hnědé šedé */
-    --black: #FFF8E1;             /* Původní pozadí jako "černá" v tmavém režimu */
-    --white: #2D2016;             /* Velmi tmavá s nádechem hnědé jako "bílá" v tmavém režimu */
+    /* Neutrální barvy - invertované - AKTUALIZOVÁNO */
+    --background-color: #212529;  /* Tmavé pozadí */
+    --light-gray: #343a40;        /* Tmavší šedá */
+    --medium-gray: #495057;       /* Střední tmavá šedá */
+    --dark-gray: #adb5bd;         /* Světlejší šedá (pro text na tmavém pozadí) */
+    --black: #f8f9fa;             /* Světlá barva pro text */
+    --white: #121212;             /* Velmi tmavé pozadí pro prvky */
     
-    /* Stíny a efekty - přizpůsobené tmavému režimu */
-    --shadow-light: 0 2px 6px rgba(0, 0, 0, 0.4);
-    --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.5);
-    --shadow-strong: 0 6px 12px rgba(0, 0, 0, 0.6);
+    /* Stíny a efekty - přizpůsobené tmavému režimu - AKTUALIZOVÁNO na neutrální */
+    --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.25);
+    --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.3);
+    --shadow-strong: 0 6px 12px rgba(0, 0, 0, 0.35);
+    
+    /* Přizpůsobení adventure-text-shadow pro tmavý režim (dle preferencí systému) */
+    --adventure-text-shadow: 1px 1px 2px color-mix(in srgb, var(--primary-dark) 30%, transparent);
   }
 }
 
@@ -136,18 +140,19 @@ body {
   overflow: hidden;
   position: fixed;
   background-color: var(--background-color);
-  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23bc8f51' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+  /* AKTUALIZOVÁNO - SVG pozadí uděláme subtilnější */
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23000000' fill-opacity='0.02' fill-rule='evenodd'/%3E%3C/svg%3E");
   color: var(--black);
 }
 
-/* Dobrodružný stylový prvek - ozdobné umístění papíru/pergamenu */
+/* Dobrodružný stylový prvek - ozdobné umístění papíru/pergamenu - AKTUALIZOVÁNO */
 .parchment {
-  background-color: var(--white);
+  background-color: var(--white); /* Čistší bílá nebo velmi světlá šedá */
   border-radius: 8px;
   box-shadow: var(--shadow-medium);
   padding: 20px;
   position: relative;
-  border: 1px solid var(--medium-gray);
+  border: 1px solid var(--medium-gray); /* Jemnější okraj */
   overflow: hidden;
 }
 
@@ -158,9 +163,10 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23caa472' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+  /* AKTUALIZOVÁNO - SVG textura pergamenu uděláme subtilnější */
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23000000' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
   z-index: 0;
-  opacity: 0.5;
+  opacity: 0.3; /* Snížená opacita pro jemnější efekt */
 }
 
 .parchment > * {
@@ -178,7 +184,7 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
   font-size: 2.5em;
-  text-shadow: 2px 2px 3px rgba(139, 69, 19, 0.2);
+  text-shadow: var(--adventure-text-shadow); /* Použití nové proměnné */
 }
 
 h2 {
@@ -240,7 +246,7 @@ h2 {
 
 .adventure-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(139, 69, 19, 0.4);
+  box-shadow: var(--shadow-strong); /* Použití neutrální silné varianty stínu */
 }
 
 .adventure-button:hover::after {
@@ -398,9 +404,340 @@ h2 {
   }
 }
 
+/* Úpravy pro ovládací prvky mapy v režimu na šířku s omezenou výškou */
+@media (orientation: landscape) and (max-height: 450px) {
+  .maplibregl-ctrl-group {
+    margin-top: 5px !important; 
+    margin-right: 5px !important;
+  }
+  .maplibregl-ctrl-group button {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .maplibregl-ctrl button .maplibregl-ctrl-icon {
+    -webkit-mask-size: 16px 16px !important;
+    mask-size: 16px 16px !important;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 380px) {
+  .maplibregl-ctrl-group {
+    transform: scale(0.9);
+    transform-origin: top right;
+  }
+}
+
 /* Oprava touchmove událostí */
 .maplibregl-cooperative-gesture-screen {
   pointer-events: all !important;
   touch-action: none !important;
   background-color: transparent !important;
 }
+
+/* Styly z AndroidFixes.css - Globální optimalizace */
+/* Základní optimalizace pro všechna Android zařízení */
+.loadingScreen, .splashScreen { /* Předpokládáme, že tyto třídy jsou na globálních prvcích */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Oprava problikávání a třepání obsahu */
+.loadingContainer,
+.splashContainer { /* Předpokládáme, že tyto třídy jsou na globálních prvcích */
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Optimalizace pro Android zařízení - třída přidaná přes JS */
+.android-device {
+  -webkit-tap-highlight-color: transparent; /* Odstranění zvýraznění po klepnutí */
+  -webkit-touch-callout: none; /* Vypnutí kontextového menu na dlouhý stisk */
+  touch-action: manipulation; /* Optimalizace pro touch input */
+}
+
+/* Hardware acceleration pro animace na Androidu */
+.android-device .loadingScreen,
+.android-device .splashScreen,
+.android-device .loadingContainer,
+.android-device .splashContainer {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Landscape opravy - Android - pro globální kontejnery */
+@media (orientation: landscape) {
+  .loadingContainer.android-landscape-fix, /* Použijeme specifickou třídu pro Android fixy, aby se to nepletlo s obecnými styly */
+  .splashContainer.android-landscape-fix {
+    flex-direction: row !important;
+    max-height: 80vh;
+    margin: 0 auto !important;
+    /* Další styly z AndroidFixes.css pro .loadingContainer v landscape, pokud jsou relevantní globálně */
+  }
+  
+  /* Oprava zobrazení hlavního kontejneru v landscape na Androidu s nízkým rozlišením */
+  @media (max-height: 400px) {
+    .loadingScreen.android-low-res-fix, 
+    .splashScreen.android-low-res-fix {
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .loadingContainer.android-low-res-fix, 
+    .splashContainer.android-low-res-fix {
+      max-width: 95%;
+      padding: 10px 15px;
+      position: relative;
+      top: auto;
+      left: auto;
+      transform: none !important;
+      overflow-y: auto; /* Umožnit scrollování pro nižší rozlišení */
+    }
+  }
+}
+
+/* Konec stylů z AndroidFixes.css */
+
+/* Styly z GameControls.css - INTEGROVÁNO */
+.game-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-button {
+  background: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 50px;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-medium);
+  transition: all 0.3s ease;
+  font-family: var(--font-adventure);
+  min-width: 160px;
+}
+
+.game-button:hover, .game-button.hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-strong);
+}
+
+.game-button:active, .game-button.active {
+  transform: translateY(1px);
+  box-shadow: var(--shadow-light);
+}
+
+.start-button {
+  background: linear-gradient(to right, var(--secondary-color), var(--secondary-dark));
+  border: 2px solid var(--accent-color);
+}
+
+.stop-button {
+  background: linear-gradient(to right, var(--danger-color), #8B0000); /* Uvažte použití --danger-dark proměnné, pokud existuje */
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.button-glow {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.3), 
+    transparent
+  );
+  z-index: 1;
+  animation: glowMove 3s infinite;
+}
+
+.pulse-animation::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border: 2px solid var(--accent-color);
+  border-radius: 50px;
+  animation: pulse 2s infinite;
+  z-index: 0;
+  opacity: 0;
+}
+
+.hidden-control {
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
+.hidden-control:hover {
+  opacity: 1;
+}
+
+@keyframes glowMove {
+  0% { left: -100%; }
+  50%, 100% { left: 100%; }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.05);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* Responzivní design pro GameControls */
+@media (max-width: 768px) {
+  .game-button {
+    padding: 10px 20px;
+    font-size: 15px;
+    min-width: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-button {
+    padding: 8px 16px;
+    font-size: 14px;
+    min-width: 140px;
+  }
+  
+  .game-button .button-content svg { /* Zacílení SVG uvnitř .game-button */
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Styly pro landscape orientaci pro GameControls */
+@media (orientation: landscape) {
+  .game-controls {
+    bottom: 16px;
+    /* left: 50%; Již nastaveno */
+    /* transform: translateX(-50%); Již nastaveno */
+  }
+  
+  .game-button {
+    padding: 12px 24px; 
+    min-width: 180px; 
+    font-size: 16px; 
+    margin-bottom: 8px; 
+  }
+  
+  .game-button .button-content { /* Zacílení .button-content uvnitř .game-button */
+    gap: 8px; 
+  }
+  
+  .game-button .button-content svg { /* Zacílení SVG uvnitř .game-button */
+    width: 22px; 
+    height: 22px; 
+  }
+}
+
+/* Pro velmi malé displeje v landscape režimu pro GameControls */
+@media (orientation: landscape) and (max-height: 500px) {
+  .game-controls {
+    bottom: 10px;
+    transform: translateX(-50%) scale(0.9); /* Mírné zmenšení, původně bylo scale(1.3) což je asi chyba */
+    transform-origin: bottom center;
+  }
+  
+  .game-button {
+    padding: 6px 12px;
+    min-width: 120px;
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  
+  .game-button .button-content { /* Zacílení .button-content uvnitř .game-button */
+    gap: 5px;
+  }
+  
+  .game-button .button-content svg { /* Zacílení SVG uvnitř .game-button */
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Pro extrémně malé displeje v landscape režimu pro GameControls */
+@media (orientation: landscape) and (max-height: 400px) {
+  .game-controls {
+    bottom: 5px;
+    transform: translateX(-50%) scale(0.7);
+  }
+  
+  .game-button {
+    padding: 5px 10px;
+    min-width: 100px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  
+  .button-glow { /* Tento styl je globální, ale zde je kontext GameControls */
+    display: none; 
+  }
+}
+
+/* Pro zařízení s velmi malou šířkou v landscape režimu pro GameControls */
+@media (orientation: landscape) and (max-width: 600px) and (max-height: 350px) {
+  .game-controls {
+    bottom: 5px;
+    transform: translateX(-50%) scale(0.65);
+  }
+  
+  .game-button {
+    padding: 4px 8px;
+    min-width: 90px;
+    margin-bottom: 5px;
+  }
+  
+  .game-button .button-content svg { /* Zacílení SVG uvnitř .game-button */
+    width: 14px;
+    height: 14px;
+  }
+  
+  .pulse-animation::before { /* Tento styl je globální, ale zde je kontext GameControls */
+    animation: none; 
+  }
+}
+
+/* Styly pro portrait orientaci na malých zařízeních pro GameControls */
+@media (orientation: portrait) and (max-height: 700px) {
+  .game-controls {
+    bottom: 70px; /* Posunutí výše, aby nebylo překryto např. gesty na mobilu */
+  }
+}
+/* Konec stylů z GameControls.css */

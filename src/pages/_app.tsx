@@ -4,13 +4,8 @@ import { useEffect } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import '../styles/globals.css';
 // Globální CSS soubory pro responzivní design a optimalizace pro různá zařízení
-import '../styles/OrientationFixes.css';
-import '../styles/SmallScreenFixes.css';
-import '../styles/AndroidFixes.css';
 import '../styles/LoadingScreenUpdates.css';
-import '../styles/ResponsiveFixes.css';
 import '../styles/iOSFixes.css';
-import '../styles/MobileUIFixes.css';
 import '../styles/DeviceSpecificFixes.css';
 import { applyDeviceOptimizations } from '../utils/deviceDetection';
 
@@ -18,14 +13,14 @@ function MyApp({ Component, pageProps }: AppProps) {
   // Aplikace optimalizací pro zařízení při načtení aplikace
   useEffect(() => {
     applyDeviceOptimizations();
-    
+
     // Nastavení výchozího světlého režimu při prvním načtení aplikace
     const savedTheme = localStorage.getItem('color-theme');
     if (!savedTheme) {
       document.documentElement.setAttribute('data-theme', 'light');
       localStorage.setItem('color-theme', 'light');
     }
-    
+
     // Pro testování - vypisovat informace o zařízení do konzole v dev režimu
     if (process.env.NODE_ENV === 'development') {
       // @ts-ignore
@@ -35,9 +30,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       }
     }
   }, []);
-  
+
   return (
-    <>      <Head>
+    <>
+      <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
         <meta name="orientation" content="portrait-primary" />
       </Head>

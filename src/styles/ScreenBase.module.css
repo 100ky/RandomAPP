@@ -305,3 +305,241 @@
     rgba(0, 0, 0, 0.1) 100%
   );
 }
+
+/* Styly pro mapový svitek a planetu (původně z LoadingScreenUpdates.css) */
+.mapScroll {
+  width: 120px;
+  height: 90px;
+  background: linear-gradient(to bottom, #e6d2b5, #d2b48c, #c19a6b);
+  border-radius: 8px;
+  position: relative;
+  overflow: visible;
+  transform: perspective(400px) rotateX(5deg) rotateY(-5deg);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+  margin: 10px 0;
+}
+
+.mapScroll:hover {
+  transform: perspective(400px) rotateX(8deg) rotateY(-8deg);
+}
+
+.mapContent {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(211, 180, 140, 0.8),
+    rgba(211, 180, 140, 0.8) 2px,
+    rgba(226, 202, 170, 0.8) 2px,
+    rgba(226, 202, 170, 0.8) 4px
+  );
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.mapPath {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  width: 80%;
+  height: 3px;
+  background: #8b5432;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.mapPath::before, .mapPath::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8b5432;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.mapPath::before {
+  left: 0;
+}
+
+.mapPath::after {
+  right: 0;
+}
+
+.mapMarker {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #c22525;
+  border: 1px solid #8b5432;
+  top: 50%;
+  left: 30%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  box-shadow: 0 0 4px rgba(194, 37, 37, 0.6);
+}
+
+.mapTreasure {
+  position: absolute;
+  top: 50%;
+  right: 15%;
+  width: 15px;
+  height: 15px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%238b5432' d='M12,1L3,5v6c0,5.5,3.8,10.7,9,12c5.2-1.3,9-6.5,9-12V5L12,1z M12,11.8c-1,0-1.8-0.8-1.8-1.8s0.8-1.8,1.8-1.8s1.8,0.8,1.8,1.8S13,11.8,12,11.8z'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  transform: translate(0, -50%);
+  z-index: 3;
+  filter: drop-shadow(0 0 2px rgba(139, 84, 50, 0.5));
+}
+
+.mapRolls {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.mapTopRoll, .mapBottomRoll {
+  position: absolute;
+  width: 100%;
+  height: 12px;
+  background: linear-gradient(to bottom, #a0846c, #8b5432);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.mapTopRoll {
+  top: -6px;
+}
+
+.mapBottomRoll {
+  bottom: -6px;
+}
+
+.planet {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #5d8d84, #2a4a44, #1a3a34);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6), 0 0 20px rgba(75, 125, 116, 0.3);
+  transform-style: preserve-3d;
+  perspective: 800px;
+  animation: planetFloat 6s ease-in-out infinite alternate;
+}
+
+.planetRings {
+  position: absolute;
+  width: 140%;
+  height: 20px;
+  background: linear-gradient(90deg, 
+    rgba(255, 215, 0, 0.01) 0%, 
+    rgba(255, 215, 0, 0.1) 15%, 
+    rgba(255, 215, 0, 0.3) 50%, 
+    rgba(255, 215, 0, 0.1) 85%, 
+    rgba(255, 215, 0, 0.01) 100%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotateX(75deg);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
+  opacity: 0.7;
+}
+
+.planetRings::before, .planetRings::after {
+  content: "";
+  position: absolute;
+  width: 95%;
+  height: 6px;
+  background: rgba(255, 215, 0, 0.05);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+
+.planetRings::after {
+  width: 80%;
+  height: 3px;
+  background: rgba(255, 215, 0, 0.2);
+}
+
+.planetClouds {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-image: 
+    radial-gradient(circle at 60% 30%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 15%),
+    radial-gradient(circle at 25% 65%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 20%),
+    radial-gradient(circle at 75% 70%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 15%);
+  animation: cloudsSpin 30s linear infinite;
+}
+
+.planetSurface {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  opacity: 0.7;
+}
+
+.planetSurface::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 30%, #70a599 0%, transparent 10%),
+    radial-gradient(circle at 80% 40%, #70a599 0%, transparent 8%),
+    radial-gradient(circle at 40% 80%, #70a599 0%, transparent 12%);
+  animation: surfaceRotate 50s linear infinite;
+}
+
+/* Animace pro mapový svitek a planetu (původně z LoadingScreenUpdates.css) */
+@keyframes mapScroll {
+  0% { background-position: 0 0; }
+  100% { background-position: 50px 50px; }
+}
+
+@keyframes planetFloat {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(180deg); }
+  100% { transform: translateY(5px) rotate(360deg); }
+}
+
+@keyframes cloudsSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes surfaceRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+/* Responzivní úpravy pro mapový svitek a planetu (původně z LoadingScreenUpdates.css) */
+@media (max-width: 768px) {
+  .mapScroll {
+    width: 90px;
+    height: 70px;
+  }
+
+  .planet {
+    width: 70px;
+    height: 70px;
+  }
+}
