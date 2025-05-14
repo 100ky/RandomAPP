@@ -4,10 +4,12 @@
  * Tato komponenta slouží k zobrazení aktuálně vybraného avatara hráče v horní části aplikace.
  * Uživatel tak vždy vidí, kterou postavu si zvolil pro průchod hrou.
  */
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import styles from '@/styles/AppMenu.module.css';
+import compassStyles from '@/styles/Compass.module.css';
 import { getAvailableAvatars } from '../games/gameManager';
+import Compass from './CompassNew';
 
 // Definice dostupných avatarů - seznam všech dostupných avatarů z game manageru
 export const avatarData = [
@@ -58,25 +60,41 @@ interface AppMenuProps {
  * Komponenta zobrazující menu aplikace s vybraným avatarem
  */
 const AppMenu: React.FC<AppMenuProps> = ({ selectedAvatarId }) => {
+  // Stav pro sledování, zda je kompas rozbalený
+  const [isCompassExpanded, setIsCompassExpanded] = useState(false);
+  
   // Najít aktuálně vybraný avatar podle jeho ID
   const selectedAvatar = avatars.find(avatar => avatar.id === selectedAvatarId) || avatars[0];
 
+  // Funkce pro přepínání rozbalení kompasu
+  const handleToggleCompass = () => {
+    setIsCompassExpanded(!isCompassExpanded);
+  };
+
   return (
     <div className={styles['app-menu']}>
-      <div className={styles['avatar-display']}>
-        {selectedAvatar && (
-          <div className={styles['current-avatar']}>
-            <Image 
-              src={selectedAvatar.imageUrl} 
-              alt={selectedAvatar.name} 
-              width={50}
-              height={50}
-              className={styles['avatar-icon']} 
-            />
-            {/* Text jména avatara je skrytý pomocí CSS ale přítomný pro přístupnost */}
-            <span className={styles['avatar-name']}>{selectedAvatar.name}</span>
-          </div>
-        )}
+      <div className={compassStyles.compassContainer}>
+        <div className={styles['avatar-display']}>
+          {selectedAvatar && (
+            <div className={styles['current-avatar']}>
+              <Image 
+                src={selectedAvatar.imageUrl} 
+                alt={selectedAvatar.name} 
+                width={50}
+                height={50}
+                className={styles['avatar-icon']} 
+              />
+              {/* Text jména avatara je skrytý pomocí CSS ale přítomný pro přístupnost */}
+              <span className={styles['avatar-name']}>{selectedAvatar.name}</span>
+            </div>
+          )}
+        </div>
+        
+        {/* Kompas pod avatarem */}
+        <Compass 
+          isExpanded={isCompassExpanded}
+          onToggleExpanded={handleToggleCompass}
+        />
       </div>
     </div>
   );

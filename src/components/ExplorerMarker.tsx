@@ -68,13 +68,17 @@ const ExplorerMarker: React.FC<ExplorerMarkerProps> = ({
           viewBox="0 0 24 24"
           className={styles.explorerIcon}
         >
-          {/* Tělo postavičky */}
-          <circle cx="12" cy="7" r="4" fill="#FFD54F" className={styles.head} />
+          {/* Tělo postavičky - nejprve vykreslíme hlavu */}
+          <circle cx="12" cy="7.5" r="3.5" fill="#FFD54F" className={styles.head} />
           
           {/* Obličej - jednoduchý úsměv a oči */}
-          <circle cx="10.5" cy="6" r="0.8" fill="#5D4037" className={styles.eye} />
-          <circle cx="13.5" cy="6" r="0.8" fill="#5D4037" className={styles.eye} />
-          <path d="M10.5 8.5C11 9.3 13 9.3 13.5 8.5" stroke="#5D4037" fill="none" strokeWidth="0.6" className={styles.mouth} />
+          <circle cx="10.5" cy="7.3" r="0.7" fill="#5D4037" className={styles.eye} />
+          <circle cx="13.5" cy="7.3" r="0.7" fill="#5D4037" className={styles.eye} />
+          <path d="M10.5 8.7C11 9.3 13 9.3 13.5 8.7" stroke="#5D4037" fill="none" strokeWidth="0.6" className={styles.mouth} />
+          
+          {/* Klobouk dobrodruha v popředí - upravená pozice */}
+          <path d="M7 5.2C7 5.2 8.5 5.9 12 5.9C15.5 5.9 17 5.2 17 5.2L16.5 3.4H7.5L7 5.2Z" fill="#A1887F" className={styles.hatBrim} />
+          <path d="M8 4.9C8 3.9 10 1.9 12 1.9C14 1.9 16 3.9 16 4.9L17 5.2C17 6.2 14.5 6.7 12 6.7C9.5 6.7 7 6.2 7 5.2L8 4.9Z" fill="#8D6E63" className={styles.hat} />
           
           {/* Tělo */}
           <rect x="9" y="11" width="6" height="8" rx="3" ry="3" fill="#26A69A" className={styles.body} />
@@ -114,13 +118,14 @@ const ExplorerMarker: React.FC<ExplorerMarkerProps> = ({
             className={`${styles.leg} ${styles.rightLeg} ${isMoving ? styles[`step${animationStep}`] : ''}`}
           />
           
-          {/* Značka lokace pod postavičkou */}
-          <path 
-            d="M12 24c3-3 8-5 8-10 0-4.418-3.582-8-8-8s-8 3.582-8 8c0 5 5 7 8 10z" 
-            fill="rgba(33, 150, 243, 0.4)" 
-            stroke="#2196F3" 
-            strokeWidth="0.7"
-            className={styles.locationMarker}
+          {/* Stín pod postavičkou */}
+          <ellipse
+            cx="12"
+            cy="23.5"
+            rx="5"
+            ry="1"
+            fill="rgba(0, 0, 0, 0.2)"
+            className={styles.shadow}
           />
         </svg>
       </div>

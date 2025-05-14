@@ -14,6 +14,7 @@ import { avatars } from './AppMenu';
 import { useGameStore } from '../store/gameStore';
 import { createOfflineMapCache } from '../utils/mapHelpers';
 import { getRequiredAttributions } from '../utils/attributions';
+import { setupZoomConstraints, MIN_ZOOM, MAX_ZOOM, smoothZoom as libSmoothZoom } from '../utils/mapZoomConstraints';
 import styles from '../styles/Map.module.css';
 import GameMenu from './GameMenu';
 import GameControls from './GameControls';
@@ -73,6 +74,11 @@ const Map: React.FC<MapProps> = ({
     // Stav pro zobrazení tabulky se statistikami
     const [showStatsTable, setShowStatsTable] = useState(false);
     
+    // Stav pro sledování aktuálního zoomu a pozice mapy
+    const [currentZoom, setCurrentZoom] = useState<number>(15);
+    const [currentPosition, setCurrentPosition] = useState<{lat: number, lng: number}>({lat: 49.95, lng: 16.16});
+    const [isGamePaused, setIsGamePaused] = useState<boolean>(false);
+    
     // Použití hooku pro geolokaci - sledování polohy uživatele
     const { 
         latitude, 
@@ -95,7 +101,6 @@ const Map: React.FC<MapProps> = ({
         progress: 0,
         complete: false,
     });
-    const [isGamePaused, setIsGamePaused] = useState(false);        // Je hra pozastavena
     const [activePuzzle, setActivePuzzle] = useState<Puzzle | null>(null); // Aktuálně aktivní hádanka    // Stav pro skrytí chybové zprávy geolokace
     const [hideGeolocationError, setHideGeolocationError] = useState(false);
     
@@ -194,6 +199,13 @@ const Map: React.FC<MapProps> = ({
      */
     const handleResumeGame = useCallback(() => {
         setIsGamePaused(false);
+    }, []);
+    
+    /**
+     * Přepíná mezi pozastaveným a běžícím stavem hry
+     */
+    const handleTogglePauseGame = useCallback(() => {
+        setIsGamePaused(prevState => !prevState);
     }, []);
     
     /**
@@ -576,13 +588,22 @@ const Map: React.FC<MapProps> = ({
         
         // Pokud se mapa má automaticky přesunout k uživateli, udělat to
         if (animateToUserLocation && !animationStartedRef.current) {
+            // Zajistit, že zoom bude v bezpečném rozsahu
+            const safeZoom = Math.min(15, MAX_ZOOM);
+            
             mapRef.current.flyTo({
                 center: userCoordinates,
-                zoom: 15,
+                zoom: safeZoom,
                 duration: 2000
             });
             animationStartedRef.current = true;
+            
+            // Zkontrolovat zoom po dokončení animace
+            setTimeout(ensureSafeZoom, 2200);
         }
+        
+        // Vždy zajistit, že zoom je v bezpečném rozsahu
+        ensureSafeZoom();
         
         // Aktualizace vzdálenosti při pohybu uživatele
         if (lastPositionRef.current && isGameRunning) {
@@ -621,6 +642,26 @@ const Map: React.FC<MapProps> = ({
         animateToUserLocation, addDistance, updateStepsCount, checkProximityToLocations]);
     
     /**
+     * Zajistí, že zoom mapy je v bezpečném rozsahu
+     * Řeší problém mizení mapy při příliš velkém přiblížení
+     * Používá smoothZoom pro plynulejší změnu úrovně přiblížení
+     */
+    const ensureSafeZoom = () => {
+        if (mapRef.current) {
+            const currentZoom = mapRef.current.getZoom();
+            
+            if (currentZoom > MAX_ZOOM) {
+                libSmoothZoom(mapRef.current, MAX_ZOOM, 200);
+                return true;
+            } else if (currentZoom < MIN_ZOOM) {
+                libSmoothZoom(mapRef.current, MIN_ZOOM, 200);
+                return true;
+            }
+        }
+        return false;
+    };
+
+    /**
      * Zobrazí oznámení o objevení nové lokace s vylepšenou animací
      * @param locationName Název objevené lokace
      */
@@ -637,7 +678,7 @@ const Map: React.FC<MapProps> = ({
         const icon = document.createElement('div');
         icon.className = 'discovery-icon';
         icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12-2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
         </svg>`;
         
         // Přidat text
@@ -727,6 +768,40 @@ const Map: React.FC<MapProps> = ({
         return cleanup;
     }, [setupTouchHandlers]);
 
+    /**
+     * Nastaví limity pro přiblížení a zabrání příliš velkému přiblížení
+     * Používá veřejné API maplibre-gl
+     */
+    const setupZoomLimits = (map: maplibre.Map) => {
+        // Nastavení pevného maximálního a minimálního zoomu pro celou mapu
+        map.setMinZoom(MIN_ZOOM);
+        map.setMaxZoom(MAX_ZOOM);
+        
+        // Přidání posluchače pro událost zoomu, aby bylo zajištěno dodržení limitů
+        map.on('zoom', () => {
+            const currentZoom = map.getZoom();
+            
+            // Pokud je zoom vyšší než maximum, nastavit ho zpět na maximum
+            if (currentZoom > MAX_ZOOM) {
+                map.setZoom(MAX_ZOOM);
+            }
+            
+            // Pokud je zoom nižší než minimum, nastavit ho zpět na minimum
+            if (currentZoom < MIN_ZOOM) {
+                map.setZoom(MIN_ZOOM);
+            }
+        });
+    };
+
+    /**
+     * Funkce pro plynulejší změnu úrovně přiblížení
+     * Využívá globální implementaci z mapZoomConstraints.ts
+     */
+    const smoothZoom = (targetZoom: number, duration = 300) => {
+        if (!mapRef.current) return;
+        libSmoothZoom(mapRef.current, targetZoom, duration);
+    };
+
     // Inicializace mapy při načtení komponenty
     useEffect(() => {
         // Inicializace mapy pouze pokud ještě nebyla vytvořena
@@ -809,13 +884,18 @@ const Map: React.FC<MapProps> = ({
                         }
                     ]
                 },
-                center: initialCenter as [number, number],                zoom: initialZoom,
+                center: initialCenter as [number, number],
+                zoom: initialZoom,
+                minZoom: MIN_ZOOM, // Nastavení minimálního zoomu pro omezení oddálení
+                maxZoom: MAX_ZOOM, // Nastavení maximálního zoomu pro zabránění mizení mapy
                 transformRequest,
                 // Přidání nastavení pro lepší ovládání
                 dragRotate: false, // Vypnutí rotace mapy tahem
                 touchPitch: false, // Vypnutí změny sklonu mapy dotekem
                 cooperativeGestures: false, // Vypnutí kooperativních gest pro umožnění normálního ovládání myší
-                scrollZoom: true, // Povolení zoomování kolečkem myši
+                scrollZoom: {
+                    around: 'center' // Centrování zoomu kolečkem myši kolem středu mapy
+                }
             });
               // Počkat na načtení mapy před přidáním vrstev
             mapRef.current.on('load', () => {
@@ -842,8 +922,91 @@ const Map: React.FC<MapProps> = ({
                     }
                 });
                 
+                // Sledování změny pozice mapy
+                mapRef.current.on('move', () => {
+                    if (mapRef.current) {
+                        const center = mapRef.current.getCenter();
+                        setCurrentPosition({
+                            lat: center.lat,
+                            lng: center.lng
+                        });
+                    }
+                });
+                
+                // Sledování změny zoomu mapy
+                mapRef.current.on('zoom', () => {
+                    if (mapRef.current) {
+                        const zoom = mapRef.current.getZoom();
+                        setCurrentZoom(zoom);
+                        
+                        // Kontrola, zda není zoom příliš velký nebo malý
+                        if (zoom > MAX_ZOOM) {
+                            mapRef.current.setZoom(MAX_ZOOM);
+                        } else if (zoom < MIN_ZOOM) {
+                            mapRef.current.setZoom(MIN_ZOOM);
+                        }
+                    }
+                });
+                
                 // Přidat body zájmu jako markery
                 addLocationMarkers();
+                
+                // Nastavit omezení přiblížení, aby mapa nezmizela při přílišném zoomu
+                setupZoomConstraints(mapRef.current);
+
+                // Nastavit bezpečnostní limity pro přiblížení mapy
+                setupZoomLimits(mapRef.current);
+
+                // Nastavit posluchač pro zobrazení upozornění na maximální zoom
+                mapRef.current.on('zoomend', () => {
+                    if (mapRef.current) {
+                        const currentZoom = mapRef.current.getZoom();
+                        
+                        // Pokud je zoom blízko maxima, zobrazit upozornění
+                        if (currentZoom > MAX_ZOOM - 0.3) {
+                            // Zabráníme zobrazení více stejných upozornění najednou
+                            let existingAlert = document.getElementById('max-zoom-alert');
+                            if (existingAlert) return;
+                            
+                            // Vytvoření prvku upozornění s CSS třídou místo inline stylů
+                            const maxZoomAlert = document.createElement('div');
+                            maxZoomAlert.id = 'max-zoom-alert';
+                            maxZoomAlert.className = styles.maxZoomAlert;
+                            maxZoomAlert.textContent = 'Dosaženo maximálního přiblížení';
+                            
+                            document.body.appendChild(maxZoomAlert);
+                            
+                            // Automatické odstranění po animaci
+                            setTimeout(() => {
+                                if (maxZoomAlert && maxZoomAlert.parentNode) {
+                                    maxZoomAlert.parentNode.removeChild(maxZoomAlert);
+                                }
+                            }, 2500); // Shodné s délkou animace v CSS
+                        }
+
+                        // Obdobný listener i pro minimální zoom
+                        if (currentZoom < MIN_ZOOM + 0.3) {
+                            // Zabráníme zobrazení více stejných upozornění najednou
+                            let existingMinAlert = document.getElementById('min-zoom-alert');
+                            if (existingMinAlert) return;
+                            
+                            // Vytvoření prvku upozornění s CSS třídou
+                            const minZoomAlert = document.createElement('div');
+                            minZoomAlert.id = 'min-zoom-alert';
+                            minZoomAlert.className = styles.minZoomAlert;
+                            minZoomAlert.textContent = 'Dosaženo maximálního oddálení';
+                            
+                            document.body.appendChild(minZoomAlert);
+                            
+                            // Automatické odstranění po animaci
+                            setTimeout(() => {
+                                if (minZoomAlert && minZoomAlert.parentNode) {
+                                    minZoomAlert.parentNode.removeChild(minZoomAlert);
+                                }
+                            }, 2500);
+                        }
+                    }
+                });
                 
                 // Nastavit stav map jako načtený
                 setMapLoaded(true);
@@ -996,15 +1159,37 @@ const Map: React.FC<MapProps> = ({
     
     /**
      * Vycentruje mapu na aktuální polohu uživatele
+     * s plynulou animací pohybu
      */
     const centerOnUser = () => {
         if (mapRef.current && latitude && longitude) {
+            // Zajistit, že zoom bude v bezpečném rozsahu
+            const safeZoom = Math.min(16, MAX_ZOOM);
+            
+            // Zobrazit vizuální indikátor akce (pulzní kruh)
+            const container = mapRef.current.getContainer();
+            const pulse = document.createElement('div');
+            pulse.className = styles.locationPulse;
+            container.appendChild(pulse);
+            
+            // Animace přecentrování s plynulým přechodem
             mapRef.current.flyTo({
                 center: [longitude, latitude],
-                zoom: 16,
+                zoom: safeZoom,
                 speed: 1.2,
+                curve: 1.3, // plynulejší pohyb s mírným "bounce" efektem
                 essential: true // Zajistí, že animace nebude přerušena
             });
+            
+            // Odstranit pulzní efekt po dokončení animace
+            setTimeout(() => {
+                if (pulse && pulse.parentNode) {
+                    pulse.parentNode.removeChild(pulse);
+                }
+            }, 1000);
+            
+            // Zkontrolovat zoom po dokončení animace
+            setTimeout(ensureSafeZoom, 1500);
         }
     };
 
@@ -1013,12 +1198,18 @@ const Map: React.FC<MapProps> = ({
      */
     const centerOnVysokeMýto = () => {
         if (mapRef.current) {
+            // Zajistit, že zoom bude v bezpečném rozsahu
+            const safeZoom = Math.min(15, MAX_ZOOM);
+            
             mapRef.current.flyTo({
                 center: [defaultLongitude, defaultLatitude],
-                zoom: 15,
+                zoom: safeZoom,
                 speed: 1.2,
                 essential: true
             });
+            
+            // Zkontrolovat zoom po dokončení animace
+            setTimeout(ensureSafeZoom, 1500);
         }
     };
     
@@ -1128,6 +1319,13 @@ const Map: React.FC<MapProps> = ({
                 onEndGame={handleEndGame}
                 isGameRunning={isGameRunning}
                 isPaused={isGamePaused}
+                currentZoom={currentZoom}
+                currentPosition={currentPosition}
+                isGamePaused={isGamePaused}
+                onTogglePauseGame={handleTogglePauseGame}
+                onCenterMap={centerOnUser}
+                onDownloadMap={() => {}}
+                maxZoom={MAX_ZOOM} // Předání maximálního zoomu z konstant
             />
             
             {/* Tabulka se statistikami hráče */}
@@ -1183,6 +1381,38 @@ const Map: React.FC<MapProps> = ({
                     )
                 )
             )}
+
+            {/* Ovládací tlačítka pro zoom přímo na mapě */}
+            <div className={styles.mapZoomControls}>
+                <button 
+                    className={styles.mapZoomButton}
+                    onClick={() => {
+                        if (mapRef.current) {
+                            const currentZoom = mapRef.current.getZoom();
+                            smoothZoom(currentZoom + 1);
+                        }
+                    }}
+                    title="Přiblížit"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
+                    </svg>
+                </button>
+                <button 
+                    className={styles.mapZoomButton}
+                    onClick={() => {
+                        if (mapRef.current) {
+                            const currentZoom = mapRef.current.getZoom();
+                            smoothZoom(currentZoom - 1);
+                        }
+                    }}
+                    title="Oddálit"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                        <path d="M19 13H5v-2h14v2z" fill="currentColor"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     );
 };

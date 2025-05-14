@@ -1,0 +1,46 @@
+/* Globální styly pro kompas - mimo CSS moduly */
+
+/* Přizpůsobení pro různá zařízení */
+.portrait-orientation .compass-global-container {
+  transform: scale(1);
+  transform-origin: top left;
+}
+
+.landscape-orientation .compass-global-container {
+  transform: scale(0.85);
+  transform-origin: top left;
+}
+
+/* Pro iPhone v landscape módu */
+.iphone-landscape .compass-global-container {
+  transform: scale(0.75);
+  transform-origin: top left;
+}
+
+/* Pro velmi malé obrazovky */
+.small-screen .compass-global-container {
+  transform: scale(0.7);
+  transform-origin: top left;
+}
+
+/* Animace při točení kompasu */
+@keyframes compass-calibrating {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+.calibrating-compass {
+  animation: compass-calibrating 1.5s infinite;
+}
+
+/* Animace pro dotykovou zpětnou vazbu */
+@keyframes compass-tap {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.compass-tap-feedback {
+  animation: compass-tap 0.3s;
+}

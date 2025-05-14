@@ -1,0 +1,386 @@
+/* Styly pro komponenty kompasu */
+
+.compass {
+  position: absolute;
+  top: 5px; /* Bude nastaven relativně v rámci .compassContainer */
+  left: auto; /* Resetování absolutního pozicování */
+  width: 36px;
+  height: 36px;
+  z-index: 999;
+  cursor: pointer;
+  background: linear-gradient(145deg, #e0e5ec, #ffffff);
+  border-radius: 50%;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.7),
+              inset 0 -1px 1px rgba(0, 0, 0, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5px; /* Mezera mezi avatarem a kompasem */
+  transform-origin: center;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  user-select: none;
+}
+
+.compass:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.compass:active {
+  transform: scale(0.9);
+}
+
+.compassContainer {
+  /* Styly pro lepší propojení s AppMenu */
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 990;
+}
+
+.compassMini {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z'/%3E%3C/svg%3E");
+  background-size: contain;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.compassNeedleMini {
+  position: absolute;
+  width: 3px; /* Zesílení pro lepší viditelnost */
+  height: 12px; /* Prodloužení */
+  background: linear-gradient(to bottom, #d9534f 0%, #d9534f 50%, #428bca 50%, #428bca 100%); /* Mírně upravené barvy */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.expandedCompass {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box; /* Přidáno pro konzistentní box model */
+  width: 280px; /* Zvětšení pro více detailů */
+  height: 350px; /* Zvětšení pro více detailů */
+  background: linear-gradient(145deg, #e0e5ec 0%, #ffffff 100%); /* Světlejší, moderní gradient */
+  border-radius: 25px; /* Mírně větší zaoblení */
+  box-shadow: 0 8px 35px rgba(0, 0, 0, 0.2), /* Výraznější stín */
+              inset 0 2px 4px rgba(255, 255, 255, 0.7), /* Vnitřní stín pro 3D efekt */
+              inset 0 -2px 4px rgba(0, 0, 0, 0.05); /* Vnitřní stín dole */
+  z-index: 1500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around; /* Lepší rozložení prvků */
+  padding: 20px; /* Větší padding */
+  user-select: none;
+  transition: width 0.3s ease, height 0.3s ease; /* Přidána animace změny velikosti */
+}
+
+.compassRose {
+  width: 220px; /* Zvětšení */
+  height: 220px; /* Zvětšení */
+  position: relative;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  /* Přidání jemného vzoru na pozadí růžice */
+  background-image: radial-gradient(circle, rgba(0,0,0,0.02) 1px, transparent 1px);
+  background-size: 5px 5px;
+}
+
+.compassCircle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 3px solid #b0bec5; /* Silnější a světlejší okraj */
+  position: absolute;
+  background: linear-gradient(135deg, #eceff1 0%, #fafafa 100%); /* Jemnější gradient pozadí */
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.1); /* Vnitřní stín pro hloubku */
+}
+
+.compassCircle::before, .compassCircle::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  z-index: -1; /* Pod hlavní kružnicí */
+}
+
+.compassCircle::before {
+  /* Vnější stínování pro 3D efekt */
+  top: -5px; left: -5px; right: -5px; bottom: -5px;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.05) 0%,rgba(0,0,0,0) 60%);
+}
+
+.compassCircle::after {
+  /* Jemný vnitřní lesk */
+  top: 5px; left: 5px; right: 5px; bottom: 5px;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.3) 0%,rgba(255,255,255,0) 60%);
+}
+
+.compassDirection {
+  position: absolute;
+  font-weight: 600; /* Mírně tučnější */
+  font-size: 16px; /* Mírně menší pro více prostoru */
+  color: #37474f; /* Tmavší, méně kontrastní barva */
+  transform-origin: center;
+  user-select: none;
+}
+
+.compassDirection[data-direction="N"] {
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #e74c3c;
+}
+
+.compassDirection[data-direction="E"] {
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+}
+
+.compassDirection[data-direction="S"] {
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.compassDirection[data-direction="W"] {
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+}
+
+.compassNeedle {
+  position: absolute;
+  top: 5%; /* Posunuto výše pro delší střelku */
+  left: 50%;
+  height: 45%; /* Střelka zabírá 45% výšky růžice */
+  width: 6px; /* Širší střelka */
+  background: linear-gradient(to bottom, #e53935 0%, #e53935 50%, #1e88e5 50%, #1e88e5 100%); /* Nové barvy */
+  transform-origin: bottom center;
+  transform: translateX(-50%);
+  z-index: 2;
+  border-radius: 3px 3px 0 0; /* Zaoblení horní části střelky */
+  box-shadow: 0 0 5px rgba(0,0,0,0.3); /* Jemný stín střelky */
+}
+
+.compassNeedle::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; /* Umístění na konec střelky */
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 10px;
+  height: 10px;
+  background-color: #1e88e5; /* Barva jižní části */
+  border-radius: 0 0 2px 0;
+}
+
+.compassCenterDot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px; /* Větší středový bod */
+  height: 16px; /* Větší středový bod */
+  background-color: #455a64; /* Tmavší barva */
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  box-shadow: 0 0 8px rgba(0,0,0,0.4); /* Stín pro 3D efekt */
+}
+
+.compassInfo {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.compassHeading {
+  font-size: 28px; /* Větší písmo */
+  font-weight: 700; /* Tučnější */
+  margin-bottom: 8px; /* Větší mezera */
+  color: #263238; /* Tmavší barva */
+}
+
+.compassAccuracy {
+  font-size: 14px; /* Větší písmo */
+  font-style: italic; /* Kurzíva pro odlišení */
+}
+
+.accuracy_high {
+  color: #27ae60;
+}
+
+.accuracy_medium {
+  color: #f39c12;
+}
+
+.accuracy_low {
+  color: #e74c3c;
+}
+
+.accuracy_unreliable {
+  color: #95a5a6;
+}
+
+.accuracy_unreliable .compassNeedle {
+  animation: pulse 2s infinite;
+}
+
+/* Animace, efekty a zpětná vazba */
+.tapped {
+  animation: tapPulse 0.3s ease-out;
+}
+
+.closeExpandedCompass {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #eee;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.closeExpandedCompass:hover {
+  background-color: #ddd;
+}
+
+.permissionTooltip {
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: fadeInOut 4s ease-in-out;
+}
+
+.movingIndicator {
+  font-size: 12px;
+  margin-top: 5px;
+  color: #3498db;
+  animation: pulse 2s infinite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.calibrationIcon {
+  font-size: 20px;
+  margin-top: 5px;
+  display: inline-block;
+}
+
+.calibrateButton {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.calibrateButton:hover {
+  background-color: #2980b9;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+}
+
+@keyframes tapPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Responzivní design pro malé obrazovky */
+@media (max-width: 480px) and (orientation: portrait) {
+  .expandedCompass {
+    width: 90vw; /* Využití větší části šířky obrazovky */
+    max-width: 260px; /* Maximální šířka */
+    height: auto; /* Automatická výška podle obsahu */
+    min-height: 320px; /* Minimální výška */
+    padding: 15px;
+  }
+  
+  .compassRose {
+    width: 180px; /* Přizpůsobení velikosti */
+    height: 180px; /* Přizpůsobení velikosti */
+  }
+  .compassHeading {
+    font-size: 24px;
+  }
+  .compassAccuracy {
+    font-size: 12px;
+  }
+}
+
+/* Obnovení původních stylů pro landscape režim */
+@media (orientation: landscape) {
+  .compass {
+    top: 70px;
+    left: 10px;
+  }
+}
+
+/* Speciální styly pro Samsung zařízení */
+html.samsung-device .compass {
+  transform: scale(1.1);
+}
+
+/* Základní animace pro přechody */
+.compass, .expandedCompass {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

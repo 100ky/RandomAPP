@@ -5,10 +5,12 @@
  * popisu dobrodružství, obtížnosti, vzdálenosti a doby trvání hry. Uživatel může
  * kliknutím na avatara zobrazit jeho detaily a poté zahájit hru s vybranou postavou.
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import styles from '@/styles/AvatarSelection.module.css';
+import baseStyles from '../styles/ScreenBase.module.css';
 import { getAvailableAvatars } from '../games/gameManager';
+import { useEnhancedOrientation } from '../hooks/useEnhancedOrientation';
 
 /**
  * Rozhraní popisující informace o avatarovi
@@ -72,6 +74,42 @@ const AvatarSelection: React.FC<AvatarSelectionProps> = ({ onSelect }) => {
   const [avatarInfo, setAvatarInfo] = useState<AvatarInfo | null>(null);
   // Stav pro uložení dostupných avatarů z gameManager
   const [availableAvatars, setAvailableAvatars] = useState<AvatarInfo[]>([]);
+  // Stav pro detekci klientského renderování (pro SSR kompatibilitu)
+  const [isClient, setIsClient] = useState(false);
+  // Stav pro animaci odchodu
+  const [isExiting, setIsExiting] = useState(false);
+  // Hook pro detekci orientace a typu zařízení
+  const { isLandscape, isAndroid, isSamsung, isLowPerformance } = useEnhancedOrientation();
+
+  // Efekt pro nastavení klientského renderování
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Funkce pro získání CSS tříd na základě orientace a typu zařízení
+  const getContainerClasses = useCallback(() => {
+    let classes = `${styles.container}`;
+    
+    // Přidáváme třídy pro orientaci pouze na klientovi
+    if (isClient) {
+      if (isLandscape) {
+        classes += ` ${baseStyles.landscapeContent}`;
+        if (isSamsung) {
+          classes += ` ${styles.samsungLandscape}`;
+        }
+      }
+      
+      if (isLowPerformance) {
+        classes += ` ${styles.optimizedPerformance}`;
+      }
+      
+      if (isAndroid) {
+        classes += ` ${styles.androidOptimized}`;
+      }
+    }
+    
+    return classes;
+  }, [isClient, isLandscape, isSamsung, isLowPerformance, isAndroid]);
 
   // Načtení dostupných avatarů z gameManager
   useEffect(() => {
@@ -109,23 +147,29 @@ const AvatarSelection: React.FC<AvatarSelectionProps> = ({ onSelect }) => {
   };
 
   /**
-   * Spustí hru s vybraným avatarem
+   * Spustí hru s vybraným avatarem (s animací odchodu)
    */
   const handleStartGame = () => {
     if (selectedAvatar) {
+      // Zahájit animaci odchodu
+      setIsExiting(true);
+      
       // Najít ID avatara podle jeho jména
       const selectedGame = getAvailableAvatars().find(game => game.name === selectedAvatar);
       if (selectedGame) {
-        // Použít ID avatara pro přechod do další fáze
-        onSelect(selectedGame.id);
+        // Přidáme timeout pro dokončení animace před přechodem
+        setTimeout(() => {
+          // Použít ID avatara pro přechod do další fáze
+          onSelect(selectedGame.id);
+        }, 300);
       }
     }
   };
 
   return (
-    <div className={styles.container}>
+    <div className={getContainerClasses()}>
       {/* Seznam dostupných avatarů */}
-      <div className={styles.avatarList}>
+      <div className={`${styles.avatarList} ${isClient && isLandscape ? styles.landscapeAvatarList : ''}`}>
         {availableAvatars.map((avatar) => (
           <div
             key={avatar.name}
@@ -135,8 +179,8 @@ const AvatarSelection: React.FC<AvatarSelectionProps> = ({ onSelect }) => {
             <Image
               src={avatar.image}
               alt={avatar.name}
-              width={60}
-              height={60}
+              width={isClient && isLandscape ? 50 : 60}
+              height={isClient && isLandscape ? 50 : 60}
               className={styles.avatarImage}
             />
             <div className={styles.avatarName}>{avatar.name}</div>
@@ -145,17 +189,19 @@ const AvatarSelection: React.FC<AvatarSelectionProps> = ({ onSelect }) => {
       </div>
       
       {/* Panel s informacemi o vybraném avatarovi */}
-      <div className={styles.infoPanel}>
+      <div className={`${styles.infoPanel} ${isClient && isLandscape ? styles.landscapeInfoPanel : ''}`}>
         {avatarInfo ? (
           <>
-            <h1 className={styles.infoTitle}>Informace o hře: {avatarInfo.name}</h1>
-            <div className={styles.infoContent}>
-              <div className={styles.infoItem}>
+            <h1 className={`${styles.infoTitle} ${isClient && isLandscape ? styles.landscapeInfoTitle : ''}`}>
+              Informace o hře: {avatarInfo.name}
+            </h1>
+            <div className={`${styles.infoContent} ${isClient && isLandscape ? styles.landscapeInfoContent : ''}`}>
+              <div className={`${styles.infoItem} ${isClient && isLandscape ? styles.landscapeInfoItem : ''}`}>
                 <h2 className={styles.infoItemTitle}>Popis dobrodružství</h2>
                 <p className={styles.infoItemDescription}>{avatarInfo.description}</p>
               </div>
               
-              <div className={styles.infoItem}>
+              <div className={`${styles.infoItem} ${isClient && isLandscape ? styles.landscapeInfoItem : ''}`}>
                 <h2 className={styles.infoItemTitle}>Detaily mise</h2>
                 <p className={styles.infoItemDescription}>
                   <strong>Obtížnost:</strong> {avatarInfo.difficulty}<br />
@@ -164,14 +210,18 @@ const AvatarSelection: React.FC<AvatarSelectionProps> = ({ onSelect }) => {
                 </p>
               </div>
             </div>
-            <button className={styles.startButton} onClick={handleStartGame}>
+            <button className={`${styles.startButton} ${isClient && isLandscape ? styles.landscapeStartButton : ''}`} onClick={handleStartGame}>
               Začít hru
             </button>
           </>
         ) : (
-          <div className={styles.infoContent}>
-            <h1 className={styles.infoTitle}>Vyberte avatara</h1>
-            <p>Klikněte na jednoho z avatarů vlevo pro zobrazení podrobností o dané únikové hře.</p>
+          <div className={`${styles.infoContent} ${isClient && isLandscape ? styles.landscapeInfoContent : ''}`}>
+            <h1 className={`${styles.infoTitle} ${isClient && isLandscape ? styles.landscapeInfoTitle : ''}`}>
+              Vyberte avatara
+            </h1>
+            <p className={isClient && isLandscape ? styles.landscapeHelperText : ''}>
+              {isClient && isLandscape ? "Vyberte avatara ze seznamu" : "Klikněte na jednoho z avatarů vlevo pro zobrazení podrobností o dané únikové hře."}
+            </p>
           </div>
         )}
       </div>

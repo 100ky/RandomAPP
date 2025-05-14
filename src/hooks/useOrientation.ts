@@ -1,13 +1,30 @@
-import { useState, useEffect } from 'react';
-
 /**
  * Hook pro detekci orientace zařízení, typu zařízení a optimalizace vykreslování
- * @returns {{ isLandscape: boolean, orientation: string, windowWidth: number, windowHeight: number, isAndroid: boolean, isSamsung: boolean, isLowPerformance: boolean }} 
- * Objekt obsahující informace o orientaci, velikosti okna a typu zařízení
+ * Tento hook poskytuje informace o aktuální orientaci zařízení, velikosti okna
+ * a typu zařízení pro optimalizaci vykreslování.
  */
-export function useOrientation() {
+import { useState, useEffect } from 'react';
+
+interface OrientationState {
+  isLandscape: boolean;        // Zda je zařízení v landscape módu
+  orientation: string;         // 'landscape' nebo 'portrait'
+  windowWidth: number;         // Šířka okna v pixelech
+  windowHeight: number;        // Výška okna v pixelech
+  isAndroid: boolean;          // Zda je zařízení Android
+  isIOS: boolean;              // Zda je zařízení iOS
+  isSamsung: boolean;          // Zda je zařízení Samsung
+  isLowPerformance: boolean;   // Zda má zařízení nižší výkon
+  isSmallScreen: boolean;      // Zda má zařízení malý displej
+}
+
+/**
+ * Hook pro detekci orientace zařízení a dalších vlastností zařízení
+ * @returns Objekt obsahující informace o orientaci, velikosti okna a typu zařízení
+ */
+export default function useOrientation(): OrientationState {
   // Kontrola typu zařízení a výkonu, pokud je dostupná
   const isAndroidDevice = typeof navigator !== 'undefined' ? /Android/.test(navigator.userAgent) : false;
+  const isIOSDevice = typeof navigator !== 'undefined' ? /iPhone|iPad|iPod/.test(navigator.userAgent) : false;
   const isSamsungDevice = typeof navigator !== 'undefined' ? /SM-|SAMSUNG/.test(navigator.userAgent) : false;
   
   // Detekce starých zařízení nebo nízkovýkonných zařízení
@@ -16,63 +33,64 @@ export function useOrientation() {
   
   // Odhad nízkovýkonných zařízení
   const isLowPerformance = isOldAndroid || 
-    (typeof navigator !== 'undefined' && navigator.deviceMemory && navigator.deviceMemory < 4);
+    (typeof navigator !== 'undefined' && 
+     // @ts-ignore - ne všechny prohlížeče podporují deviceMemory
+     (navigator.deviceMemory !== undefined && navigator.deviceMemory < 4));
   
   // Výchozí hodnoty
-  const [state, setState] = useState({
-    isLandscape: typeof window !== 'undefined' ? window.innerWidth > window.innerHeight : false,
-    orientation: typeof window !== 'undefined' ? (window.innerWidth > window.innerHeight ? 'landscape' : 'portrait') : 'portrait',
-    windowWidth: typeof window !== 'undefined' ? window.innerWidth : 0,
-    windowHeight: typeof window !== 'undefined' ? window.innerHeight : 0,
+  const initialWindowWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
+  const initialWindowHeight = typeof window !== 'undefined' ? window.innerHeight : 0;
+  
+  const [state, setState] = useState<OrientationState>({
+    isLandscape: initialWindowWidth > initialWindowHeight,
+    orientation: initialWindowWidth > initialWindowHeight ? 'landscape' : 'portrait',
+    windowWidth: initialWindowWidth,
+    windowHeight: initialWindowHeight,
     isAndroid: isAndroidDevice,
+    isIOS: isIOSDevice,
     isSamsung: isSamsungDevice,
-    isLowPerformance: isLowPerformance
+    isLowPerformance: isLowPerformance,
+    // Použijeme konzistentní logiku pro isSmallScreen
+    isSmallScreen: initialWindowWidth < 480 || initialWindowHeight < 480 
   });
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     /**
      * Aktualizuje stav orientace při změně velikosti okna
      */
     const handleResize = () => {
-      const landscape = window.innerWidth > window.innerHeight;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const landscape = width > height;
+      
       setState({
         isLandscape: landscape,
         orientation: landscape ? 'landscape' : 'portrait',
-        windowWidth: window.innerWidth,
-        windowHeight: window.innerHeight,
+        windowWidth: width,
+        windowHeight: height,
         isAndroid: isAndroidDevice,
+        isIOS: isIOSDevice,
         isSamsung: isSamsungDevice,
-        isLowPerformance: isLowPerformance
+        isLowPerformance: isLowPerformance,
+        // Použijeme konzistentní logiku pro isSmallScreen
+        isSmallScreen: width < 480 || height < 480
       });
       
       // Aktualizuje CSS třídy na kořenovém elementu
-      if (landscape) {
-        document.documentElement.classList.add('landscape-orientation');
-        document.documentElement.classList.remove('portrait-orientation');
-      } else {
-        document.documentElement.classList.add('portrait-orientation');
-        document.documentElement.classList.remove('landscape-orientation');
-      }
+      document.documentElement.classList.toggle('landscape-orientation', landscape);
+      document.documentElement.classList.toggle('portrait-orientation', !landscape);
       
       // Detekce velmi malého displeje
-      const isSmallScreen = window.innerWidth < 480 || window.innerHeight < 480;
-      document.documentElement.classList.toggle('small-screen', isSmallScreen);
+      const smallScreen = width < 480 || height < 480;
+      document.documentElement.classList.toggle('small-screen', smallScreen);
       
       // Přidání tříd pro specifická zařízení
-      if (isAndroidDevice) {
-        document.documentElement.classList.add('android-device');
-      }
-      
-      if (isSamsungDevice) {
-        document.documentElement.classList.add('samsung-device');
-      }
-      
-      if (isOldAndroid) {
-        document.documentElement.classList.add('old-device');
-      }
-      
-      if (isLowPerformance) {
-        document.documentElement.classList.add('low-performance-device');
-      }
+      document.documentElement.classList.toggle('android-device', isAndroidDevice);
+      document.documentElement.classList.toggle('ios-device', isIOSDevice); // Přidáno pro iOS
+      document.documentElement.classList.toggle('samsung-device', isSamsungDevice);
+      document.documentElement.classList.toggle('old-device', isOldAndroid);
+      document.documentElement.classList.toggle('low-performance-device', isLowPerformance);
     };
 
     // Přiřazení event handleru pro změnu velikosti okna
@@ -89,9 +107,7 @@ export function useOrientation() {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('orientationchange', handleResize);
     };
-  }, [isAndroidDevice]);
+  }, [isAndroidDevice, isIOSDevice, isSamsungDevice, isLowPerformance]);
 
   return state;
 }
-
-export default useOrientation;

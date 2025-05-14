@@ -9,11 +9,9 @@ import '../styles/SmallScreenFixes.css';
 import '../styles/AndroidFixes.css';
 import '../styles/LoadingScreenUpdates.css';
 import '../styles/ResponsiveFixes.css';
-import '../styles/ResponsiveTestHelpers.css';
 import '../styles/iOSFixes.css';
 import '../styles/MobileUIFixes.css';
 import '../styles/DeviceSpecificFixes.css';
-import '../styles/DeviceSimulation.css';
 import { applyDeviceOptimizations } from '../utils/deviceDetection';
 
 function MyApp({ Component, pageProps }: AppProps) {

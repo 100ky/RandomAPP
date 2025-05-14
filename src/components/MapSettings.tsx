@@ -87,12 +87,13 @@ interface MapSettingsProps {
   onEndGame?: () => void;                      // Funkce pro ukončení hry
   isGameRunning?: boolean;                     // Indikátor, zda je hra aktivní
   isPaused?: boolean;                          // Indikátor, zda je hra pozastavena
-  onCenterMap: () => void;                     // Funkce pro centrování mapy
-  onDownloadMap: () => void;                   // Funkce pro stažení mapy
-  isGamePaused: boolean;                       // Indikátor, zda je hra pozastavena
-  onTogglePauseGame: () => void;               // Funkce pro přepnutí pozastavení hry
-  currentZoom: number;                         // Aktuální zoom mapy
-  currentPosition: { lat: number; lng: number }; // Aktuální pozice na mapě
+  onCenterMap?: () => void;                    // Funkce pro centrování mapy (změněno na volitelné)
+  onDownloadMap?: () => void;                  // Funkce pro stažení mapy (změněno na volitelné)
+  isGamePaused?: boolean;                      // Indikátor, zda je hra pozastavena (změněno na volitelné)
+  onTogglePauseGame?: () => void;              // Funkce pro přepnutí pozastavení hry (změněno na volitelné)
+  currentZoom?: number;                        // Aktuální zoom mapy (změněno na volitelné)
+  currentPosition?: { lat: number; lng: number }; // Aktuální pozice na mapě (změněno na volitelné)
+  maxZoom?: number;                            // Maximální povolený zoom mapy
 }
 
 /**
@@ -125,17 +126,21 @@ const MapSettings: React.FC<MapSettingsProps> = ({
   onEndGame,
   isGameRunning = false,
   isPaused = false,
-  onCenterMap,
-  onDownloadMap,
-  isGamePaused,
-  onTogglePauseGame,
-  currentZoom,
-  currentPosition,
+  onCenterMap = () => {},
+  onDownloadMap = () => {},
+  isGamePaused = false,
+  onTogglePauseGame = () => {},
+  currentZoom = 15,
+  currentPosition = { lat: 49.95, lng: 16.16 },
+  maxZoom = 18,
 }) => {
   // Stav určující, zda je menu nastavení otevřené
   const [isOpen, setIsOpen] = useState<boolean>(false);
   // Reference na DOM element menu pro detekci kliknutí mimo menu
   const menuRef = useRef<HTMLDivElement>(null);
+  
+  // Výpočet, jak blízko je uživatel k maximálnímu zoomu (procento)
+  const zoomPercentage = Math.min(100, Math.max(0, (currentZoom / maxZoom) * 100));
 
   // Zavření menu při kliknutí mimo něj
   useEffect(() => {
@@ -202,8 +207,45 @@ const MapSettings: React.FC<MapSettingsProps> = ({
             </li>
           </ul>
           <div className={styles.menuFooter}>
-            <p>Zoom: {currentZoom.toFixed(2)}</p>
-            <p>Pozice: {currentPosition.lat.toFixed(4)}, {currentPosition.lng.toFixed(4)}</p>
+            <p>
+              Zoom: {typeof currentZoom === 'number' ? currentZoom.toFixed(2) : 'N/A'} 
+              {zoomPercentage > 85 && (
+                <span className={styles.zoomWarning}> (Blízko maximu)</span>
+              )}
+            </p>
+            
+            {/* Indikátor přiblížení */}
+            <div className={styles.zoomIndicator}>
+              <div 
+                className={`${styles.zoomIndicatorFill} ${zoomPercentage > 85 ? styles.zoomIndicatorWarning : ''}`}
+                style={{ width: `${zoomPercentage}%` }}
+              />
+            </div>
+            
+            {/* Ovládání zoomu */}
+            <div className={styles.zoomControls}>
+              <button 
+                className={styles.zoomButton} 
+                onClick={() => onCenterMap && onCenterMap()}
+                title="Centrovat na mou polohu"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24">
+                  <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" fill="currentColor"/>
+                </svg>
+              </button>
+              
+              <button 
+                className={styles.zoomButton} 
+                onClick={() => window.dispatchEvent(new WheelEvent('wheel', { deltaY: 100 }))}
+                title="Oddálit"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24">
+                  <path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+            
+            <p>Pozice: {currentPosition && currentPosition.lat ? currentPosition.lat.toFixed(4) : 'N/A'}, {currentPosition && currentPosition.lng ? currentPosition.lng.toFixed(4) : 'N/A'}</p>
           </div>
         </div>
       )}

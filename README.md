@@ -10,6 +10,14 @@ Tento projekt je mobilní aplikace vytvořená pomocí Next.js a TypeScriptu, kt
 - **Uživatelské rozhraní**: Poskytuje intuitivní ovládací prvky pro správu hry.
 - **Offline režim**: Podpora pro ukládání mapových dlaždic pro použití bez internetu.
 - **PWA**: Implementováno jako Progressive Web App s možností instalace.
+- **Optimalizovaný zoom**: Implementace bezpečných limitů přiblížení s plynulými přechody.
+
+## Technická dokumentace
+
+Podrobná dokumentace ke konkrétním tématům:
+
+- [Řešení problému s mapou při přiblížení](./src/docs/MAP-ZOOM-SOLUTION.md)
+- [Optimalizace pro landscape režim](./src/docs/LANDSCAPE-OPTIMIZATION.md)
 
 ## Instalace
 
