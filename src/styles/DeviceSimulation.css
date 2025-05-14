@@ -1,0 +1,92 @@
+/* DeviceSimulation.css - Styly pro simulaci různých typů zařízení v testovacím rozhraní */
+
+/* Simulace Samsung zařízení */
+.simulated-samsung .fullScreen {
+  height: 100vh;
+  height: -webkit-fill-available;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #1a73e8, #185abc);
+}
+
+.simulated-samsung .compass {
+  width: 70px;
+  height: 70px;
+  border: 3px solid rgba(255, 255, 255, 0.5);
+}
+
+.simulated-samsung .landscapeContent {
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-around !important;
+}
+
+/* Simulace starších Android zařízení */
+.simulated-old-device .fullScreen {
+  background: linear-gradient(135deg, #f50057, #c51162);
+}
+
+.simulated-old-device .compass,
+.simulated-old-device .needle {
+  animation: none !important;
+}
+
+.simulated-old-device .fullScreen::before {
+  display: none;
+}
+
+.simulated-old-device .progressBar {
+  background: #f50057;
+  box-shadow: none;
+}
+
+/* Simulace nízkovýkonných zařízení */
+.simulated-low-performance .fullScreen {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+}
+
+.simulated-low-performance .fadeIn,
+.simulated-low-performance .fadeOut {
+  animation-duration: 0.5s !important;
+}
+
+.simulated-low-performance .compass,
+.simulated-low-performance .needle {
+  animation: none !important;
+}
+
+.simulated-low-performance .fullScreen::before {
+  opacity: 0.3;
+  background-image: none;
+}
+
+.simulated-low-performance .progressBar {
+  background: #ff9800;
+  transition: width 0.5s linear;
+}
+
+/* Pomocné prvky pro testovací režim */
+.device-info-overlay {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  z-index: 9999;
+}
+
+.return-button {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  text-decoration: none;
+  z-index: 9999;
+}

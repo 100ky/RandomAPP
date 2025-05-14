@@ -5,6 +5,8 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import '../styles/globals.css';
 // Globální CSS soubory pro responzivní design a optimalizace pro různá zařízení
 import '../styles/LoadingScreenUpdates.css';
+import '../styles/LoadingScreen.css';
+import '../styles/adventureCore.css';
 import '../styles/iOSFixes.css';
 import '../styles/DeviceSpecificFixes.css';
 import { applyDeviceOptimizations } from '../utils/deviceDetection';

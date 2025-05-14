@@ -4,10 +4,11 @@
  * Tato komponenta slouží k zobrazení aktuálně vybraného avatara hráče v horní části aplikace.
  * Uživatel tak vždy vidí, kterou postavu si zvolil pro průchod hrou.
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import styles from '@/styles/AppMenu.module.css';
 import compassStyles from '@/styles/Compass.module.css';
+import compassContainerStyles from '@/styles/CompassContainer.module.css';
 import { getAvailableAvatars } from '../games/gameManager';
 import Compass from './CompassNew';
 
@@ -70,27 +71,25 @@ const AppMenu: React.FC<AppMenuProps> = ({ selectedAvatarId }) => {
   const handleToggleCompass = () => {
     setIsCompassExpanded(!isCompassExpanded);
   };
-
   return (
     <div className={styles['app-menu']}>
-      <div className={compassStyles.compassContainer}>
-        <div className={styles['avatar-display']}>
-          {selectedAvatar && (
-            <div className={styles['current-avatar']}>
-              <Image 
-                src={selectedAvatar.imageUrl} 
-                alt={selectedAvatar.name} 
-                width={50}
-                height={50}
-                className={styles['avatar-icon']} 
-              />
-              {/* Text jména avatara je skrytý pomocí CSS ale přítomný pro přístupnost */}
-              <span className={styles['avatar-name']}>{selectedAvatar.name}</span>
-            </div>
-          )}
-        </div>
-        
-        {/* Kompas pod avatarem */}
+      <div className={styles['avatar-display']}>
+        {selectedAvatar && (
+          <div className={styles['current-avatar']}>
+            <Image 
+              src={selectedAvatar.imageUrl} 
+              alt={selectedAvatar.name} 
+              width={50}
+              height={50}
+              className={styles['avatar-icon']} 
+            />
+            {/* Text jména avatara je skrytý pomocí CSS ale přítomný pro přístupnost */}
+            <span className={styles['avatar-name']}>{selectedAvatar.name}</span>
+          </div>
+        )}
+      </div>      
+      {/* Kompas pod avatarem */}
+      <div className={compassContainerStyles.compassFullContainer}>
         <Compass 
           isExpanded={isCompassExpanded}
           onToggleExpanded={handleToggleCompass}

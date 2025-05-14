@@ -271,7 +271,7 @@
   }
 }
 
-/* Progress bar */
+/* Progress bar - DEPRECATED: Use .adventure-progress-container and .adventure-progress-bar from globals.css instead */
 .progressContainer {
   width: 80%;
   height: 10px;

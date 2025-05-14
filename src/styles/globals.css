@@ -195,73 +195,136 @@ h2 {
 .adventure-icon {
   color: var(--primary-color);
   margin-right: 8px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adventure-icon::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-color);
+  opacity: 0;
+  animation: icon-pulse 2s infinite;
+}
+
+@keyframes icon-pulse {
+  0% { transform: scale(0.8); opacity: 0.7; }
+  70% { transform: scale(1.2); opacity: 0; }
+  100% { transform: scale(1.5); opacity: 0; }
 }
 
 .sound-toggle {
   color: var(--primary-color);
 }
 
+/* HARMONIZOVANÉ TLAČÍTKA */
+
+/* Základní dobrodružné tlačítko */
 .adventure-button {
-  background-color: var(--primary-color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
   color: var(--white);
-  border: none;
-  border-radius: 6px;
-  padding: 12px 24px;
+  border: 2px solid var(--accent-color);
+  border-radius: 8px;
   font-family: var(--font-adventure);
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 16px;
+  text-decoration: none;
   cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   box-shadow: var(--shadow-medium);
-  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  z-index: 1;
 }
 
-.adventure-button::before {
-  content: "";
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, var(--accent-color), transparent, var(--accent-color), transparent);
-  z-index: -1;
-  animation: adventure-border-shine 4s linear infinite;
-  background-size: 400% 400%;
+.adventure-button:hover, .adventure-button.hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: var(--shadow-strong);
 }
 
-.adventure-button::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.1);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.adventure-button:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-strong); /* Použití neutrální silné varianty stínu */
-}
-
-.adventure-button:hover::after {
-  opacity: 1;
-}
-
-.adventure-button:active {
-  transform: translateY(1px);
+.adventure-button:active, .adventure-button.active {
+  transform: scale(0.97);
   box-shadow: var(--shadow-light);
 }
 
-@keyframes adventure-border-shine {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+.adventure-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+  z-index: -1;
+}
+
+.adventure-button:hover::after {
+  animation: shine 1.5s infinite;
+}
+
+/* Velikosti tlačítek */
+.button-large {
+  padding: 12px 28px;
+  font-size: 18px;
+}
+
+.button-small {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+/* Varianty tlačítek */
+.button-primary {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  border-color: var(--accent-color);
+}
+
+.button-secondary {
+  background: linear-gradient(135deg, var(--secondary-color), var(--secondary-dark));
+  border-color: var(--secondary-light);
+}
+
+.button-accent {
+  background: linear-gradient(135deg, var(--accent-color), var(--accent-dark));
+  color: var(--black);
+  border-color: var(--primary-color);
+}
+
+.button-outline {
+  background: transparent;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+
+.button-outline:hover {
+  background: rgba(139, 69, 19, 0.1);
+}
+
+/* Zakázané tlačítko */
+.adventure-button:disabled {
+  background: var(--medium-gray);
+  border-color: var(--light-gray);
+  color: var(--dark-gray);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.adventure-button:disabled::after {
+  display: none;
 }
 
 /* Dobrodružné animované podklady */
@@ -665,6 +728,27 @@ h2 {
     width: 22px; 
     height: 22px; 
   }
+  
+  .explorer-button,
+  .explorer-link,
+  .game-button {
+    box-shadow: var(--shadow-medium), 0 0 10px rgba(255, 215, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  
+  .explorer-button:hover,
+  .explorer-link:hover,
+  .game-button:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: var(--shadow-strong), 0 0 15px rgba(255, 215, 0, 0.3);
+  }
+  
+  .explorer-button:active,
+  .explorer-link:active,
+  .game-button:active {
+    transform: scale(0.97);
+    box-shadow: var(--shadow-light);
+  }
 }
 
 /* Pro velmi malé displeje v landscape režimu pro GameControls */
@@ -741,3 +825,470 @@ h2 {
   }
 }
 /* Konec stylů z GameControls.css */
+
+/* 
+ * Průzkumnické a dobrodružné rozšíření stylů 
+ * Přidává modernější, dobrodružné prvky a sjednocuje design
+ */
+
+/* Vylepšené styly pro tlačítka */
+button {
+  font-family: var(--font-adventure);
+}
+
+/* Průzkumnické pozadí pro dobrodružné části aplikace */
+.adventure-bg {
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%23a77c46' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+  position: relative;
+}
+
+.adventure-bg::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 15px rgba(139, 69, 19, 0.1);
+  z-index: 1;
+}
+
+/* Přechody stránek */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.page-transition-exit {
+  opacity: 1;
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Stylové vylepšení pro ducha průzkumníka */
+.explorer-button,
+.explorer-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+  color: white;
+  border: 2px solid var(--accent-color);
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-family: var(--font-adventure);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-medium);
+  position: relative;
+  overflow: hidden;
+}
+
+.explorer-button::after,
+.explorer-link::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.2), 
+    transparent
+  );
+  z-index: 1;
+  animation: buttonGlow 3s infinite;
+}
+
+@keyframes buttonGlow {
+  0% { left: -100%; }
+  50%, 100% { left: 100%; }
+}
+
+.explorer-button:hover,
+.explorer-link:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-strong), 0 0 15px rgba(139, 69, 19, 0.2);
+}
+
+.explorer-button:active,
+.explorer-link:active {
+  transform: translateY(1px);
+  box-shadow: var(--shadow-light);
+}
+
+/* Animace nahrávání ve stylu průzkumníka */
+.explorer-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-adventure);
+}
+
+.explorer-loading::after {
+  content: "...";
+  animation: loadingDots 1.5s infinite;
+  width: 24px;
+  text-align: left;
+}
+
+@keyframes loadingDots {
+  0%, 20% { content: "."; }
+  40% { content: ".."; }
+  60%, 100% { content: "..."; }
+}
+
+/* Spodní panel - fix pro ještě lepší zobrazení na různých zařízeních */
+@media (orientation: landscape) {
+  .bottom-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.9);
+    border-top: 1px solid var(--light-gray);
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+/* Lepší podpora pro kompas v různých situacích */
+.compass-visible {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Vylepšený stín pro objekty s dobrodružným vzhledem */
+.adventure-shadow {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 0 8px rgba(139, 69, 19, 0.2);
+}
+
+/* Animovaný přechod stránek */
+.page-fade-in {
+  animation: pageAppear 0.6s ease-out forwards;
+}
+
+@keyframes pageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* HARMONIZOVANÉ SPOLEČNÉ ANIMACE */
+/* Tyto animace jsou sdíleny napříč celou aplikací */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  20% { left: 100%; }
+  100% { left: 100%; }
+}
+
+@keyframes cloudMove {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Společné třídy pro animace */
+.fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.fadeOut {
+  animation: fadeOut 0.5s ease-out forwards;
+}
+
+.fadeInUp {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.fadeInDown {
+  animation: fadeInDown 0.5s ease-out forwards;
+}
+
+.fadeOutUp {
+  animation: fadeOutUp 0.5s ease-out forwards;
+}
+
+.fadeOutDown {
+  animation: fadeOutDown 0.5s ease-out forwards;
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+.float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Pozadí s cloudy a gradientem */
+.adventureBackground {
+  background: linear-gradient(135deg, #8B4513, #6B3100, #8B4513);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.adventureBackground::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg width='100' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21.184 20c.357-.13.72-.264.888-.14C19.454 15.64 33.67 7.116 34.15 7.215c1.315.262 2.356 7.114 2.07 8.112-.144.14-1.356 2.316-4.2 3.23a17.876 17.876 0 01-6.877 1.384c-1.567.017-2.313-.412-4.207-.764-.483-.097-1.145.022-1.81.162-.847.219-1.898.538-2.35.6-.976.073-1.85-.47-2.13-.917-.486-.93-1.8-2.055-1.957-2.94-.25-1.425 1.592-2.346 1.011-2.076a11.74 11.74 0 015.53-.17c.76.142 1.388.458 2.838.232.766-.12 1.627-.32 2.363-.63 1.376-.58 2.51-.786 3.447-.399.68.282 1.138 1.11 1.852 1.7.标号.524.774 1.655 1.536 1.95.585.18.777.743.592 1.043-.123.2-.364.385-.604.577-.534.42-1.35.989-1.718 1.138C25.327 19.637 21.53 20 21.184 20z' fill='rgba(255, 255, 255, 0.08)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg width='70' height='30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M.97 19.336c-.9.144-1.832.27-2.283.142-1.19-.332-2.064-1.594-3.107-3.926-.48-1.07-.954-1.913-1.425-2.529-.22-.293-.363-.553-.433-.78a47.916 47.916 0 00-.745-1.852c-.096-.258-.16-.495-.19-.713-.101-.783.057-1.538.398-2.044.349-.52.904-.883 1.617-.89.612-.005 1.756.394 2.645 1.348.277.277.59.754.992 1.43.117.192.295.44.57.648.483.36.94.468 1.395.604.723.216 1.373.162 2.053.382a5.392 5.392 0 012.348 1.434c.396.379 1.032 1.103 1.522 1.988a8.16 8.16 0 01.507 1.177c.26.63.294 1.39.401 2.076.105.65.2 1.32.152 1.675-.038.233-.154.4-.338.481-.195.08-.54.085-.907.03z' fill='rgba(255, 255, 255, 0.06)'/%3E%3C/svg%3E");
+  opacity: 0.6;
+  z-index: 0;
+  animation: cloudMove 60s linear infinite;
+  pointer-events: none;
+}
+
+/* HARMONIZOVANÉ KARTY A PANELY */
+
+/* Průzkumnická karta */
+.adventure-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-medium), 0 0 0 2px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.adventure-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-strong), 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+.adventure-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color));
+  background-size: 200% 100%;
+  animation: gradientShift 3s ease infinite;
+}
+
+.adventure-card-title {
+  font-family: var(--font-adventure);
+  font-size: 24px;
+  color: var(--primary-dark);
+  margin-bottom: 16px;
+  text-shadow: var(--adventure-text-shadow);
+}
+
+.adventure-card-subtitle {
+  font-family: var(--font-adventure);
+  font-size: 18px;
+  color: var(--primary-color);
+  margin-bottom: 12px;
+}
+
+.adventure-card-content {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--black);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+/* Panel s papírovým vzhledem */
+.parchment-panel {
+  background-color: #f0e6d2;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%238b4513' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.1), 0 0 0 1px rgba(139, 69, 19, 0.05);
+  position: relative;
+  border: 1px solid rgba(139, 69, 19, 0.2);
+}
+
+.parchment-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 50%, rgba(139, 69, 19, 0.05) 100%);
+  pointer-events: none;
+}
+
+/* Progress bar */
+.adventure-progress-container {
+  width: 100%;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 2px;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 10px 0;
+}
+
+.adventure-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-light), var(--accent-color));
+  border-radius: 10px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.adventure-progress-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shine 2s infinite;
+}
+
+/* Průzkumnické ikony */
+.adventure-icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  box-shadow: var(--shadow-medium);
+  position: relative;
+  overflow: hidden;
+}
+
+.adventure-icon-container::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0) 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.adventure-icon-container:hover::after {
+  opacity: 1;
+}

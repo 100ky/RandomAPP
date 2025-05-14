@@ -209,8 +209,7 @@ const AvatarSelection: React.FC<AvatarSelectionProps> = ({ onSelect }) => {
                   <strong>Doba trvání:</strong> {avatarInfo.duration}
                 </p>
               </div>
-            </div>
-            <button className={`${styles.startButton} ${isClient && isLandscape ? styles.landscapeStartButton : ''}`} onClick={handleStartGame}>
+            </div>            <button className={`adventure-button button-large ${styles.startButton} ${isClient && isLandscape ? styles.landscapeStartButton : ''}`} onClick={handleStartGame}>
               Začít hru
             </button>
           </>

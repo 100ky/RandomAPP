@@ -48,10 +48,9 @@ const SplashScreenTest: React.FC = () => {
     <>
       <Head>
         <title>Test SplashScreen</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-      </Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />      </Head>
       
-      {showScreen && <SplashScreen onFinish={handleFinish} />}
+      {showScreen && <SplashScreen onFinish={handleFinish} selectedAvatarId="explorer" />}
       
       <div className={`${styles.testControls} ${!showScreen ? styles.visible : ''}`}>
         <div className={styles.deviceInfo}>

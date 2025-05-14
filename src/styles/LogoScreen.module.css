@@ -8,6 +8,48 @@
   height: 100%;
   padding: 20px;
   box-sizing: border-box;
+  background: linear-gradient(135deg, #8B4513, #6B3100, #8B4513);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.logoContentContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg width='100' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21.184 20c.357-.13.72-.264.888-.14C19.454 15.64 33.67 7.116 34.15 7.215c1.315.262 2.356 7.114 2.07 8.112-.144.14-1.356 2.316-4.2 3.23a17.876 17.876 0 01-6.877 1.384c-1.567.017-2.313-.412-4.207-.764-.483-.097-1.145.022-1.81.162-.847.219-1.898.538-2.35.6-.976.073-1.85-.47-2.13-.917-.486-.93-1.8-2.055-1.957-2.94-.25-1.425 1.592-2.346 1.011-2.076a11.74 11.74 0 015.53-.17c.76.142 1.388.458 2.838.232.766-.12 1.627-.32 2.363-.63 1.376-.58 2.51-.786 3.447-.399.68.282 1.138 1.11 1.852 1.7.标号.524.774 1.655 1.536 1.95.585.18.777.743.592 1.043-.123.2-.364.385-.604.577-.534.42-1.35.989-1.718 1.138C25.327 19.637 21.53 20 21.184 20z' fill='rgba(255, 255, 255, 0.08)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg width='70' height='30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M.97 19.336c-.9.144-1.832.27-2.283.142-1.19-.332-2.064-1.594-3.107-3.926-.48-1.07-.954-1.913-1.425-2.529-.22-.293-.363-.553-.433-.78a47.916 47.916 0 00-.745-1.852c-.096-.258-.16-.495-.19-.713-.101-.783.057-1.538.398-2.044.349-.52.904-.883 1.617-.89.612-.005 1.756.394 2.645 1.348.277.277.59.754.992 1.43.117.192.295.44.57.648.483.36.94.468 1.395.604.723.216 1.373.162 2.053.382a5.392 5.392 0 012.348 1.434c.396.379 1.032 1.103 1.522 1.988a8.16 8.16 0 01.507 1.177c.26.63.294 1.39.401 2.076.105.65.2 1.32.152 1.675-.038.233-.154.4-.338.481-.195.08-.54.085-.907.03z' fill='rgba(255, 255, 255, 0.06)'/%3E%3C/svg%3E");
+  opacity: 0.6;
+  z-index: 0;
+  animation: cloudsMove 60s linear infinite;
+}
+
+@keyframes cloudsMove {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes logoAppear {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Speciální styl pro landscape orientaci */
@@ -49,6 +91,16 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 250px;
+  height: 250px;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 0 2px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  animation: logoAppear 1s ease-out forwards;
   width: 100%;
   height: 100%;
   font-size: 48px;
@@ -81,6 +133,84 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.logoTitle {
+  font-family: var(--font-adventure);
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  text-align: center;
+  position: relative;
+  animation: floatAnimation 3s ease-in-out infinite;
+}
+
+.logoSubtitle {
+  font-family: var(--font-adventure);
+  font-size: 1.2rem;
+  color: var(--primary-dark);
+  text-align: center;
+  margin-top: 10px;
+  max-width: 80%;
+  animation: fadeInUp 0.8s ease-out 0.5s forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@keyframes floatAnimation {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.clouds {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  filter: blur(20px);
+}
+
+.cloud1 {
+  width: 120px;
+  height: 60px;
+  top: 20%;
+  left: -30px;
+  animation: cloudFloat1 25s linear infinite;
+}
+
+.cloud2 {
+  width: 80px;
+  height: 40px;
+  bottom: 15%;
+  right: -20px;
+  animation: cloudFloat2 18s linear infinite;
+}
+
+@keyframes cloudFloat1 {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(100vw + 120px)); }
+}
+
+@keyframes cloudFloat2 {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-100vw - 80px)); }
 }
 
 .logoHint {

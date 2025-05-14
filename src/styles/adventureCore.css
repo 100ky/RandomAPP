@@ -1,0 +1,171 @@
+/*
+ * adventureCore.css
+ * Sjednocené základní komponenty pro průzkumnický design
+ */
+
+/* Mapový svitek - průzkumnický UI prvek */
+.adventure-map-scroll {
+  width: 120px;
+  height: 90px;
+  background: linear-gradient(to bottom, #e6d2b5, #d2b48c, #c19a6b);
+  border-radius: 8px;
+  position: relative;
+  overflow: visible;
+  transform: perspective(400px) rotateX(5deg) rotateY(-5deg);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+  margin: 10px 0;
+}
+
+.adventure-map-scroll:hover {
+  transform: perspective(400px) rotateX(8deg) rotateY(-8deg);
+}
+
+.adventure-map-content {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(211, 180, 140, 0.8),
+    rgba(211, 180, 140, 0.8) 2px,
+    rgba(226, 202, 170, 0.8) 2px,
+    rgba(226, 202, 170, 0.8) 4px
+  );
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.adventure-map-path {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  width: 80%;
+  height: 3px;
+  background: #8b5432;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.adventure-map-path::before, .adventure-map-path::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8b5432;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.adventure-map-path::before {
+  left: 0;
+}
+
+.adventure-map-path::after {
+  right: 0;
+}
+
+.adventure-map-marker {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #c22525;
+  border: 1px solid #8b5432;
+  top: 50%;
+  left: 30%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  box-shadow: 0 0 4px rgba(194, 37, 37, 0.6);
+}
+
+.adventure-map-treasure {
+  position: absolute;
+  top: 50%;
+  right: 15%;
+  width: 15px;
+  height: 15px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%238b5432' d='M12,1L3,5v6c0,5.5,3.8,10.7,9,12c5.2-1.3,9-6.5,9-12V5L12,1z M12,11.8c-1,0-1.8-0.8-1.8-1.8s0.8-1.8,1.8-1.8s1.8,0.8,1.8,1.8S13,11.8,12,11.8z'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  transform: translate(0, -50%);
+  z-index: 3;
+  filter: drop-shadow(0 0 2px rgba(139, 84, 50, 0.5));
+}
+
+.adventure-map-rolls {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.adventure-map-top-roll, .adventure-map-bottom-roll {
+  position: absolute;
+  width: 100%;
+  height: 12px;
+  background: linear-gradient(to bottom, #a0846c, #8b5432);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.adventure-map-top-roll {
+  top: -6px;
+}
+
+.adventure-map-bottom-roll {
+  bottom: -6px;
+}
+
+/* Jednotné animace pro průzkumnické prvky */
+@keyframes adventure-float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes adventure-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+@keyframes adventure-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes adventure-shimmer {
+  0% { background-position: -100% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Responzivní úpravy pro landscape režim */
+@media (orientation: landscape) {
+  .adventure-landscape-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    max-height: 90vh;
+    width: 100%;
+  }
+  
+  .adventure-landscape-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 50%;
+    padding: 15px;
+  }
+}
+
+/* Podpora pro téma */
+:root[data-theme="dark"] .adventure-map-scroll {
+  background: linear-gradient(to bottom, #a68b72, #8b7258, #6b553c);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}

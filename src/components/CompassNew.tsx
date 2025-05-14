@@ -92,14 +92,13 @@ const Compass: React.FC<CompassProps> = ({
       });
     }
   }, [onToggleExpanded, permissionRequested, requestPermission]);
-
   // Vykreslí kompas podle toho, zda je rozbalený nebo ne
   if (isExpanded) {
     return (
       <div 
         className={`
           ${styles.expandedCompass} 
-          ${isLandscape ? styles.landscapeSpecificAdjustments : ''} /* Použití lokální třídy pro specifické úpravy */
+          ${isLandscape ? styles.landscapeSpecificAdjustments : ''}
           ${compassAnimations.expandingCompass}
         `} 
         onClick={handleCompassClick}
@@ -158,8 +157,7 @@ const Compass: React.FC<CompassProps> = ({
             aria-label="Zobrazit nápovědu ke kalibraci"
           >
             Kalibrovat
-          </button>
-        </div>
+          </button>        </div>
       </div>
     );
   }

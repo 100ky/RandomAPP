@@ -1,5 +1,5 @@
 import { Map, Marker, Popup, LngLatBounds } from 'maplibre-gl';
-import maplibre from 'maplibre-gl';
+import * as maplibre from 'maplibre-gl';
 
 export interface Location {
     name: string;

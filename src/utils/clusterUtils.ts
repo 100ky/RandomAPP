@@ -39,8 +39,7 @@ export function addClustering(
   const points = {
     type: 'FeatureCollection',
     features: locations.map(location => ({
-      type: 'Feature',
-      properties: {
+      type: 'Feature',      properties: {
         id: location.id,
         name: location.name,
         description: location.description,
@@ -50,7 +49,7 @@ export function addClustering(
       },
       geometry: {
         type: 'Point',
-        coordinates: [location.longitude, location.latitude]
+        coordinates: [location.coordinates.lng, location.coordinates.lat]
       }
     }))
   };

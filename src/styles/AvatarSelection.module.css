@@ -5,6 +5,19 @@
   width: 100%;
   max-height: 100vh;
   overflow: hidden;
+  animation: fadeInUp 0.6s ease-out forwards;
+  background: linear-gradient(135deg, #f0f4f8 0%, #e1e8ed 100%);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .avatarList {
@@ -15,7 +28,9 @@
   padding: 15px;
   gap: 10px;
   overflow-y: auto;
-  background-color: #f0f4f8;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.05);
 }
 
 .avatarItem {
@@ -25,16 +40,48 @@
   padding: 10px;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
 }
 
 .avatarItem:hover {
-  background-color: #e0e7ee;
+  transform: translateY(-5px) scale(1.03);
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 2px solid var(--accent-color);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
 
 .avatarItem.selected {
-  background-color: #d0dce7;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 2px solid var(--accent-color);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12), 0 0 0 4px rgba(255, 215, 0, 0.3);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  border: 2px solid var(--accent-color);
+  transform: translateY(-3px);
+}
+
+.avatarItem::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transform: translateX(-100%);
+  transition: 0.5s;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.avatarItem.selected::before {
+  animation: shineEffect 2s infinite;
+}
+
+@keyframes shineEffect {
+  0% { transform: translateX(-100%); }
+  20% { transform: translateX(100%); }
+  100% { transform: translateX(100%); }
 }
 
 .avatarImage {
@@ -42,11 +89,59 @@
   object-fit: cover;
   width: 50px;
   height: 50px;
+  transition: all 0.3s ease;
+  border: 2px solid var(--background-color);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.avatarItem:hover .avatarImage {
+  border-color: var(--primary-light);
+}
+
+.avatarItem.selected .avatarImage {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 15px rgba(var(--accent-color), 0.3);
+}
+
+.avatarIcon {
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.avatarItem:hover .avatarIcon,
+.avatarItem.selected .avatarIcon {
+  transform: scale(1.1);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
 .avatarName {
   font-size: 16px;
   font-weight: 500;
+}
+
+.avatarDetails {
+  padding: 20px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(240, 244, 248, 0.9));
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+}
+
+.avatarTitle {
+  color: var(--primary-dark);
+  position: relative;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.avatarTitle::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(to right, var(--accent-color), transparent);
 }
 
 .infoPanel {
@@ -55,6 +150,20 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%23a77c46' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+  position: relative;
+}
+
+.infoPanel::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 15px rgba(139, 69, 19, 0.1);
+  z-index: 1;
 }
 
 .infoTitle {
@@ -75,6 +184,13 @@
   border-radius: 8px;
   padding: 15px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border-left: 4px solid var(--primary-color);
+}
+
+.infoItem:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .infoItemTitle {
@@ -92,25 +208,26 @@
 
 .startButton {
   margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #4285f4;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
   align-self: flex-end;
+  /* Další styly jsou nyní v adventure-button třídě v globals.css */
 }
 
-.startButton:hover {
-  background-color: #3367d6;
+/* Odstranění duplicitních stylů - tyto jsou nyní v globals.css v adventure-button */
+
+/* Přechody stránek */
+.exiting {
+  animation: fadeOutDown 0.5s forwards;
 }
 
-.startButton:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 }
 
 /* Responzivní styly pro různé velikosti obrazovky */
@@ -174,11 +291,26 @@
   .avatarList {
     width: 100%;
     max-height: 40vh;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 15px 10px;
+    justify-content: flex-start;
+    align-items: center;
   }
   
   .detailsContainer {
     width: 100%;
     height: 60vh;
+  }
+  
+  .avatarItem {
+    min-width: 80px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 }
 
@@ -195,8 +327,10 @@
     width: 35%;
     height: 100%;
     max-height: 80vh;
-    padding: 10px;
+    padding: 15px 10px;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
   }
   
   .landscapeAvatarList {
@@ -210,6 +344,11 @@
     flex-direction: column;
     align-items: center;
     padding: 8px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  
+  .landscapeAvatarItem:hover {
+    transform: translateY(-3px) scale(1.05);
   }
   
   .landscapeAvatarName {

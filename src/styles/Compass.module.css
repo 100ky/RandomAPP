@@ -1,9 +1,7 @@
 /* Styly pro komponenty kompasu */
 
 .compass {
-  position: absolute;
-  top: 5px; /* Bude nastaven relativně v rámci .compassContainer */
-  left: auto; /* Resetování absolutního pozicování */
+  position: relative;
   width: 36px;
   height: 36px;
   z-index: 999;
@@ -14,7 +12,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 5px; /* Mezera mezi avatarem a kompasem */
+  margin-top: 10px; /* Mezera mezi avatarem a kompasem */
   transform-origin: center;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   overflow: hidden;
@@ -32,11 +30,12 @@
 
 .compassContainer {
   /* Styly pro lepší propojení s AppMenu */
-  position: absolute;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   z-index: 990;
+  width: 100%;
 }
 
 .compassMini {
@@ -72,6 +71,7 @@
   height: 350px; /* Zvětšení pro více detailů */
   background: var(--background-color); /* Použití globální proměnné */
   border-radius: 25px; /* Mírně větší zaoblení */
+  border: 2px solid var(--accent-color); /* Přidání dobrodružného vzhledu */
   box-shadow: var(--shadow-strong); /* Použití globální proměnné */
   z-index: 1500;
   display: flex;
@@ -362,10 +362,6 @@
 
 /* Úpravy pro landscape režim, zejména pro nízké obrazovky */
 @media (orientation: landscape) {
-  .compass {
-    /* top: 70px; */ /* Pozice bude řešena kontejnerem */
-    /* left: 10px; */
-  }
   .expandedCompass {
     width: auto; /* Šířka se přizpůsobí obsahu, ale ne více než max-width */
     max-width: 450px; /* Větší maximální šířka pro landscape */
@@ -412,11 +408,55 @@
   }
 }
 
-/* Obnovení původních stylů pro landscape režim */
-@media (orientation: landscape) {
-  .compass {
-    top: 70px;
-    left: 10px;
+/* Specifické úpravy pro landscape režim */
+.landscapeSpecificAdjustments {
+  width: auto;
+  max-width: 450px;
+  height: auto;
+  max-height: 90vh;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  padding: 15px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  overflow: visible;
+}
+
+.landscapeSpecificAdjustments .compassRose {
+  width: 160px;
+  height: 160px;
+  margin-right: 15px;
+}
+
+.landscapeSpecificAdjustments .compassInfo {
+  margin-top: 0;
+  text-align: left;
+}
+
+@media (orientation: landscape) and (max-height: 400px) {
+  .landscapeSpecificAdjustments {
+    padding: 10px;
+    max-width: 400px;
+  }
+  
+  .landscapeSpecificAdjustments .compassRose {
+    width: 130px;
+    height: 130px;
+    margin-right: 10px;
+  }
+  
+  .landscapeSpecificAdjustments .compassHeading {
+    font-size: 20px;
+  }
+
+  .landscapeSpecificAdjustments .closeExpandedCompass {
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    top: 5px;
+    right: 5px;
   }
 }
 

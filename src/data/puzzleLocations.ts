@@ -1,17 +1,4 @@
-import { Puzzle } from '../types/game';
-
-export interface POILocation {
-  id: string;
-  name: string;
-  coordinates: { lat: number; lng: number };
-  description: string;
-  shortDescription?: string;
-  radius: number; // Poloměr v metrech, ve kterém lze lokaci objevit
-  puzzle: Omit<Puzzle, 'locationId'> & { locationId?: string };
-  qrCode?: string; // Volitelný QR kód pro alternativní objevení
-  image?: string; // Cesta k obrázku lokace, pokud existuje
-  unlockType: 'gps' | 'qr' | 'both'; // Jak lze lokaci odemknout
-}
+import { Puzzle, POILocation } from '../types/game';
 
 // Reálné lokace ve Vysokém Mýtě
 export const puzzleLocations: POILocation[] = [

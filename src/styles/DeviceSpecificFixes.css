@@ -149,11 +149,11 @@
     height: 16px !important;
   }
   
-  /* Přesunutí herních ovládacích prvků na stranu */
+  /* Přesunutí herních ovládacích prvků */
   .landscape-orientation .game-controls {
-    transform: scale(0.6) !important;
-    right: 0 !important;
-    bottom: 0 !important;
+    transform: translateX(-50%) scale(0.8) !important;
+    left: 50% !important;
+    bottom: 5px !important;
   }
   
   /* Zmenšení menu */
@@ -168,4 +168,43 @@
   .landscape-orientation .soundToggle::after {
     display: none !important;
   }
+}
+
+/* Opravy pro game-controls a elementy mapy v landscape režimu */
+@media (orientation: landscape) {
+  /* Zajistí, že prvky na mapě budou správně zobrazeny bez překrývání */
+  .game-controls {
+    position: fixed !important;  
+    bottom: 10px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 100 !important;
+  }
+
+  /* Opravy pro Samsung zařízení, která mají problematické zobrazení v landscape režimu */
+  .android-device.samsung-device.landscape-orientation .game-controls {
+    transform: translateX(-50%) !important;
+    transform-origin: bottom center !important;
+    bottom: 10px !important;
+    left: 50% !important;
+  }
+  
+  /* Ujistíme se, že tlačítka nejsou příliš roztažená na nejmenších displejích */
+  @media (max-height: 400px) {
+    .game-button {
+      margin-bottom: 5px !important;
+    }
+    
+    /* Resetování stylů, které by mohly způsobovat problémy */
+    .vysokemytoButton,
+    .mapSettingsContainer,
+    .soundControlsContainer {
+      position: fixed !important;
+    }
+  }
+}
+
+/* Vylepšení viditelnosti tlačítek na mapě pro Samsung zařízení */
+.android-device.samsung-device .game-button {
+  box-shadow: var(--shadow-strong), 0 0 5px rgba(0, 0, 0, 0.2) !important;
 }

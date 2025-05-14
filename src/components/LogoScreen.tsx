@@ -65,12 +65,12 @@ const LogoScreen: React.FC<LogoScreenProps> = ({ onContinue }) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="mobile-web-app-capable" content="yes" />
-      </Head>
-      <div className={`${baseStyles.fullScreen} ${baseStyles.fadeIn} ${isExiting ? baseStyles.fadeOut : ''} 
+      </Head>      <div className={`${baseStyles.fullScreen} ${baseStyles.fadeIn} ${isExiting ? baseStyles.fadeOut : ''} 
         ${isClient && isAndroid ? baseStyles.androidOptimized : ''} 
         ${isClient && isLowPerformance ? baseStyles.lowPerformanceMode : ''}
         ${isClient && isLandscape ? 'landscape-orientation' : 'portrait-orientation'}
-        ${isClient && isSamsung && isLandscape ? baseStyles.samsungLandscapeMode : ''}`}
+        ${isClient && isSamsung && isLandscape ? baseStyles.samsungLandscapeMode : ''}
+        adventureBackground`}
         style={{ 
           width: '100vw', 
           height: '100vh',
@@ -83,13 +83,14 @@ const LogoScreen: React.FC<LogoScreenProps> = ({ onContinue }) => {
           overflow: 'hidden'
         }}>
         <div className={getContentClasses()}>
-          <div className={styles.logoContainer}>
-            {/* Zde bude logo - prozatím prázdný div s textem */}
+          <div className={styles.logoContainer}>            {/* Zde bude logo - prozatím prázdný div s textem */}
             <div className={styles.logoPlaceholder}>
-              LOGO
-              <p className={styles.logoHint}>
-                (Zde bude vaše vlastní logo)
-              </p>
+              <h1 className={styles.logoTitle}>LOGO</h1>
+              <p className={styles.logoSubtitle}>(Zde bude vaše vlastní logo)</p>
+              <div className={styles.clouds}>
+                <div className={`${styles.cloud} ${styles.cloud1}`}></div>
+                <div className={`${styles.cloud} ${styles.cloud2}`}></div>
+              </div>
             </div>
           </div>
         </div>

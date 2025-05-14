@@ -81,26 +81,35 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish, selectedAvatarId 
 
     return () => clearTimeout(timer);
   }, [onFinish]);
-  return (
-    <div className={`${baseStyles.fullScreen} ${baseStyles.fadeIn} ${isExiting ? baseStyles.fadeOut : ''} 
+  return (    <div className={`${baseStyles.fullScreen} ${baseStyles.fadeIn} ${isExiting ? baseStyles.fadeOut : ''} 
       ${isClient && isAndroid ? baseStyles.androidOptimized : ''} 
       ${isClient && isLowPerformance ? baseStyles.lowPerformanceMode : ''} 
-      ${isClient && isSamsung && isLandscape ? baseStyles.samsungLandscapeMode : ''}`}>
-      <div className={getContentClasses()}>
-        <div className={baseStyles.compass}>
+      ${isClient && isSamsung && isLandscape ? baseStyles.samsungLandscapeMode : ''}
+      adventureBackground`}>
+      <div className={getContentClasses()}>        <div className={`${baseStyles.compass} ${splashStyles.animatedCompass}`}>
           <div className={baseStyles.needle}></div>
         </div>
         
         <div className={splashStyles.textContent}>
-          <h1 className={baseStyles.title}>
+          <h1 className={`${baseStyles.title} ${splashStyles.animatedTitle}`}>
             {avatarName}
           </h1>
-          <h2 className={baseStyles.subtitle}>
+          <h2 className={`${baseStyles.subtitle} ${splashStyles.animatedSubtitle}`}>
             Vysokého Mýta
           </h2>
-          <p className={splashStyles.description}>
+          <p className={`${splashStyles.description} ${splashStyles.animatedDescription}`}>
             Objevte tajemství královského města
           </p>
+          
+          <div className={splashStyles.progressContainer}>
+            <div className={splashStyles.progressBar} style={{ width: '28%' }}></div>
+          </div>
+          <p className={splashStyles.subtitle}>PŘÍPRAVA PRŮZKUMU</p>
+        </div>
+        
+        <div className={splashStyles.clouds}>
+          <div className={`${splashStyles.cloud} ${splashStyles.cloud1}`}></div>
+          <div className={`${splashStyles.cloud} ${splashStyles.cloud2}`}></div>
         </div>
       </div>
     </div>

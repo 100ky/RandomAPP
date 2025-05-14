@@ -45,36 +45,7 @@ export default function useCompass(smoothingFactor: number = 0.3, updateInterval
   const lastAccelRef = useRef<{x: number, y: number, z: number} | null>(null);
   const movementCounterRef = useRef<number>(0);
   const calibrationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  
-  // Funkce pro vyžádání oprávnění pro přístup k senzorům
-  const requestPermission = useCallback(async (): Promise<boolean> => {
-    // V některých prohlížečích (iOS Safari) je potřeba explicitní povolení
-    if (typeof DeviceOrientationEvent !== 'undefined' && 
-        typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
-      try {
-        const permissionState = await (DeviceOrientationEvent as any).requestPermission();
-        const granted = permissionState === 'granted';
-        
-        if (granted && !isListeningRef.current) {
-          startListening();
-        }
-        
-        return granted;
-      } catch (error) {
-        console.error('Chyba při žádosti o povolení senzorů:', error);
-        return false;
-      }
-    }
-    
-    // Pro většinu prohlížečů není potřeba explicitní povolení
-    if (!isListeningRef.current) {
-      startListening();
-    }
-    
-    return true;
-  }, [startListening, isIOS]);
-  
-  // Deklarujeme startListening před jeho použitím v requestPermission
+    // Definice funkce startListening před jejím použitím v requestPermission
   const startListening = useCallback(() => {
     if (isListeningRef.current) return;
     
@@ -209,8 +180,7 @@ export default function useCompass(smoothingFactor: number = 0.3, updateInterval
         window.removeEventListener('deviceorientation', handleDeviceOrientation);
         window.removeEventListener('devicemotion', handleDeviceMotion);
       }
-      
-      isListeningRef.current = false;
+        isListeningRef.current = false;
       
       // Vyčištění timeoutů
       if (calibrationTimeoutRef.current) {
@@ -218,7 +188,35 @@ export default function useCompass(smoothingFactor: number = 0.3, updateInterval
         calibrationTimeoutRef.current = null;
       }
     };
-  };
+  }, [isIOS, updateInterval]);
+
+  // Funkce pro vyžádání oprávnění pro přístup k senzorům
+  const requestPermission = useCallback(async (): Promise<boolean> => {
+    // V některých prohlížečích (iOS Safari) je potřeba explicitní povolení
+    if (typeof DeviceOrientationEvent !== 'undefined' && 
+        typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
+      try {
+        const permissionState = await (DeviceOrientationEvent as any).requestPermission();
+        const granted = permissionState === 'granted';
+        
+        if (granted && !isListeningRef.current) {
+          startListening();
+        }
+        
+        return granted;
+      } catch (error) {
+        console.error('Chyba při žádosti o povolení senzorů:', error);
+        return false;
+      }
+    }
+    
+    // Pro většinu prohlížečů není potřeba explicitní povolení
+    if (!isListeningRef.current) {
+      startListening();
+    }
+    
+    return true;
+  }, [startListening, isIOS]);
   
   // Efekt pro nastavení posluchačů
   useEffect(() => {

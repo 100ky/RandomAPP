@@ -22,12 +22,21 @@ export interface POILocation {
   coordinates: { lat: number; lng: number };
   description: string;
   shortDescription?: string;
-  radius: number;
+  radius: number; // Poloměr v metrech, ve kterém lze lokaci objevit
   puzzle: Omit<Puzzle, 'locationId'> & { locationId?: string };
-  qrCode?: string;
-  image?: string;
-  unlockType: 'gps' | 'qr' | 'both';
+  qrCode?: string; // Volitelný QR kód pro alternativní objevení
+  image?: string; // Cesta k obrázku lokace, pokud existuje
+  iconUrl?: string; // URL ikony pro zobrazení na mapě
+  unlockType: 'gps' | 'qr' | 'both'; // Jak lze lokaci odemknout
+  discovered?: boolean; // Zda byla lokace objevena uživatelem
+  latitude?: number; // Pro kompatibilitu s mapovými operacemi
+  longitude?: number; // Pro kompatibilitu s mapovými operacemi
 }
+
+/**
+ * Stav stahování a ukládání offline map
+ */
+export type OfflineMapsStatus = 'not-downloaded' | 'downloading' | 'downloaded' | 'error' | 'updating';
 
 export interface Location {
     id: string;

@@ -1,0 +1,29 @@
+/* Styly pro container kompasu */
+.compassFullContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.compassReady {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.5s ease;
+}
+
+/* Styly pro různé orientace */
+@media (orientation: landscape) {
+  .compassFullContainer {
+    margin-top: 8px;
+  }
+}
+
+@media (orientation: portrait) and (max-height: 700px) {
+  .compassFullContainer {
+    transform: scale(0.9);
+    transform-origin: center top;
+  }
+}

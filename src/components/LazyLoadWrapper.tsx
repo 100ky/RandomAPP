@@ -6,7 +6,7 @@
  */
 import React, { Suspense, useState, useEffect, ComponentType, LazyExoticComponent } from 'react';
 
-interface LazyLoadWrapperProps<P = {}> {
+interface LazyLoadWrapperProps<P extends React.JSX.IntrinsicAttributes> {
   /**
    * Funkce, která importuje komponentu pomocí dynamic import
    * Např. () => import('../components/HeavyComponent')
@@ -16,7 +16,7 @@ interface LazyLoadWrapperProps<P = {}> {
   /** 
    * Props, které se předají lazy-loaded komponentě
    */
-  componentProps?: P;
+  componentProps?: Omit<P, keyof React.JSX.IntrinsicAttributes>;
   
   /** 
    * React element, který se zobrazí během načítání komponenty
@@ -54,7 +54,7 @@ interface LazyLoadWrapperProps<P = {}> {
 /**
  * Wrapper pro líné načítání React komponent
  */
-export function LazyLoadWrapper<P = {}>(props: LazyLoadWrapperProps<P>) {
+export function LazyLoadWrapper<P extends React.JSX.IntrinsicAttributes>(props: LazyLoadWrapperProps<P>) {
   // Výchozí hodnoty
   const {
     importCallback,
@@ -113,7 +113,7 @@ export function LazyLoadWrapper<P = {}>(props: LazyLoadWrapperProps<P>) {
       <div ref={setContainerRef}>
         {shouldLoad && LazyComponent ? (
           <Suspense fallback={fallback}>
-            <LazyComponent {...componentProps as P} />
+            <LazyComponent {...(componentProps as any)} />
           </Suspense>
         ) : (
           fallback
@@ -125,7 +125,7 @@ export function LazyLoadWrapper<P = {}>(props: LazyLoadWrapperProps<P>) {
   // Pokud nepoužíváme viewport sledování, vykreslíme komponentu přímo
   return shouldLoad && LazyComponent ? (
     <Suspense fallback={fallback}>
-      <LazyComponent {...componentProps as P} />
+      <LazyComponent {...(componentProps as any)} />
     </Suspense>
   ) : (
     <>{fallback}</>
@@ -138,15 +138,17 @@ export function LazyLoadWrapper<P = {}>(props: LazyLoadWrapperProps<P>) {
  * @param importCallback Funkce importující komponentu
  * @returns Lazy komponenta zabalená v Suspense
  */
-export function createLazyComponent<P = {}>(importCallback: () => Promise<{ default: ComponentType<P> }>) {
+export function createLazyComponent<P extends React.JSX.IntrinsicAttributes>(
+  importCallback: () => Promise<{ default: ComponentType<P> }>
+) {
   const LazyComponent = React.lazy(importCallback);
   
-  return (props: P & { fallback?: React.ReactNode }) => {
+  return (props: Omit<P, keyof React.JSX.IntrinsicAttributes> & { fallback?: React.ReactNode }) => {
     const { fallback = <div>Načítání...</div>, ...componentProps } = props;
     
     return (
       <Suspense fallback={fallback}>
-        <LazyComponent {...componentProps as P} />
+        <LazyComponent {...(componentProps as any)} />
       </Suspense>
     );
   };

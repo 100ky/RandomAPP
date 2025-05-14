@@ -46,8 +46,8 @@ const SoundControls: React.FC = () => {
             }
         }
     };     // Nastavení stylu pro tlačítka v landscape a portrait režimu
-     const buttonStyle = {
-        position: 'fixed',
+     const buttonStyle: React.CSSProperties = {
+        position: 'fixed' as const,
         right: '10px',
         left: 'auto',
         top: '68px', // Pod tlačítkem nastavení

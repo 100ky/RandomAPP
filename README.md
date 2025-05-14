@@ -18,6 +18,7 @@ Podrobná dokumentace ke konkrétním tématům:
 
 - [Řešení problému s mapou při přiblížení](./src/docs/MAP-ZOOM-SOLUTION.md)
 - [Optimalizace pro landscape režim](./src/docs/LANDSCAPE-OPTIMIZATION.md)
+- [Průzkumnický design - Stylový průvodce](./src/docs/DESIGN-GUIDE.md)
 
 ## Instalace
 

@@ -76,14 +76,13 @@ const LoadingScreen: React.FC = () => {
     return classes;
   }, [isClient, isLandscape, isSamsung, isLowPerformance, baseStyles.content, baseStyles.adventureCorner, 
       baseStyles.landscapeContent, baseStyles.portraitContent, 
-      loadingStyles.samsungLandscape, loadingStyles.optimizedPerformance]);
-  return (
-    <div className={`${baseStyles.fullScreen} ${baseStyles.fadeIn} 
+      loadingStyles.samsungLandscape, loadingStyles.optimizedPerformance]);  return (
+    <div className={`${baseStyles.fullScreen} ${baseStyles.fadeIn} adventure-bg
       ${isClient && isAndroid ? baseStyles.androidOptimized : ''} 
       ${isClient && isLowPerformance ? baseStyles.lowPerformanceMode : ''}
       ${isClient && isSamsung && isLandscape ? baseStyles.samsungLandscapeMode : ''}`}>
-      <div className={getContentClasses()}>
-        <div className={baseStyles.compass}>
+      <div className="loading-clouds"></div>      <div className={getContentClasses()}>
+        <div className={`${baseStyles.compass} compass-container`}>
           <div className={baseStyles.needle}></div>
         </div>
         
@@ -92,9 +91,21 @@ const LoadingScreen: React.FC = () => {
           <p className={loadingStyles.quote}>{adventureQuote}</p>
           <div className={loadingStyles.locationInfo}>Objevte historické tajemství Vysokého Mýta</div>
           
-          <div className={baseStyles.progressContainer}>
+          <div className="adventure-map-scroll">
+            <div className="adventure-map-content">
+              <div className="adventure-map-path"></div>
+              <div className="adventure-map-marker"></div>
+              <div className="adventure-map-treasure"></div>
+            </div>
+            <div className="adventure-map-rolls">
+              <div className="adventure-map-top-roll"></div>
+              <div className="adventure-map-bottom-roll"></div>
+            </div>
+          </div>
+          
+          <div className="adventure-progress-container">
             <div 
-              className={baseStyles.progressBar} 
+              className="adventure-progress-bar" 
               style={{ width: `${loadingProgress}%` }}
             ></div>
           </div>

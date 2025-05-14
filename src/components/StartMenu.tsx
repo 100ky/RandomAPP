@@ -199,10 +199,8 @@ const StartMenu: React.FC<StartMenuProps> = ({ onStartGame }) => {
           </div>
         </div>
 
-        {error && <div className={styles.errorMessage}>{error}</div>}
-
-        <button 
-          className={styles.startGameButton}
+        {error && <div className={styles.errorMessage}>{error}</div>}        <button 
+          className={`adventure-button button-large ${styles.startGameButton}`}
           onClick={handleStartGame}
         >
           Vydat se na průzkum
