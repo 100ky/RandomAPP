@@ -167,17 +167,102 @@
   justify-items: center;
 }
 
+/* V landscape režimu zobrazit avatary pod sebou */
+@media (orientation: landscape) {
+  .avatarGrid {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 0.5rem;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+}
+
+/* Třída pro landscape zobrazení avatarů (pod sebou) */
+.avatarGridLandscape {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  overflow-y: auto;
+  max-height: 60vh;
+  padding-right: 8px;
+}
+
+/* Úpravy pro avatar v landscape režimu */
+.avatarGridLandscape .avatarOption {
+  flex-direction: row;
+  justify-content: flex-start;
+  padding: 5px 10px;
+  width: 100%;
+}
+
+.avatarGridLandscape .avatarWrapper {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  margin-right: 10px;
+}
+
+.avatarGridLandscape .avatarOption span {
+  text-align: left;
+  white-space: nowrap;
+}
+
+.avatarGridLandscape .avatarUnavailable {
+  left: auto;
+  right: 5px;
+  bottom: auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.avatarGridLandscape .unavailable:hover .avatarUnavailable {
+  opacity: 1;
+  bottom: auto;
+}
+
 .avatarOption {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+/* Styly pro neaktivní (nedostupné) avatary */
+.unavailable {
+  cursor: not-allowed;
+  position: relative;
+}
+
+.avatarUnavailable {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 8px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease, bottom 0.3s ease;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.unavailable:hover .avatarUnavailable {
+  opacity: 1;
+  bottom: -5px;
 }
 
 .avatarOption:hover {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .avatarWrapper {
@@ -313,6 +398,23 @@
   box-shadow: 0 0 15px rgba(84, 110, 122, 0.5);
 }
 
+/* Přizpůsobení pro landscape režim */
+@media (orientation: landscape) {
+  .playerInfoSection {
+    flex-direction: row;
+    gap: 2rem;
+  }
+  
+  .playerNameInput {
+    flex: 1;
+  }
+  
+  .avatarSelectionSection {
+    flex: 1;
+    margin-top: 0;
+  }
+}
+
 /* Responsivní design pro menší obrazovky */
 @media (max-width: 768px) {
   .startContainer {
@@ -349,5 +451,46 @@
   .avatarWrapper {
     width: 50px;
     height: 50px;
+  }
+}
+
+/* Optimalizace pro malé obrazovky na šířku */
+@media (orientation: landscape) and (max-height: 500px) {
+  .startContainer {
+    padding: 1rem;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .themeMessage {
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+    padding-bottom: 10px;
+  }
+  
+  .missionDescription {
+    margin-bottom: 1rem;
+  }
+  
+  .missionDescription h3 {
+    font-size: 1.1rem;
+  }
+  
+  .playerInfoSection {
+    margin-bottom: 1rem;
+  }
+  
+  .avatarGridLandscape {
+    max-height: 40vh;
+  }
+  
+  .startGameButton {
+    padding: 0.7rem;
+    font-size: 1rem;
   }
 }

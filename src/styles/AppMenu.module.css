@@ -35,6 +35,80 @@
   display: none;
 }
 
+/* Styl pro neaktivní avatary - šedý filtr */
+.avatar-inactive {
+  filter: grayscale(100%);
+  opacity: 0.7;
+  position: relative;
+  cursor: not-allowed;
+}
+
+/* Zpráva při najetí na neaktivní avatar */
+.avatar-inactive-message {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 1002;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.avatar-inactive:hover .avatar-inactive-message {
+  opacity: 1;
+}
+
+/* Menu s avatary */
+.avatar-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: var(--background-color, #FFF8E1);
+  border: 2px solid var(--accent-color, #FFD700);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 5px;
+  box-shadow: var(--shadow-medium);
+  z-index: 1000;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.avatar-menu.visible {
+  max-height: 300px;
+}
+
+.avatar-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.avatar-option:hover {
+  background-color: rgba(255, 215, 0, 0.2);
+}
+
+.avatar-option-image {
+  border-radius: 50%;
+  border: 1px solid var(--accent-color);
+}
+
 /* Responzivní design pro různé orientace zařízení */
 @media (orientation: portrait) {
   .app-menu {
@@ -67,6 +141,43 @@
     margin-top: 5px;
     max-height: 80vh;
     overflow-y: auto;
+  }
+  
+  /* V landscape režimu nastavíme avatary pod sebe */
+  .avatar-menu {
+    max-height: 70vh;
+    flex-direction: column;
+    overflow-y: auto;
+    width: auto;
+  }
+  
+  .avatar-menu.visible {
+    max-height: 70vh;
+  }
+  
+  .avatar-option {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 10px;
+    gap: 10px;
+  }
+  
+  .avatar-option span {
+    text-align: left;
+  }
+  
+  .avatar-option-image {
+    margin-right: 5px;
+  }
+  
+  .avatar-inactive-message {
+    position: absolute;
+    right: 10px;
+    left: auto;
+    bottom: auto;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
 

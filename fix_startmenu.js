@@ -1,9 +1,10 @@
-// filepath: /workspaces/RandomAPP/src/components/StartMenu.tsx
+const fs = require('fs');
+
+const newContent = `// filepath: /workspaces/RandomAPP/src/components/StartMenu.tsx
 import React, { useState, useEffect } from 'react';
 import { avatarData } from './AppMenu';
 import { getAvailableAvatars, getAllAvatars } from '../games/gameManager';
 import styles from '../styles/StartMenu.module.css';
-import { useEnhancedOrientation } from '../hooks/useEnhancedOrientation';
 
 interface StartMenuProps {
   onStartGame: (avatarId: string, playerName: string) => void;
@@ -75,9 +76,6 @@ const StartMenu: React.FC<StartMenuProps> = ({ onStartGame }) => {
   const [error, setError] = useState<string | null>(null);
   const [availableAvatarIds, setAvailableAvatarIds] = useState<string[]>([]);
   const [allAvatarsData, setAllAvatarsData] = useState<typeof avatarData>([]);
-  
-  // Získáváme informaci o orientaci obrazovky
-  const { isClient, isLandscape } = useEnhancedOrientation();
 
   // Načtení dostupných avatarů a uložených preferencí
   useEffect(() => {
@@ -176,7 +174,7 @@ const StartMenu: React.FC<StartMenuProps> = ({ onStartGame }) => {
   };
 
   // Vytvoříme třídy podle vybraného avatara
-  const containerClassName = `${styles.startContainer} ${styles[colorScheme.decorationClass.replace('-theme', 'Theme')]}`;
+  const containerClassName = \`\${styles.startContainer} \${styles[colorScheme.decorationClass.replace('-theme', 'Theme')]}\`;
 
   // Vrácení tematické zprávy podle vybraného avatara
   const getThemeMessage = () => {
@@ -223,13 +221,13 @@ const StartMenu: React.FC<StartMenuProps> = ({ onStartGame }) => {
 
           <div className={styles.avatarSelectionSection}>
             <h3>Vyberte si avatara:</h3>
-            <div className={`${styles.avatarGrid} ${isClient && isLandscape ? styles.avatarGridLandscape : ''}`}>
+            <div className={styles.avatarGrid}>
               {allAvatarsData.map((avatar) => (
                 <div 
                   key={avatar.id}
-                  className={`${styles.avatarOption} 
-                    ${selectedAvatarId === avatar.id ? styles.selected : ''} 
-                    ${!isAvatarAvailable(avatar.id) ? styles.unavailable : ''}`}
+                  className={\`\${styles.avatarOption} 
+                    \${selectedAvatarId === avatar.id ? styles.selected : ''} 
+                    \${!isAvatarAvailable(avatar.id) ? styles.unavailable : ''}\`}
                   onClick={() => handleAvatarClick(avatar.id)}
                 >
                   <div className={styles.avatarWrapper}>
@@ -255,7 +253,7 @@ const StartMenu: React.FC<StartMenuProps> = ({ onStartGame }) => {
         {error && <div className={styles.errorMessage}>{error}</div>}
         
         <button 
-          className={`adventure-button button-large ${styles.startGameButton}`}
+          className={\`adventure-button button-large \${styles.startGameButton}\`}
           onClick={handleStartGame}
         >
           Vydat se na průzkum
@@ -265,4 +263,8 @@ const StartMenu: React.FC<StartMenuProps> = ({ onStartGame }) => {
   );
 };
 
-export default StartMenu;
+export default StartMenu;`;
+
+// Přepsat soubor
+fs.writeFileSync('/workspaces/RandomAPP/src/components/StartMenu.tsx', newContent);
+console.log('Soubor StartMenu.tsx byl úspěšně opraven.');

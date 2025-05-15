@@ -22,6 +22,7 @@ interface AvatarInfo {
   difficulty: string;  // Úroveň obtížnosti (Lehká, Střední, Obtížná)
   distance: string;    // Přibližná vzdálenost trasy
   duration: string;    // Přibližná doba trvání hry
+  isAvailable?: boolean; // Zda je avatar/hra dostupná
 }
 
 /**
@@ -111,25 +112,33 @@ const AvatarSelection: React.FC<AvatarSelectionProps> = ({ onSelect }) => {
     return classes;
   }, [isClient, isLandscape, isSamsung, isLowPerformance, isAndroid]);
 
-  // Načtení dostupných avatarů z gameManager
+  // Načtení všech avatarů z gameManager (místo jen dostupných)
   useEffect(() => {
     const loadAvatars = async () => {
-      const gameAvatars = getAvailableAvatars();
+      // Import nové funkce getAllAvatars
+      const { getAllAvatars } = await import('../games/gameManager');
+      const gameAvatars = getAllAvatars();
       
-      // Převedení avatarů z gameManager na formát AvatarInfo
-      const avatarsData: AvatarInfo[] = gameAvatars.map(game => ({
+      // Převedení avatarů z gameManager na formát AvatarInfo, přidání atributu isAvailable
+      const avatarsData: (AvatarInfo & { isAvailable: boolean })[] = gameAvatars.map(game => ({
         name: game.name,
         image: `/assets/avatars/${game.id}.png`,
         description: game.description,
         difficulty: difficultyMap[game.id] || 'Střední',
         distance: distanceMap[game.id] || '2,5 km',
         duration: durationMap[game.id] || 'cca 90 minut',
+        isAvailable: game.isAvailable // přidáno, zda je hra dostupná
       }));
       
       setAvailableAvatars(avatarsData);
       
       // Automaticky vybrat první dostupný avatar, pokud existuje
-      if (avatarsData.length > 0) {
+      const availableAvatar = avatarsData.find(avatar => avatar.isAvailable);
+      if (availableAvatar) {
+        setSelectedAvatar(availableAvatar.name);
+        setAvatarInfo(availableAvatar);
+      } else if (avatarsData.length > 0) {
+        // Pokud není dostupný žádný avatar, vybereme první
         setSelectedAvatar(avatarsData[0].name);
         setAvatarInfo(avatarsData[0]);
       }
@@ -150,12 +159,20 @@ const AvatarSelection: React.FC<AvatarSelectionProps> = ({ onSelect }) => {
    * Spustí hru s vybraným avatarem (s animací odchodu)
    */
   const handleStartGame = () => {
-    if (selectedAvatar) {
+    if (selectedAvatar && avatarInfo) {
+      // Kontrola dostupnosti vybraného avatara
+      if (!avatarInfo.isAvailable) {
+        alert("Na této únikové hře se pracuje. Hra není momentálně dostupná.");
+        return;
+      }
+
       // Zahájit animaci odchodu
       setIsExiting(true);
       
       // Najít ID avatara podle jeho jména
-      const selectedGame = getAvailableAvatars().find(game => game.name === selectedAvatar);
+      const { getAllAvatars } = require('../games/gameManager');
+      const selectedGame = getAllAvatars().find((game: any) => game.name === selectedAvatar);
+      
       if (selectedGame) {
         // Přidáme timeout pro dokončení animace před přechodem
         setTimeout(() => {
@@ -168,12 +185,15 @@ const AvatarSelection: React.FC<AvatarSelectionProps> = ({ onSelect }) => {
 
   return (
     <div className={getContainerClasses()}>
-      {/* Seznam dostupných avatarů */}
+      {/* Seznam všech avatarů */}
       <div className={`${styles.avatarList} ${isClient && isLandscape ? styles.landscapeAvatarList : ''}`}>
         {availableAvatars.map((avatar) => (
           <div
             key={avatar.name}
-            className={`${styles.avatarItem} ${selectedAvatar === avatar.name ? styles.selected : ''}`}
+            className={`${styles.avatarItem} 
+              ${selectedAvatar === avatar.name ? styles.selected : ''} 
+              ${!avatar.isAvailable ? styles.avatarItemInactive : ''}
+              ${isClient && isLandscape ? styles.landscapeAvatarItem : ''}`}
             onClick={() => handleAvatarClick(avatar)}
           >
             <Image
@@ -182,8 +202,16 @@ const AvatarSelection: React.FC<AvatarSelectionProps> = ({ onSelect }) => {
               width={isClient && isLandscape ? 50 : 60}
               height={isClient && isLandscape ? 50 : 60}
               className={styles.avatarImage}
+              style={!avatar.isAvailable ? { filter: 'grayscale(100%)', opacity: 0.7 } : {}}
             />
             <div className={styles.avatarName}>{avatar.name}</div>
+            
+            {/* Zpráva o nedostupnosti */}
+            {!avatar.isAvailable && (
+              <div className={styles.unavailableMessage}>
+                Na této únikové hře se pracuje
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -209,8 +237,13 @@ const AvatarSelection: React.FC<AvatarSelectionProps> = ({ onSelect }) => {
                   <strong>Doba trvání:</strong> {avatarInfo.duration}
                 </p>
               </div>
-            </div>            <button className={`adventure-button button-large ${styles.startButton} ${isClient && isLandscape ? styles.landscapeStartButton : ''}`} onClick={handleStartGame}>
-              Začít hru
+            </div>            <button 
+              className={`adventure-button button-large ${styles.startButton} ${isClient && isLandscape ? styles.landscapeStartButton : ''} ${avatarInfo && !avatarInfo.isAvailable ? styles.buttonDisabled : ''}`} 
+              onClick={handleStartGame}
+              disabled={avatarInfo && !avatarInfo.isAvailable}
+              title={avatarInfo && !avatarInfo.isAvailable ? "Tato hra není momentálně dostupná" : "Začít hru s vybraným avatarem"}
+            >
+              {avatarInfo && !avatarInfo.isAvailable ? 'Hra není dostupná' : 'Začít hru'}
             </button>
           </>
         ) : (

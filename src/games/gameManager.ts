@@ -66,6 +66,13 @@ export const getAvailableAvatars = () => {
 };
 
 /**
+ * Získá všechny avatary bez ohledu na jejich dostupnost
+ */
+export const getAllAvatars = () => {
+  return avatarGames;
+};
+
+/**
  * Získá lokace podle ID avatara
  * @param avatarId ID avatara
  * @returns Lokace pro daného avatara nebo prázdné pole, pokud není hra dostupná
