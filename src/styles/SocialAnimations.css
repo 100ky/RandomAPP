@@ -1,0 +1,192 @@
+/* Animace a přechody pro sociální funkce */
+
+/* Základní animace pro modální okna */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Animace pro notifikace */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes highlight {
+  0% { background-color: rgba(255, 215, 0, 0.2); }
+  50% { background-color: rgba(255, 215, 0, 0.5); }
+  100% { background-color: rgba(255, 215, 0, 0.2); }
+}
+
+/* Modální okna - animace vstupu */
+.modal-container {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.social-modal {
+  animation: slideInUp 0.3s ease-out;
+}
+
+/* Animace pro položky seznamu */
+.list-item-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.list-item-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.list-item-exit {
+  opacity: 1;
+}
+
+.list-item-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Animace tlačítek */
+.button-hover {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.button-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.button-hover:active {
+  transform: translateY(0);
+}
+
+/* Animace pro nové týmové události */
+.team-event-notification {
+  animation: slideInRight 0.5s ease-out;
+}
+
+/* Animace zvýraznění nových položek */
+.new-item-highlight {
+  animation: highlight 2s ease-in-out;
+}
+
+/* Animace pro nové body na mapě */
+.new-marker-pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Animace pro zprávy chatu */
+@keyframes messageIn {
+  from { 
+    transform: translateY(10px) scale(0.9);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.message-in {
+  animation: messageIn 0.3s ease-out;
+}
+
+/* Animace pro indikátor psaní */
+.typing-indicator {
+  display: inline-flex;
+  align-items: center;
+}
+
+.typing-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin: 0 2px;
+  background-color: var(--dark-gray, #555);
+  animation: typingAnimation 1.5s infinite;
+}
+
+.typing-dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingAnimation {
+  0% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-5px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+}
+
+/* Animace pro zobrazení tras */
+@keyframes routeAppear {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.route-appear {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: routeAppear 2s ease-in-out forwards;
+}
+
+/* Animace pro týmové výzvy */
+@keyframes challengeComplete {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.challenge-complete {
+  animation: challengeComplete 1s ease-out;
+}

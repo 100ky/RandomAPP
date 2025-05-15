@@ -42,6 +42,14 @@ const MapPinIcon: React.FC<IconProps> = ({ size = 18, className }) => (
   </svg>
 );
 
+const MapIcon: React.FC<IconProps> = ({ size = 18, className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
+    <line x1="9" x2="9" y1="3" y2="18"></line>
+    <line x1="15" x2="15" y1="6" y2="21"></line>
+  </svg>
+);
+
 const DownloadIcon: React.FC<IconProps> = ({ size = 18, className }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -71,9 +79,9 @@ export type MapLayerType = 'streets' | 'satellite' | 'terrain' | 'dark';
 /**
  * Props pro komponentu MapSettings
  */
-interface MapSettingsProps {
-  centerOnUser: () => void;                    // Funkce pro vycentrování mapy na aktuální polohu uživatele
+interface MapSettingsProps {  centerOnUser: () => void;                    // Funkce pro vycentrování mapy na aktuální polohu uživatele
   downloadOfflineMap?: () => void;             // Funkce pro stažení offline verze mapy
+  openOfflineMapManager?: () => void;          // Funkce pro otevření správce offline map
   isOfflineMapDownloaded?: boolean;            // Indikátor, zda byla offline mapa již stažena
   isDownloadingOfflineMap?: boolean;           // Indikátor, zda právě probíhá stahování mapy
   downloadProgress?: number;                   // Průběh stahování v procentech (0-100)
@@ -121,13 +129,13 @@ const MapSettings: React.FC<MapSettingsProps> = ({
   showPointsOfInterest = true,
   togglePointsOfInterest,
   weatherEnabled = false,
-  toggleWeather,
-  onPauseGame,
+  toggleWeather,  onPauseGame,
   onEndGame,
   isGameRunning = false,
   isPaused = false,
   onCenterMap = () => {},
   onDownloadMap = () => {},
+  openOfflineMapManager = () => {},
   isGamePaused = false,
   onTogglePauseGame = () => {},
   currentZoom = 15,
@@ -184,11 +192,16 @@ const MapSettings: React.FC<MapSettingsProps> = ({
                 <MapPinIcon size={18} className={styles.menuIcon} />
                 Centrovat na mé místo
               </button>
-            </li>
-            <li className={styles.menuItem} role="none">
+            </li>            <li className={styles.menuItem} role="none">
               <button onClick={onDownloadMap} className={styles.menuButton} role="menuitem">
                 <DownloadIcon size={18} className={styles.menuIcon} />
                 Stáhnout mapu offline
+              </button>
+            </li>
+            <li className={styles.menuItem} role="none">
+              <button onClick={openOfflineMapManager} className={styles.menuButton} role="menuitem">
+                <MapIcon size={18} className={styles.menuIcon} />
+                Správce offline map
               </button>
             </li>
             <li className={styles.menuItem} role="none">

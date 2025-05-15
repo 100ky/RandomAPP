@@ -1,0 +1,145 @@
+.routeContainer {
+  position: relative;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.activeRoute {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.routeOverview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+  color: white;
+  padding: 12px;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.routeInfo {
+  flex-grow: 1;
+}
+
+.routeName {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.routeStats {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.statIcon {
+  margin-right: 4px;
+}
+
+.importedBadge {
+  display: inline-block;
+  background-color: rgba(255, 215, 0, 0.8);
+  color: #333;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+.closeButton {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.closeButton:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.routeVisualization {
+  width: 100%;
+  height: 150px;
+  background-color: #e5e5e5;
+}
+
+.routeSvg {
+  width: 100%;
+  height: 100%;
+}
+
+.routePath {
+  fill: none;
+  stroke: #4285f4;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.3s;
+}
+
+.activePath {
+  stroke: #ff5252;
+  stroke-width: 4;
+  filter: drop-shadow(0 0 3px rgba(255, 82, 82, 0.5));
+}
+
+.startPoint {
+  fill: #4caf50;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.endPoint {
+  fill: #f44336;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.visible {
+  opacity: 1;
+}
+
+/* Animace pro trasu */
+@keyframes dash {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.activePath {
+  animation: dash 1.5s ease-in-out forwards;
+}
+
+/* Responzivní design */
+@media (max-width: 600px) {
+  .routeStats {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .routeVisualization {
+    height: 120px;
+  }
+}

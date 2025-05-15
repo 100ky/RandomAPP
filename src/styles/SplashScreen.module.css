@@ -53,23 +53,27 @@
 
 .title {
   font-size: 24px;
-  color: white;
+  color: var(--heading-color);
   text-align: center;
   font-weight: bold;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: var(--heading-text-shadow);
   margin: 0;
+  border-bottom: 2px solid var(--heading-border-color);
+  padding-bottom: 6px;
+  display: inline-block;
 }
 
 .subtitle {
   font-family: var(--font-adventure);
   font-size: 1.2rem;
-  color: var(--white);
+  color: var(--heading-color);
   text-align: center;
   margin-top: 12px;
   max-width: 80%;
   animation: fadeInUp 0.8s ease-out 0.5s forwards;
   opacity: 0;
   transform: translateY(10px);
+  text-shadow: var(--heading-text-shadow);
 }
 
 @keyframes fadeIn {

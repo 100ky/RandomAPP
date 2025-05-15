@@ -28,12 +28,15 @@
 .title {
   font-family: var(--font-adventure);
   font-size: 2.5rem;
-  color: var(--white);
+  color: var(--heading-color);
   margin-bottom: 1.5rem;
   text-align: center;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  text-shadow: var(--heading-text-shadow);
   position: relative;
   z-index: 1;
+  border-bottom: 2px solid var(--heading-border-color);
+  display: inline-block;
+  padding-bottom: 8px;
 }
 
 .startContainer {

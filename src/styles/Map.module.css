@@ -504,6 +504,74 @@
   animation: progress 5s linear forwards;
 }
 
+/* Notifikace pro offline mapy */
+.notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: var(--shadow-medium);
+  z-index: 1100;
+  animation: slideDown 0.3s ease-out, fadeIn 0.3s;
+  max-width: 90%;
+  width: auto;
+}
+
+.notificationContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notification svg {
+  flex-shrink: 0;
+}
+
+.notification.success {
+  background-color: #4caf5080;
+  color: var(--white);
+  border: 1px solid #388e3c;
+}
+
+.notification.error {
+  background-color: #f4433680;
+  color: var(--white);
+  border: 1px solid #d32f2f;
+}
+
+.notification.info {
+  background-color: #2196f380;
+  color: var(--white);
+  border: 1px solid #1976d2;
+}
+
+.notification.fadeOut {
+  animation: fadeOut 0.5s forwards;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translate(-50%, -20px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; transform: translate(-50%, -20px); }
+}
+
 /* Animace */
 @keyframes pop-in {
   0% {

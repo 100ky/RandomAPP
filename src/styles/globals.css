@@ -2,8 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Quattrocento:wght@400;700&display=swap');
 
 /* Resetovací styly */
-:root {
-  /* Základní dobrodružné barevné schéma */
+:root {  /* Základní dobrodružné barevné schéma */
   --primary-color: #8B4513;      /* Hnědá - dobrodružná */
   --primary-dark: #6B3100;      /* Tmavší hnědá */
   --primary-light: #A06235;     /* Světlejší hnědá */
@@ -15,6 +14,11 @@
   --accent-color: #FFD700;      /* Zlatá - objevitelská */
   --accent-dark: #DAA520;       /* Tmavší zlatá */
   --accent-light: #FFF8DC;      /* Velmi světlá zlatá */
+  
+  /* Nové barvy pro sjednocený vzhled */
+  --heading-color: var(--accent-color);  /* Žlutá pro všechny nadpisy */
+  --heading-text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);  /* Stín pro lepší čitelnost */
+  --heading-border-color: var(--accent-dark);  /* Ohraničení pro nadpisy */
   
   --warning-color: #FF8C00;     /* Oranžová výstraha */
   --danger-color: #B22222;      /* Červená - nebezpečí */
@@ -177,18 +181,24 @@ body {
 /* Dobrodružné nadpisy */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-adventure);
-  color: var(--primary-color);
+  color: var(--heading-color);
   font-weight: 600;
   margin-bottom: 0.5em;
+  text-shadow: var(--heading-text-shadow);
 }
 
 h1 {
   font-size: 2.5em;
-  text-shadow: var(--adventure-text-shadow); /* Použití nové proměnné */
+  border-bottom: 2px solid var(--heading-border-color);
+  padding-bottom: 0.2em;
+  display: inline-block;
 }
 
 h2 {
   font-size: 2em;
+  border-bottom: 1px solid var(--heading-border-color);
+  padding-bottom: 0.1em;
+  display: inline-block;
 }
 
 /* Stylové prvky pro dobrodružství */
@@ -325,6 +335,33 @@ h2 {
 
 .adventure-button:disabled::after {
   display: none;
+}
+
+/* Hlavní nadpisy stránek - sjednocený styl */
+.section-heading {
+  color: var(--heading-color);
+  font-family: var(--font-adventure);
+  font-size: 1.8rem;
+  text-shadow: var(--heading-text-shadow);
+  border-bottom: 2px solid var(--heading-border-color);
+  padding-bottom: 6px;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.sub-heading {
+  color: var(--heading-color);
+  font-family: var(--font-adventure);
+  font-size: 1.4rem;
+  text-shadow: var(--heading-text-shadow);
+  margin-bottom: 0.8rem;
+}
+
+/* Zvýraznění textu ve zlaté barvě */
+.highlight-text {
+  color: var(--heading-color);
+  font-weight: bold;
+  text-shadow: var(--heading-text-shadow);
 }
 
 /* Dobrodružné animované podklady */
@@ -1291,4 +1328,25 @@ button {
 
 .adventure-icon-container:hover::after {
   opacity: 1;
+}
+
+/* Styly pro modální okna ve hře */
+.modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2000;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

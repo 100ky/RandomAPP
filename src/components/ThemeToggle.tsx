@@ -8,8 +8,7 @@ interface ThemeToggleProps {
 const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
   // Výchozí režim je systémový nebo světlý
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
-
-  // Nastavení režimu podle uloženého nastavení nebo systémového nastavení
+  // Nastavení režimu podle uloženého nastavení nebo výchozí světlý režim
   useEffect(() => {
     // Pokud existuje uložené nastavení, použijeme ho
     const savedTheme = localStorage.getItem('color-theme');
@@ -17,10 +16,10 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
       setTheme(savedTheme);
       document.documentElement.setAttribute('data-theme', savedTheme);
     } else {
-      setTheme('system');
-      // Detekce systémového nastavení
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      setTheme('light'); // Výchozí hodnota je light místo system
+      // Vždy nastavit světlý režim jako výchozí, ignorovat systémová nastavení
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('color-theme', 'light');
     }
   }, []);
 

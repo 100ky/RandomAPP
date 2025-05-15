@@ -12,7 +12,13 @@ import { pointsOfInterest } from '../data/cityBoundary';
 import { POILocation, Puzzle } from '../types/game';
 import { avatars } from './AppMenu';
 import { useGameStore } from '../store/gameStore';
-import { createOfflineMapCache } from '../utils/mapHelpers';
+import { useSocialStore } from '../store/socialStoreEnhanced'; 
+import { Route, TeamMember } from '../types/social';
+import { 
+    createOfflineMapCache, 
+    downloadVysokeMýtoOfflineMap,
+    getOfflineMapMetadata
+} from '../utils/mapHelpers';
 import { getRequiredAttributions } from '../utils/attributions';
 import { setupZoomConstraints, MIN_ZOOM, MAX_ZOOM, smoothZoom as libSmoothZoom } from '../utils/mapZoomConstraints';
 import styles from '../styles/Map.module.css';
@@ -24,9 +30,12 @@ import { SoundType, playSound } from '../utils/SoundManager';
 import { createUserMarker, useUserMarker } from '../utils/markerUtils';
 import SoundControls from './SoundControls';
 import MapSettings from './MapSettings';
+import OfflineMapManager from './OfflineMapManager';
 import { getLocationsByAvatarId } from '../games/gameManager';
 import UserLocationMarker from './UserLocationMarker';
 import ExplorerMarker from './ExplorerMarker';
+import TeamMemberMarker from './TeamMemberMarker';
+import RouteDisplay from './RouteDisplayWeb';
 
 // Komponenta pro ovládací tlačítka přiblížení mapy byla odstraněna
 
@@ -37,6 +46,7 @@ interface MapProps {
     selectedAvatarId: string | null;        // ID vybraného avatara uživatelem
     animateToUserLocation?: boolean;        // Zda má mapa automaticky animovat k poloze uživatele
     onEndGame?: () => void;                 // Callback funkce volaná při ukončení hry
+    selectedRoute?: Route | null;           // Vybraná trasa k zobrazení
     simulationProps?: {                     // Volitelné props pro simulační režim
         enabled: boolean;
         location: {
@@ -55,7 +65,8 @@ const Map: React.FC<MapProps> = ({
     selectedAvatarId, 
     animateToUserLocation = false, 
     onEndGame,
-    simulationProps
+    simulationProps,
+    selectedRoute
 }) => {
     // Reference na DOM elementy a objekty mapy
     const mapContainerRef = useRef<HTMLDivElement | null>(null);    // Reference na DOM kontejner pro mapu
@@ -66,9 +77,29 @@ const Map: React.FC<MapProps> = ({
     const lastPositionRef = useRef<{lat: number, lng: number} | null>(null);  // Reference na poslední pozici uživatele
     const stepCounterTimeoutRef = useRef<NodeJS.Timeout | null>(null);        // Reference na timeout pro počítání kroků
     const [showQRScanner, setShowQRScanner] = useState<boolean>(false); // Stav pro zobrazení QR skeneru
-    
-    // Připojení k Zustand storu pro správu herního stavu
+      // Připojení k Zustand storu pro správu herního stavu
     const { visitLocation, playerProgress, addSteps, addDistance, startGame, isGameActive, resetStats } = useGameStore();
+    
+    // Připojení k sociálnímu storu    // Získání dat ze socialStore
+    const { 
+        teamMembers, 
+        teamId, 
+        isTeamMode, 
+        lastKnownLocations, 
+        savedRoutes, 
+        currentRoute, 
+        isRecordingRoute, 
+        addRoutePoint,
+        sharedRoutes
+    } = useSocialStore();
+    
+    // Stav pro aktivní trasu k zobrazení (může být vybraná z props nebo lokálně)
+    const [activeRoute, setActiveRoute] = useState<Route | null>(null);
+    
+    // Pomocné ref proměnné pro práci s trasami a sociálními funkcemi
+    const routePointsRef = useRef<Array<{lat: number, lng: number, timestamp: number}>>([]);
+    const recordingStartTimeRef = useRef<number | null>(null);
+    const totalDistanceRef = useRef<number>(0);
     
     // Stav pro sledování, zda je hra spuštěna
     const [isGameRunning, setIsGameRunning] = useState(false);
@@ -94,8 +125,7 @@ const Map: React.FC<MapProps> = ({
         continuousTracking: true,
         minDistance: 5, // aktualizovat polohu jen když se uživatel posune alespoň o 5 metrů
     });
-    
-    // Stavy komponenty mapy
+      // Stavy komponenty mapy
     const [mapLoaded, setMapLoaded] = useState(false);              // Byl načten mapový podklad
     const [offlineMode, setOfflineMode] = useState(false);          // Je aktivní offline režim
     const [offlineTilesStatus, setOfflineTilesStatus] = useState({  // Stav stahování offline dlaždic
@@ -103,6 +133,7 @@ const Map: React.FC<MapProps> = ({
         progress: 0,
         complete: false,
     });
+    const [showOfflineMapManager, setShowOfflineMapManager] = useState(false); // Zobrazení správce offline map
     const [activePuzzle, setActivePuzzle] = useState<Puzzle | null>(null); // Aktuálně aktivní hádanka    // Stav pro skrytí chybové zprávy geolokace
     const [hideGeolocationError, setHideGeolocationError] = useState(false);
     
@@ -605,9 +636,7 @@ const Map: React.FC<MapProps> = ({
         }
         
         // Vždy zajistit, že zoom je v bezpečném rozsahu
-        ensureSafeZoom();
-        
-        // Aktualizace vzdálenosti při pohybu uživatele
+        ensureSafeZoom();        // Aktualizace vzdálenosti při pohybu uživatele
         if (lastPositionRef.current && isGameRunning) {
             const lastPos = lastPositionRef.current;
             const distance = Math.sqrt(
@@ -623,6 +652,25 @@ const Map: React.FC<MapProps> = ({
                 // Přehrát zvuk kroků s nižší pravděpodobností
                 if (Math.random() < 0.3) {
                     playSound(SoundType.STEP, { volume: 0.15 + Math.random() * 0.1 });
+                }
+                
+                // Aktualizace polohy v týmovém režimu
+                if (isTeamMode && teamId) {
+                    useSocialStore.getState().updateMemberLocation('current-user', {
+                        lat: latitude,
+                        lng: longitude,
+                        timestamp: Date.now()
+                    });
+                }
+                
+                // Zaznamenávání trasy, pokud je aktivní
+                if (isRecordingRoute) {
+                    const timestamp = Date.now();
+                    addRoutePoint({
+                        lat: latitude,
+                        lng: longitude,
+                        timestamp
+                    });
                 }
             }
         }
@@ -806,6 +854,10 @@ const Map: React.FC<MapProps> = ({
 
     // Inicializace mapy při načtení komponenty
     useEffect(() => {
+        // Vynucení světlého režimu při načtení mapy
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('color-theme', 'light');
+        
         // Inicializace mapy pouze pokud ještě nebyla vytvořena
         if (mapContainerRef.current && !mapRef.current) {
             // Určení počátečního středu a zoomu mapy
@@ -1158,6 +1210,97 @@ const Map: React.FC<MapProps> = ({
             alert('Došlo k chybě při stahování offline map. Zkuste to prosím znovu.');
         }
     };
+
+    /**
+     * Stáhne offline mapu Vysokého Mýta a okolí 10 km
+     */
+    const handleDownloadVysokeMýtoMap = () => {
+        setOfflineTilesStatus({
+            downloading: true,
+            progress: 0,
+            complete: false
+        });
+        
+        // Stáhnout mapu Vysokého Mýta a okolí 10 km
+        downloadVysokeMýtoOfflineMap(
+            (progress) => {
+                setOfflineTilesStatus({
+                    downloading: true,
+                    progress,
+                    complete: false
+                });
+            },
+            () => {
+                // Po dokončení stahování
+                setOfflineTilesStatus({
+                    downloading: false,
+                    progress: 100,
+                    complete: true
+                });
+                
+                setOfflineMode(true);
+                
+                // Zobrazit oznámení o úspěšném stažení
+                const notification = document.createElement('div');
+                notification.className = styles.notification;
+                notification.classList.add(styles.success);
+                notification.innerHTML = `
+                    <div class="${styles.notificationContent}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <span>Mapa Vysokého Mýta a okolí byla úspěšně stažena pro offline použití</span>
+                    </div>
+                `;
+                document.body.appendChild(notification);
+                
+                // Skrýt oznámení po 3 sekundách
+                setTimeout(() => {
+                    notification.classList.add(styles.fadeOut);
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 500);
+                }, 3000);
+            }
+        ).catch(error => {
+            console.error("Chyba při stahování offline mapy:", error);
+            
+            setOfflineTilesStatus({
+                downloading: false,
+                progress: 0,
+                complete: false
+            });
+            
+            // Zobrazit oznámení o chybě
+            const notification = document.createElement('div');
+            notification.className = styles.notification;
+            notification.classList.add(styles.error);
+            notification.innerHTML = `
+                <div class="${styles.notificationContent}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                    <span>Nepodařilo se stáhnout mapu. Zkuste to prosím znovu.</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            // Skrýt oznámení po 3 sekundách
+            setTimeout(() => {
+                notification.classList.add(styles.fadeOut);
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 500);
+            }, 3000);
+        });
+    };
     
     /**
      * Vycentruje mapu na aktuální polohu uživatele
@@ -1228,7 +1371,16 @@ const Map: React.FC<MapProps> = ({
     const handleSolvePuzzle = (puzzleId: string, points: number) => {
         // Zde lze implementovat další logiku po vyřešení hádanky
         console.log(`Hádanka ${puzzleId} vyřešena za ${points} bodů`);
-    };    return (
+    };
+
+    // Efekt pro synchronizaci vybrané trasy z props
+    useEffect(() => {
+        if (selectedRoute) {
+            setActiveRoute(selectedRoute);
+        }
+    }, [selectedRoute]);
+
+    return (
         <div className={`${styles.mapContainerWrapper} ${isLandscape ? 'landscape-mode' : 'portrait-mode'}`} id="map-container">
             <div ref={mapContainerRef} className={styles.mapContainer} />
             
@@ -1314,8 +1466,7 @@ const Map: React.FC<MapProps> = ({
                 <ScannerButton onScan={handleQRCodeScan} />
             )} */}
             
-            {/* Nastavení mapy - ozubené tlačítko v pravém horním rohu */}
-            <MapSettings 
+            {/* Nastavení mapy - ozubené tlačítko v pravém horním rohu */}            <MapSettings 
                 centerOnUser={centerOnUser}
                 onPauseGame={handlePauseGame}
                 onEndGame={handleEndGame}
@@ -1326,7 +1477,11 @@ const Map: React.FC<MapProps> = ({
                 isGamePaused={isGamePaused}
                 onTogglePauseGame={handleTogglePauseGame}
                 onCenterMap={centerOnUser}
-                onDownloadMap={() => {}}
+                onDownloadMap={handleDownloadVysokeMýtoMap}
+                openOfflineMapManager={() => setShowOfflineMapManager(true)}
+                isOfflineMapDownloaded={!!getOfflineMapMetadata()}
+                isDownloadingOfflineMap={offlineTilesStatus.downloading}
+                downloadProgress={offlineTilesStatus.progress}
                 maxZoom={MAX_ZOOM} // Předání maximálního zoomu z konstant
             />
             
@@ -1365,8 +1520,7 @@ const Map: React.FC<MapProps> = ({
                         <path d="M12 2C8.13 2 5 13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12-2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
                     </svg>
                 </button>
-            }            {/* Nový průzkumník jako marker pozice uživatele - viditelný jen když je dostupná geolokace a mapa je načtená */}
-            {mapLoaded && mapRef.current && (
+            }            {/* Nový průzkumník jako marker pozice uživatele - viditelný jen když je dostupná geolokace a mapa je načtená */}            {mapLoaded && mapRef.current && (
                 simulationProps?.enabled ? (
                     // V simulačním režimu zobrazíme marker se simulovanými daty
                     <UserLocationMarker 
@@ -1383,8 +1537,62 @@ const Map: React.FC<MapProps> = ({
                     )
                 )
             )}
+              {/* Zobrazení týmových markerů */}
+            {mapLoaded && mapRef.current && isTeamMode && teamMembers.filter(member => 
+                member.id !== 'current-user' && 
+                lastKnownLocations[member.id]
+            ).map(member => {
+                const location = lastKnownLocations[member.id];
+                if (!location) return null;
+                
+                return (
+                    <TeamMemberMarker
+                        key={member.id}
+                        member={member}
+                        location={location}
+                    />
+                );
+            })}
             
-            {/* Ovládací tlačítka pro zoom byla odstraněna */}
+            {/* Zobrazení aktuálně zaznamenávané trasy */}
+            {mapLoaded && mapRef.current && isRecordingRoute && currentRoute && (
+                <RouteDisplay
+                    route={currentRoute}
+                    isActive={true}
+                />
+            )}
+              {/* Zobrazení vybraných tras */}
+            {mapLoaded && mapRef.current && activeRoute && (
+                <RouteDisplay 
+                    key={activeRoute.id}
+                    route={activeRoute}
+                    isActive={true}
+                    onClose={() => setActiveRoute(null)}
+                />
+            )}
+            
+            {/* Zobrazení sdílených tras */}
+            {mapLoaded && mapRef.current && sharedRoutes && sharedRoutes.map((route: Route) => (
+                <RouteDisplay 
+                    key={route.id}
+                    route={route}
+                    isActive={false}
+                />
+            ))}
+            {mapLoaded && mapRef.current && sharedRoutes.map(route => (
+                <RouteDisplay 
+                    key={route.id}
+                    map={mapRef.current}
+                    route={route}
+                />
+            ))}
+            
+            {/* Správce offline map */}
+            <OfflineMapManager
+                isOpen={showOfflineMapManager}
+                onClose={() => setShowOfflineMapManager(false)}
+                onOfflineModeToggle={setOfflineMode}
+            />
         </div>
     );
 };

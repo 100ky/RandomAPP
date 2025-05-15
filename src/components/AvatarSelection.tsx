@@ -118,17 +118,26 @@ const AvatarSelection: React.FC<AvatarSelectionProps> = ({ onSelect }) => {
       // Import nové funkce getAllAvatars
       const { getAllAvatars } = await import('../games/gameManager');
       const gameAvatars = getAllAvatars();
-      
-      // Převedení avatarů z gameManager na formát AvatarInfo, přidání atributu isAvailable
-      const avatarsData: (AvatarInfo & { isAvailable: boolean })[] = gameAvatars.map(game => ({
-        name: game.name,
-        image: `/assets/avatars/${game.id}.png`,
-        description: game.description,
-        difficulty: difficultyMap[game.id] || 'Střední',
-        distance: distanceMap[game.id] || '2,5 km',
-        duration: durationMap[game.id] || 'cca 90 minut',
-        isAvailable: game.isAvailable // přidáno, zda je hra dostupná
-      }));
+        // Převedení avatarů z gameManager na formát AvatarInfo, přidání atributu isAvailable
+      const avatarsData: (AvatarInfo & { isAvailable: boolean })[] = gameAvatars.map(game => {
+        // Mapování ID na správné názvy souborů
+        let imageName = game.id;
+        if (game.id === 'detective') {
+          imageName = 'Detektiv';
+        } else if (game.id === 'ninja' || game.id === 'Bivoj') {
+          imageName = game.id.charAt(0).toUpperCase() + game.id.slice(1); // První písmeno velké
+        }
+        
+        return {
+          name: game.name,
+          image: `/assets/avatars/${imageName}.png`,
+          description: game.description,
+          difficulty: difficultyMap[game.id] || 'Střední',
+          distance: distanceMap[game.id] || '2,5 km',
+          duration: durationMap[game.id] || 'cca 90 minut',
+          isAvailable: game.isAvailable // přidáno, zda je hra dostupná
+        };
+      });
       
       setAvailableAvatars(avatarsData);
       

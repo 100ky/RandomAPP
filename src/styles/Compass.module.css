@@ -62,10 +62,14 @@
 }
 
 .expandedCompass {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  margin: 0 !important;
+  display: flex;
+  justify-content: center; 
+  align-items: center;
   box-sizing: border-box; /* Přidáno pro konzistentní box model */
   width: 280px; /* Zvětšení pro více detailů */
   height: 350px; /* Zvětšení pro více detailů */
@@ -73,17 +77,24 @@
   border-radius: 25px; /* Mírně větší zaoblení */
   border: 2px solid var(--accent-color); /* Přidání dobrodružného vzhledu */
   box-shadow: var(--shadow-strong); /* Použití globální proměnné */
-  z-index: 1500;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around; /* Lepší rozložení prvků */
-  padding: 20px; /* Větší padding */
+  z-index: 2000; /* Zajistí, že kompas bude vždy viditelný */
   user-select: none;
   transition: width 0.3s ease, height 0.3s ease, transform 0.3s ease; /* Přidána transformace do transition */
   max-width: 90vw; /* Omezení maximální šířky */
   max-height: 90vh; /* Omezení maximální výšky */
   overflow: auto; /* Povolení scrollu, pokud je obsah větší */
+}
+
+@media (max-width: 768px) {
+  .expandedCompass {
+    max-width: 90vw;
+  }
+}
+
+@media (max-height: 600px) {
+  .expandedCompass {
+    max-height: 85vh;
+  }
 }
 
 .compassRose {
@@ -369,8 +380,11 @@
     max-height: 85vh; /* Omezení výšky */
     flex-direction: row; /* Změna na řádkové uspořádání pro lepší využití šířky */
     align-items: center; /* Centrovaní prvků v řádku */
-    justify-content: space-around;
+    justify-content: center;
     padding: 15px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
   .compassRose {
     width: 160px; /* Menší růžice v landscape */
@@ -390,6 +404,9 @@
   .expandedCompass {
     padding: 10px;
     max-width: 400px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
   .compassRose {
     width: 130px;
@@ -416,12 +433,13 @@
   max-height: 90vh;
   flex-direction: row;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
   padding: 15px;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   overflow: visible;
+  margin: 0 auto;
 }
 
 .landscapeSpecificAdjustments .compassRose {

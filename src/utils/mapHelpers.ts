@@ -207,3 +207,140 @@ const getTileXY = (lng: number, lat: number, zoom: number) => {
     
     return { x, y };
 };
+
+// Funkce pro výpočet hranice (bounds) okolo daného bodu v kilometrech
+export const calculateBoundsAroundPoint = (
+    centerLat: number, 
+    centerLng: number, 
+    radiusKm: number
+): maplibre.LngLatBounds => {
+    // Přibližný výpočet pro změnu souřadnic (1 stupeň ~ 111 km)
+    const latChange = radiusKm / 111.0;
+    // Změna longitude se liší podle latitude (na rovníku je 1 stupeň ~ 111 km, na pólech 0)
+    const lngChange = radiusKm / (111.0 * Math.cos(centerLat * Math.PI / 180));
+
+    // Vytvoření hranic
+    return new maplibre.LngLatBounds(
+        [centerLng - lngChange, centerLat - latChange], // jihozápadní roh
+        [centerLng + lngChange, centerLat + latChange]  // severovýchodní roh
+    );
+};
+
+/**
+ * Stáhne mapu Vysokého Mýta a okolí 10 km pro offline použití
+ * @param progressCallback - Callback pro aktualizaci průběhu stahování
+ * @param onComplete - Callback volaný po dokončení stahování
+ */
+export const downloadVysokeMýtoOfflineMap = async (
+    progressCallback: (progress: number) => void,
+    onComplete: () => void
+): Promise<void> => {
+    try {
+        // Souřadnice centra Vysokého Mýta
+        const centerLat = 49.9532;
+        const centerLng = 16.1611;
+        
+        // Vytvoříme hranice okolo Vysokého Mýta s okruhem 10 km
+        const bounds = calculateBoundsAroundPoint(centerLat, centerLng, 10);
+        
+        // Definujeme zoom levels pro offline mapu
+        const minZoom = 10; // Přehledová mapa
+        const maxZoom = 17; // Detailní přiblížení
+
+        console.log('Zahajuji stahování offline mapy pro Vysoké Mýto a okolí 10 km');
+        
+        // Stáhneme a uložíme mapové dlaždice
+        await createOfflineMapCache(
+            bounds,
+            minZoom,
+            maxZoom,
+            progressCallback
+        );
+        
+        // Uložíme metadata o offline mapě
+        await saveOfflineMapMetadata({
+            region: 'Vysoké Mýto a okolí',
+            centerLat,
+            centerLng,
+            radiusKm: 10,
+            minZoom,
+            maxZoom,
+            timestamp: new Date().toISOString(),
+            tileCount: await getTileCacheCount()
+        });
+        
+        console.log('Offline mapa pro Vysoké Mýto úspěšně stažena');
+        onComplete();
+    } catch (error) {
+        console.error('Chyba při stahování offline mapy:', error);
+        throw error;
+    }
+};
+
+// Funkce pro uložení metadat o offline mapě do localStorage
+const saveOfflineMapMetadata = async (metadata: {
+    region: string;
+    centerLat: number;
+    centerLng: number;
+    radiusKm: number;
+    minZoom: number;
+    maxZoom: number;
+    timestamp: string;
+    tileCount: number;
+}): Promise<void> => {
+    localStorage.setItem('offline-map-metadata', JSON.stringify(metadata));
+};
+
+// Funkce pro načtení metadat o offline mapě z localStorage
+export const getOfflineMapMetadata = (): {
+    region: string;
+    centerLat: number;
+    centerLng: number;
+    radiusKm: number;
+    minZoom: number;
+    maxZoom: number;
+    timestamp: string;
+    tileCount: number;
+} | null => {
+    const metadata = localStorage.getItem('offline-map-metadata');
+    return metadata ? JSON.parse(metadata) : null;
+};
+
+// Funkce pro získání počtu uložených dlaždic v cache
+export const getTileCacheCount = async (): Promise<number> => {
+    try {
+        const db = await initializeOfflineDB();
+        const transaction = db.transaction(['tiles'], 'readonly');
+        const store = transaction.objectStore('tiles');
+        
+        return new Promise((resolve, reject) => {
+            const countRequest = store.count();
+            countRequest.onsuccess = () => resolve(countRequest.result);
+            countRequest.onerror = () => reject(new Error('Nepodařilo se získat počet dlaždic'));
+        });
+    } catch (error) {
+        console.error('Chyba při získávání počtu dlaždic:', error);
+        return 0;
+    }
+};
+
+// Funkce pro vymazání offline map cache
+export const clearOfflineMapCache = async (): Promise<void> => {
+    try {
+        const db = await initializeOfflineDB();
+        const transaction = db.transaction(['tiles'], 'readwrite');
+        const store = transaction.objectStore('tiles');
+        
+        return new Promise((resolve, reject) => {
+            const request = store.clear();
+            request.onsuccess = () => {
+                localStorage.removeItem('offline-map-metadata');
+                resolve();
+            };
+            request.onerror = () => reject(new Error('Nepodařilo se vymazat offline mapu'));
+        });
+    } catch (error) {
+        console.error('Chyba při mazání offline mapy:', error);
+        throw error;
+    }
+};

@@ -9,10 +9,11 @@ import '../styles/LoadingScreen.css';
 import '../styles/adventureCore.css';
 import '../styles/iOSFixes.css';
 import '../styles/DeviceSpecificFixes.css';
+import '../styles/Modal.css';
+import '../styles/SocialAnimations.css';
 import { applyDeviceOptimizations } from '../utils/deviceDetection';
 
-function MyApp({ Component, pageProps }: AppProps) {
-  // Aplikace optimalizací pro zařízení při načtení aplikace
+function MyApp({ Component, pageProps }: AppProps) {  // Aplikace optimalizací pro zařízení při načtení aplikace
   useEffect(() => {
     applyDeviceOptimizations();
 
@@ -21,6 +22,16 @@ function MyApp({ Component, pageProps }: AppProps) {
     if (!savedTheme) {
       document.documentElement.setAttribute('data-theme', 'light');
       localStorage.setItem('color-theme', 'light');
+    } else {
+      // Zajisti, že při obnovení stránky se použije uložené téma
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    // Vždycky nastavit světlý režim při načtení mapy poprvé
+    if (window.location.pathname === '/' && !sessionStorage.getItem('themeSet')) {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('color-theme', 'light');
+      sessionStorage.setItem('themeSet', 'true');
     }
 
     // Pro testování - vypisovat informace o zařízení do konzole v dev režimu

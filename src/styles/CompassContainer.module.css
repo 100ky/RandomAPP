@@ -6,6 +6,7 @@
   align-items: center;
   margin-top: 10px;
   width: 100%;
+  z-index: 1500;
 }
 
 .compassReady {

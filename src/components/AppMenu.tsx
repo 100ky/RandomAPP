@@ -11,6 +11,7 @@ import compassStyles from '@/styles/Compass.module.css';
 import compassContainerStyles from '@/styles/CompassContainer.module.css';
 import { getAvailableAvatars, getAllAvatars } from '../games/gameManager';
 import Compass from './CompassNew';
+import { useSocialStore } from '../store/socialStoreEnhanced';
 
 // Definice dostupných avatarů - seznam všech dostupných avatarů z game manageru
 export const avatarData = [
@@ -48,23 +49,44 @@ export const avatars = avatarData;
  * Typová definice props pro AppMenu komponentu
  * @param selectedAvatarId - ID aktuálně vybraného avatara
  * @param onSelectAvatar - Volitelná funkce pro změnu avatara (pokud je menu aktivní)
+ * @param onShowLeaderboard - Funkce pro zobrazení žebříčku
+ * @param onShowTeamMode - Funkce pro zobrazení týmového režimu
+ * @param onShowRouteManager - Funkce pro zobrazení správce tras
+ * @param onShowTeamChat - Funkce pro zobrazení týmového chatu
+ * @param onShowTeamChallenges - Funkce pro zobrazení týmových výzev
+ * @param onShowTeamStats - Funkce pro zobrazení týmových statistik
  */
 interface AppMenuProps {
   selectedAvatarId: string | null;
   onSelectAvatar?: (avatar: typeof avatars[0]) => void;
+  onShowLeaderboard?: () => void;
+  onShowTeamMode?: () => void;
+  onShowRouteManager?: () => void;
+  onShowTeamChat?: () => void;
+  onShowTeamChallenges?: () => void;
+  onShowTeamStats?: () => void;
 }
 
 /**
  * Komponenta zobrazující menu aplikace s vybraným avatarem
  */
-const AppMenu: React.FC<AppMenuProps> = ({ selectedAvatarId, onSelectAvatar }) => {
+const AppMenu: React.FC<AppMenuProps> = ({ 
+  selectedAvatarId, 
+  onSelectAvatar,
+  onShowLeaderboard,
+  onShowTeamMode,
+  onShowRouteManager,
+  onShowTeamChat,
+  onShowTeamChallenges,
+  onShowTeamStats
+}) => {
   // Stav pro sledování, zda je kompas rozbalený
   const [isCompassExpanded, setIsCompassExpanded] = useState(false);
-  // Stav pro sledování, zda je menu avatarů otevřené
-  const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false);
   // Stav pro zprávu o nedostupnosti avatara
   const [showUnavailableMessage, setShowUnavailableMessage] = useState(false);
   
+  // Používáme socialStoreEnhanced pro přístup k počtu nepřečtených zpráv
+  const { unreadChatCount, unreadEventsCount } = useSocialStore();
   // Najít aktuálně vybraný avatar podle jeho ID
   const selectedAvatar = avatars.find(avatar => avatar.id === selectedAvatarId) || avatars[0];
 
@@ -78,31 +100,9 @@ const AppMenu: React.FC<AppMenuProps> = ({ selectedAvatarId, onSelectAvatar }) =
   const handleToggleCompass = () => {
     setIsCompassExpanded(!isCompassExpanded);
   };
-
-  // Přepínání menu avatarů
-  const toggleAvatarMenu = () => {
-    setIsAvatarMenuOpen(!isAvatarMenuOpen);
-  };
-
-  // Zpracování kliknutí na avatar
-  const handleAvatarClick = (avatar: typeof avatars[0]) => {
-    // Pokud je avatar dostupný a máme k dispozici funkci pro změnu avatara
-    if (isAvatarAvailable(avatar.id) && onSelectAvatar) {
-      onSelectAvatar(avatar);
-      setIsAvatarMenuOpen(false); // Zavřít menu
-    } else {
-      // Avatar není dostupný, zobrazíme zprávu
-      alert("Na této únikové hře se pracuje. Hra není momentálně dostupná.");
-    }
-  };
-
   return (
     <div className={styles['app-menu']}>
-      <div 
-        className={styles['avatar-display']} 
-        onClick={toggleAvatarMenu}
-        title="Klikněte pro zobrazení všech avatarů"
-      >
+      <div className={styles['avatar-display']} title={selectedAvatar.name}>
         {selectedAvatar && (
           <div className={styles['current-avatar']}>
             <Image 
@@ -117,37 +117,76 @@ const AppMenu: React.FC<AppMenuProps> = ({ selectedAvatarId, onSelectAvatar }) =
           </div>
         )}
       </div>
-
-      {/* Menu s avatary */}
-      {onSelectAvatar && (
-        <div className={`${styles['avatar-menu']} ${isAvatarMenuOpen ? styles.visible : ''}`}>
-          {avatars.map((avatar) => {
-            const isAvailable = isAvatarAvailable(avatar.id);
-            return (
-              <div 
-                key={avatar.id}
-                className={`${styles['avatar-option']} ${!isAvailable ? styles['avatar-inactive'] : ''}`}
-                onClick={() => handleAvatarClick(avatar)}
-              >
-                <Image 
-                  src={avatar.imageUrl} 
-                  alt={avatar.name} 
-                  width={30}
-                  height={30}
-                  className={styles['avatar-option-image']}
-                  style={!isAvailable ? { filter: 'grayscale(100%)', opacity: 0.7 } : {}} 
-                />
-                <span>{avatar.name}</span>
-                {!isAvailable && (
-                  <span className={styles['avatar-inactive-message']}>
-                    Na únikové hře se pracuje
-                  </span>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+      
+      {/* Sociální tlačítka */}
+      <div className={styles['social-buttons']}>
+        {onShowLeaderboard && (
+          <button 
+            className={styles['social-button']} 
+            onClick={onShowLeaderboard}
+            title="Žebříček výsledků"
+            aria-label="Zobrazit žebříček výsledků"
+          >
+            🏆
+          </button>
+        )}
+          {onShowTeamMode && (
+          <button 
+            className={styles['social-button']} 
+            onClick={onShowTeamMode}
+            title="Týmový režim"
+            aria-label="Přepnout týmový režim"
+          >
+            👥
+            {unreadEventsCount > 0 && (
+              <span className={styles['notification-badge']}>{unreadEventsCount}</span>
+            )}
+          </button>
+        )}
+          {onShowRouteManager && (
+          <button 
+            className={styles['social-button']} 
+            onClick={onShowRouteManager}
+            title="Správa tras"
+            aria-label="Správa a sdílení tras"
+          >
+            🗺️
+          </button>
+        )}        {onShowTeamChat && (
+          <button 
+            className={styles['social-button']} 
+            onClick={onShowTeamChat}
+            title="Týmový chat"
+            aria-label="Otevřít týmový chat"
+          >
+            💬
+            {unreadChatCount > 0 && (
+              <span className={styles['notification-badge']}>{unreadChatCount}</span>
+            )}
+          </button>
+        )}
+          {onShowTeamChallenges && (
+          <button 
+            className={styles['social-button']} 
+            onClick={onShowTeamChallenges}
+            title="Týmové výzvy"
+            aria-label="Otevřít týmové výzvy"
+          >
+            🏆
+          </button>
+        )}
+        
+        {onShowTeamStats && (
+          <button 
+            className={styles['social-button']} 
+            onClick={onShowTeamStats}
+            title="Týmové statistiky"
+            aria-label="Zobrazit týmové statistiky"
+          >
+            📊
+          </button>
+        )}
+      </div>
       
       {/* Kompas pod avatarem */}
       <div className={compassContainerStyles.compassFullContainer}>

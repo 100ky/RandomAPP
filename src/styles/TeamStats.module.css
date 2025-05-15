@@ -1,0 +1,222 @@
+/* Styly pro týmové statistiky */
+
+.teamStatsContainer {
+  width: 100%;
+  max-width: 700px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color, #fff);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.modalBody {
+  padding: 20px;
+  overflow-y: auto;
+  max-height: calc(90vh - 70px);
+}
+
+.teamOverview {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+@media (min-width: 600px) {
+  .teamOverview {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.statCard {
+  background-color: var(--light-gray, #f8f9fa);
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.statCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.statIcon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.statValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+  color: var(--primary-color, #3f51b5);
+}
+
+.statLabel {
+  font-size: 0.85rem;
+  color: var(--dark-gray, #555);
+}
+
+.contributionsSection {
+  margin-bottom: 25px;
+}
+
+.contributionsSection h3, .visualizationSection h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 15px 0;
+  color: var(--dark, #333);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color, #ddd);
+}
+
+.statTypeSelector {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.statTypeButton {
+  background-color: var(--light-gray, #f0f2f5);
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  flex: 1;
+  min-width: 80px;
+  transition: all 0.2s;
+}
+
+.statTypeButton:hover {
+  background-color: var(--hover-color, #e9ecef);
+}
+
+.selectedStatType {
+  background-color: var(--primary-color, #3f51b5);
+  color: white;
+  border-color: var(--primary-color, #3f51b5);
+}
+
+.selectedStatType:hover {
+  background-color: var(--primary-dark, #303f9f);
+}
+
+.contributionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.memberContribution {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.memberInfo {
+  display: flex;
+  align-items: center;
+}
+
+.memberRank {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--dark-gray, #555);
+  width: 30px;
+}
+
+.memberName {
+  flex: 1;
+  font-weight: 500;
+  color: var(--dark, #333);
+}
+
+.memberValue {
+  font-weight: 500;
+  color: var(--primary-color, #3f51b5);
+  text-align: right;
+  min-width: 80px;
+}
+
+.contributionBar {
+  height: 10px;
+  background-color: var(--light-gray, #e0e0e0);
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+}
+
+.contributionFill {
+  height: 100%;
+  background-color: var(--primary-color, #3f51b5);
+  border-radius: 5px;
+}
+
+.contributionPercentage {
+  position: absolute;
+  right: 5px;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  font-size: 0.7rem;
+  color: var(--light, #fff);
+  font-weight: 700;
+}
+
+.visualizationSection {
+  margin-bottom: 20px;
+}
+
+.pieChart {
+  background-color: var(--light-gray, #f8f9fa);
+  border-radius: 10px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pieChartPlaceholder {
+  font-size: 1.2rem;
+  color: var(--dark-gray, #555);
+  text-align: center;
+}
+
+.loadingStats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  color: var(--dark-gray, #555);
+}
+
+.noTeamMessage {
+  padding: 30px;
+  text-align: center;
+  color: var(--dark-gray, #555);
+}
+
+.createTeamButton {
+  background-color: var(--primary-color, #3f51b5);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  margin-top: 15px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.createTeamButton:hover {
+  background-color: var(--primary-dark, #303f9f);
+}

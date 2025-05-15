@@ -1,7 +1,7 @@
 .app-menu {
   position: absolute;
   top: 15px;
-  left: 15px;  /* Změněno z right na left */
+  left: 15px;
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -9,15 +9,15 @@
 }
 
 .avatar-display {
-  background-color: var(--map-background-color); /* Použití proměnné pro pozadí, konzistentní s mapou */
-  border-radius: 50%;  /* Změněno na kruh */
-  box-shadow: var(--shadow-medium); /* Použití globální proměnné pro stín */
-  padding: 5px;  /* Zmenšeno padding */
+  background-color: var(--map-background-color);
+  border-radius: 50%;
+  box-shadow: var(--shadow-medium);
+  padding: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  z-index: 1001; /* Nad kompasem */
+  z-index: 1001;
 }
 
 .current-avatar {
@@ -27,86 +27,14 @@
 
 .avatar-icon {
   border-radius: 50%;
-  border: 2px solid var(--accent-color); /* Použití accent-color pro tématický vzhled */
+  border: 2px solid var(--accent-color);
+  width: 50px;
+  height: 50px;
 }
 
 /* Skryjeme jméno avatara */
 .avatar-name {
   display: none;
-}
-
-/* Styl pro neaktivní avatary - šedý filtr */
-.avatar-inactive {
-  filter: grayscale(100%);
-  opacity: 0.7;
-  position: relative;
-  cursor: not-allowed;
-}
-
-/* Zpráva při najetí na neaktivní avatar */
-.avatar-inactive-message {
-  position: absolute;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 14px;
-  bottom: -50px;
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  z-index: 1002;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s ease-in-out;
-}
-
-.avatar-inactive:hover .avatar-inactive-message {
-  opacity: 1;
-}
-
-/* Menu s avatary */
-.avatar-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: var(--background-color, #FFF8E1);
-  border: 2px solid var(--accent-color, #FFD700);
-  border-radius: 8px;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 5px;
-  box-shadow: var(--shadow-medium);
-  z-index: 1000;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-in-out;
-}
-
-.avatar-menu.visible {
-  max-height: 300px;
-}
-
-.avatar-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.avatar-option:hover {
-  background-color: rgba(255, 215, 0, 0.2);
-}
-
-.avatar-option-image {
-  border-radius: 50%;
-  border: 1px solid var(--accent-color);
 }
 
 /* Responzivní design pro různé orientace zařízení */
@@ -134,51 +62,6 @@
     left: 10px;
     z-index: 1000;
   }
-  
-  .menu-dropdown {
-    left: 0;
-    top: 100%;
-    margin-top: 5px;
-    max-height: 80vh;
-    overflow-y: auto;
-  }
-  
-  /* V landscape režimu nastavíme avatary pod sebe */
-  .avatar-menu {
-    max-height: 70vh;
-    flex-direction: column;
-    overflow-y: auto;
-    width: auto;
-  }
-  
-  .avatar-menu.visible {
-    max-height: 70vh;
-  }
-  
-  .avatar-option {
-    width: 100%;
-    flex-direction: row;
-    align-items: center;
-    padding: 8px 10px;
-    gap: 10px;
-  }
-  
-  .avatar-option span {
-    text-align: left;
-  }
-  
-  .avatar-option-image {
-    margin-right: 5px;
-  }
-  
-  .avatar-inactive-message {
-    position: absolute;
-    right: 10px;
-    left: auto;
-    bottom: auto;
-    top: 50%;
-    transform: translateY(-50%);
-  }
 }
 
 /* Pro mobilní zařízení */
@@ -187,26 +70,102 @@
     width: 40px;
     height: 40px;
   }
-  
-  .menu-dropdown {
-    width: 180px;
-  }
-  
-  .menu-item {
-    font-size: 13px;
-  }
 }
 
 /* Pro velmi malé displeje v landscape režimu */
 @media (orientation: landscape) and (max-height: 500px) {
   .app-menu {
-    transform: scale(0.85);
-    transform-origin: top left;
+    top: 5px;
+    left: 5px;
   }
   
-  .menu-dropdown {
+  .avatar-display {
+    transform: scale(0.8);
+  }
+}
+
+/* Styly pro sociální tlačítka */
+.social-buttons {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  background-color: var(--map-background-color-translucent);
+  border-radius: 20px;
+  padding: 5px 10px;
+  box-shadow: var(--shadow-small);
+}
+
+.social-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+  background-color: var(--menu-background);
+  position: relative;  /* Pro umístění odznaku */
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.social-button:hover {
+  background-color: var(--hover-color);
+  transform: scale(1.1);
+}
+
+.social-button:active {
+  transform: scale(0.95);
+}
+
+/* Nové styly pro notifikační odznak */
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: var(--accent-color, #ff5722);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
     transform: scale(1);
-    transform-origin: top left;
-    max-height: 70vh;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Responzivní design pro sociální tlačítka */
+@media (orientation: landscape) {
+  .social-buttons {
+    flex-direction: column;
+    position: absolute;
+    left: 70px;
+    top: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .social-button {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
   }
 }

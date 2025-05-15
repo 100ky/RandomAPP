@@ -77,14 +77,19 @@
 .title {
   font-size: 24px;
   font-weight: bold;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: var(--heading-color);
+  text-shadow: var(--heading-text-shadow);
   margin: 0;
+  border-bottom: 2px solid var(--heading-border-color);
+  padding-bottom: 6px;
+  display: inline-block;
 }
 
 .subtitle {
   font-size: 16px;
   margin-top: 5px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  color: var(--heading-color);
+  text-shadow: var(--heading-text-shadow);
 }
 
 /* Dekorativní prvky */
