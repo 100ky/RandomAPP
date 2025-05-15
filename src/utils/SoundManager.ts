@@ -191,7 +191,9 @@ class SoundManager {
 }
 
 // Export typů a třídy
-export { SoundType, SoundOptions, SoundManager };
+export { SoundType };
+export type { SoundOptions }; // Použití "export type" pro typ
+export { SoundManager };
 
 // Export pohodlné funkce pro přehrávání zvuku
 export const playSound = (type: SoundType, options?: SoundOptions): Promise<void> => {

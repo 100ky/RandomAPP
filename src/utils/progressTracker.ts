@@ -1,5 +1,4 @@
 // Progress Tracker - ukládání herního postupu
-import { PuzzleLocation } from '../types/game';
 
 interface GameProgress {
   solvedPuzzles: string[];

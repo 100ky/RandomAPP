@@ -126,42 +126,7 @@
   filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
 }
 
-/* Ovládací tlačítka zoomu na mapě */
-.mapZoomControls {
-  position: absolute;
-  right: 15px;
-  bottom: 130px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  z-index: 50;
-}
-
-.mapZoomButton {
-  width: 40px;
-  height: 40px;
-  background-color: var(--map-background-color);
-  border: 1px solid var(--map-border-color);
-  border-radius: 8px;
-  box-shadow: var(--shadow-light);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  color: var(--map-icon-color);
-}
-
-.mapZoomButton:hover {
-  background-color: var(--map-hover-background-color);
-  transform: scale(1.05);
-  border-color: var(--accent-dark);
-}
-
-.mapZoomButton:active {
-  transform: scale(0.95);
-  background-color: color-mix(in srgb, var(--map-hover-background-color) 80%, var(--black) 20%);
-}
+/* Ovládací tlačítka zoomu na mapě byla odstraněna */
 
 /* Indikátor minimálního zoomu */
 .minZoomAlert {

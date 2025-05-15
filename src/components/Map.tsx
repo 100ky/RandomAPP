@@ -28,6 +28,8 @@ import { getLocationsByAvatarId } from '../games/gameManager';
 import UserLocationMarker from './UserLocationMarker';
 import ExplorerMarker from './ExplorerMarker';
 
+// Komponenta pro ovládací tlačítka přiblížení mapy byla odstraněna
+
 /**
  * Props pro komponentu Map
  */
@@ -1381,38 +1383,8 @@ const Map: React.FC<MapProps> = ({
                     )
                 )
             )}
-
-            {/* Ovládací tlačítka pro zoom přímo na mapě */}
-            <div className={styles.mapZoomControls}>
-                <button 
-                    className={styles.mapZoomButton}
-                    onClick={() => {
-                        if (mapRef.current) {
-                            const currentZoom = mapRef.current.getZoom();
-                            smoothZoom(currentZoom + 1);
-                        }
-                    }}
-                    title="Přiblížit"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
-                    </svg>
-                </button>
-                <button 
-                    className={styles.mapZoomButton}
-                    onClick={() => {
-                        if (mapRef.current) {
-                            const currentZoom = mapRef.current.getZoom();
-                            smoothZoom(currentZoom - 1);
-                        }
-                    }}
-                    title="Oddálit"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-                        <path d="M19 13H5v-2h14v2z" fill="currentColor"/>
-                    </svg>
-                </button>
-            </div>
+            
+            {/* Ovládací tlačítka pro zoom byla odstraněna */}
         </div>
     );
 };

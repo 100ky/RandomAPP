@@ -42,52 +42,127 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  z-index: 1001; /* Zvýšený z-index, aby byl nad ostatními prvky mapy */
+  z-index: 1005; /* Výrazně zvýšený z-index, aby byl nad všemi ostatními prvky */
 }
 
 .settingsButton {
-  background-color: var(--map-background-color, #fff);
-  color: var(--map-text-color, #333);
-  border: 1px solid var(--map-border-color, #ccc);
+  background-color: var(--primary-color, #8B4513);
+  color: #FFFFFF;
+  border: 2px solid var(--accent-color, #FFD700);
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3), 0 0 5px rgba(255, 215, 0, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.settingsButton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .settingsButton:hover,
 .settingsButton.open {
-  background-color: var(--map-hover-background-color, #f0f0f0);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.4), 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.settingsButton:hover::after,
+.settingsButton.open::after {
+  opacity: 1;
 }
 
 .menu {
   position: absolute;
-  top: 50px; /* Odsazení od tlačítka ozubeného kola */
+  top: 52px; /* Větší odsazení od tlačítka ozubeného kola */
   right: 0;
-  background-color: var(--map-background-color, #fff);
-  color: var(--map-text-color, #333);
-  border: 1px solid var(--map-border-color, #ccc);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: rgba(139, 69, 19, 0.85); /* Světlejší hnědá barva jako na předešlých stránkách */
+  color: rgba(255, 255, 255, 0.95);
+  border: 2px solid var(--accent-color, #FFD700);
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), 0 0 8px rgba(255, 215, 0, 0.4);
   z-index: 1000;
-  width: 280px; /* Širší menu pro lepší přehlednost */
-  overflow: hidden; /* Zajistí, že vnitřní prvky nepřesáhnou border-radius */
+  width: 220px; /* Užší pro lepší umístění */
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+  max-height: calc(100vh - 240px); /* Omezení výšky v portrait režimu */
+  overflow-y: auto; /* Umožní scrollování pokud je menu příliš vysoké */
+  animation: menuAppear 0.3s ease-out forwards;
+  transform-origin: top right;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-color, #FFD700) rgba(139, 69, 19, 0.6); /* Sladěné barvy scrollbaru */
+}
+
+@keyframes menuAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .menuList {
   list-style: none;
   padding: 0;
   margin: 0;
+  position: relative;
+}
+
+/* Speciální styly pro landscape režim */
+@media (orientation: landscape) {
+  .menuList {
+    display: flex; /* Položky menu v řadě */
+    align-items: center; /* Vertikální zarovnání na střed */
+    height: 100%; /* Plná výška rodičovského elementu */
+  }
+  
+  .menuItem {
+    border-bottom: none; /* Žádné spodní ohraničení */
+    border-right: 1px solid rgba(255, 215, 0, 0.2); /* Pravé ohraničení mezi položkami */
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+  
+  .menuItem:last-child {
+    border-right: none;
+  }
+}
+
+.menuList::before {
+  content: "NASTAVENÍ";
+  display: block;
+  background: linear-gradient(to right, rgba(255, 215, 0, 0.8), rgba(139, 69, 19, 0.6));
+  color: #fff;
+  text-align: center;
+  padding: 7px 0;
+  font-family: var(--font-adventure, 'Cinzel', serif);
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  margin-bottom: 4px;
+  font-size: 15px;
 }
 
 .menuItem {
-  border-bottom: 1px solid var(--map-divider-color, #eee);
+  border-bottom: 1px solid rgba(255, 215, 0, 0.2); /* Jemnější zlaté oddělení položek */
 }
 
 .menuItem:last-child {
@@ -96,25 +171,68 @@
 
 .menuButton {
   background-color: transparent;
-  color: var(--map-text-color, #333);
+  color: rgba(255, 255, 255, 0.95);
   border: none;
-  padding: 12px 15px;
+  padding: 10px 15px; /* Menší vertikální padding pro kompaktnější vzhled */
   width: 100%;
   text-align: left;
   cursor: pointer;
   display: flex;
   align-items: center;
-  font-size: 1rem;
-  transition: background-color 0.2s ease;
+  font-size: 0.95rem; /* Menší font pro kompaktnější menu */
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-family: var(--font-body, 'Quattrocento', 'Georgia', serif);
+  position: relative;
+  overflow: hidden;
+}
+
+.menuButton::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background-color: var(--accent-color, #FFD700);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
 }
 
 .menuButton:hover {
-  background-color: var(--map-hover-background-color, #f0f0f0);
+  background-color: rgba(255, 215, 0, 0.15);
+  box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.1);
+}
+
+.menuButton:hover::before {
+  transform: scaleY(1);
+}
+
+.menuButton:active {
+  background-color: rgba(255, 215, 0, 0.2);
+}
+
+.menuButton:hover::before {
+  transform: scaleY(1);
 }
 
 .menuIcon {
   margin-right: 12px;
-  color: var(--map-icon-color, #555);
+  color: var(--accent-color, #FFD700);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+  transition: all 0.3s ease;
+}
+
+@media (orientation: landscape) {
+  .menuIcon {
+    margin-right: 6px; /* Menší pravý okraj pro ikonu */
+    width: 16px; /* Menší ikona */
+    height: 16px; /* Menší ikona */
+  }
+}
+
+.menuButton:hover .menuIcon {
+  transform: translateX(2px) scale(1.1);
 }
 
 /* Styly pro položku přepínače motivu */
@@ -128,11 +246,17 @@
 }
 
 .menuFooter {
-  padding: 10px 15px;
-  background-color: var(--map-footer-background-color, #f9f9f9);
-  border-top: 1px solid var(--map-divider-color, #eee);
+  padding: 8px 15px;
+  background-color: rgba(139, 69, 19, 0.7); /* Světlejší hnědá, sladěná s hlavním pozadím */
+  border-top: 1px solid rgba(255, 215, 0, 0.3);
   font-size: 0.85rem;
-  color: var(--map-footer-text-color, #666);
+  color: rgba(255, 255, 255, 0.9); /* Světlejší text */
+}
+
+@media (orientation: landscape) {
+  .menuFooter {
+    display: none; /* Skrytí patičky v landscape režimu */
+  }
 }
 
 .menuFooter p {
@@ -188,16 +312,17 @@
   }
   
   .settingsButton {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
   }
   
   .menu {
-    max-width: 90vw; /* Využití větší části šířky obrazovky */
-    width: 220px; /* Mírné zvětšení oproti původním 200px pro lepší čitelnost */
+    max-width: 85vw; /* Využití části šířky obrazovky */
+    width: 210px; /* Zmenšení pro lepší umístění */
     right: 5px;
     max-height: 70vh; /* Omezení výšky a povolení scrollu */
     overflow-y: auto;
+    top: 48px; /* Lépe umístěno vzhledem k menší velikosti tlačítka */
   }
   
   .menuButton {
@@ -223,7 +348,26 @@
   .settingsContainer {
     top: 10px;
     right: 10px;
-    z-index: 100; /* Zvýšení z-indexu pro zajištění, že bude nad ostatními prvky */
+    z-index: 1002; /* Ještě vyšší z-index pro zajištění, že bude nad ostatními prvky */
+  }
+  
+  .settingsButton {
+    width: 46px; /* Větší tlačítko pro lepší ovládání v landscape režimu */
+    height: 46px;
+  }
+  
+  .menu {
+    top: 52px; /* Umístění pod ozubeným kolem, stejné jako v portrait režimu */
+    right: 0; /* Zachování pozice vpravo jako v portrait režimu */
+    left: auto; /* Zrušení levého zarovnání */
+    width: 220px; /* Pevná šířka jako v portrait režimu */
+    height: auto; /* Automatická výška podle obsahu */
+    max-height: 80vh; /* Omezení maximální výšky pro případné scrollování */
+    position: absolute;
+    z-index: 1001; /* Vyšší z-index pro menu */
+    bottom: auto; /* Zabránění překrývání spodních tlačítek */
+    transform: none; /* Žádná transformace */
+    overflow-y: auto; /* Povolení scrollování pro delší obsah */
   }
   
   .statsContainer {
@@ -244,35 +388,56 @@
 /* Pro velmi malé displeje v landscape režimu */
 @media (orientation: landscape) and (max-height: 500px) {
   .settingsContainer {
-    transform: scale(0.85);
+    transform: scale(1); /* Bez zmenšování na mobilních zařízeních */
     transform-origin: top right;
   }
   
+  .settingsButton {
+    width: 46px; /* Zvětšené tlačítko pro lepší přístupnost na mobilních zařízeních */
+    height: 46px;
+  }
+  
   .menu {
-    max-width: 240px; /* Omezení šířky menu v landscape */
-    max-height: 75vh; /* Upraveno z 80vh pro konzistenci s ostatními úpravami */
-    overflow-y: auto;
+    max-width: 200px; /* Užší menu v landscape */
+    height: auto; /* Výška podle obsahu */
+    max-height: 80vh; /* Omezení maximální výšky */
+    overflow-y: auto; /* Povolení scrollování pro delší obsah */
+    right: 0; /* Zachování pozice vpravo */
+    left: auto; /* Zrušení levého zarovnání */
+    top: 52px; /* Umístění pod tlačítkem */
+    margin-bottom: 0; /* Žádná mezera od spodního okraje */
   }
 }
 
 @media (orientation: landscape) and (max-height: 380px) {
   .settingsContainer {
-    transform: scale(0.8); /* Mírně menší škálování */
+    transform: scale(0.95); /* Téměř bez zmenšení */
     transform-origin: top right;
   }
+  .settingsButton {
+    width: 46px; /* Větší tlačítko pro mobilní zařízení */
+    height: 46px;
+  }
   .menu {
-    max-width: 220px; /* Další zmenšení šířky */
-    max-height: 65vh; /* Další omezení výšky */
+    max-width: 190px; /* Ještě užší menu */
+    height: auto; /* Automatická výška podle obsahu */
+    max-height: 75vh; /* Omezení maximální výšky na 75% výšky obrazovky */
+    right: 0; /* Pozice vpravo od tlačítka */
+    left: auto; /* Zrušení levého zarovnání */
+    top: 52px; /* Pod tlačítkem */
+    position: absolute; /* Standardní absolutní pozicování */
+    margin-bottom: 0; /* Žádná mezera od spodních prvků */
+    overflow-y: auto; /* Povolení scrollování pro delší obsah */
   }
 }
 
 /* Indikátor zoomu */
 .zoomIndicator {
   width: 100%;
-  height: 5px;
-  background-color: rgba(0, 0, 0, 0.1);
+  height: 4px; /* Nižší indikátor pro úsporu místa */
+  background-color: rgba(255, 255, 255, 0.15); /* Světlejší pozadí pro větší kontrast */
   border-radius: 3px;
-  margin: 5px 0;
+  margin: 4px 0;
   overflow: hidden;
 }
 
@@ -346,35 +511,42 @@
   animation: fadeInOut 2.5s ease;
 }
 
-/* Ovládací tlačítka zoomu */
-.zoomControls {
-  display: flex;
-  justify-content: center;
-  margin: 8px 0;
-  gap: 12px;
+/* Dodatečné styly pro menu na různých zařízeních a orientacích */
+@media (orientation: landscape) {
+  .menuList {
+    flex-direction: column; /* Vrátit vertikální rozložení seznamu položek */
+    display: block; /* Zrušit flex layout pro položky menu */
+    height: auto; /* Automatická výška seznamu */
+  }
+  
+  .menuItem {
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2); /* Obnovit spodní ohraničení mezi položkami */
+    border-right: none; /* Zrušit pravé ohraničení */
+    height: auto; /* Automatická výška položky menu */
+    display: block; /* Standardní blokové zobrazení */
+  }
+  
+  .menuButton {
+    padding: 10px 15px; /* Zachování stejného paddingu jako v portrait režimu */
+    font-size: 0.95rem; /* Zachování stejné velikosti textu */
+    display: flex; /* Flexbox pro zarovnání ikon a textu */
+    align-items: center; /* Vertikální zarovnání na střed */
+  }
+  
+  .menuList::before {
+    display: block; /* Zachování nadpisu */
+  }
+  
+  .menuIcon {
+    margin-right: 12px; /* Standardní pravý okraj pro ikonu jako v portrait režimu */
+  }
 }
 
-.zoomButton {
-  background-color: var(--map-background-color, #fff);
-  border: 1px solid var(--map-border-color, #ddd);
-  border-radius: 4px;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: var(--map-text-color, #333);
+@media (orientation: landscape) and (max-height: 500px) {
+  .mapSettingsContainer {
+    transform-origin: top right;
+    transform: scale(0.98); /* Téměř bez zmenšení */
+  }
 }
 
-.zoomButton:hover {
-  background-color: var(--map-hover-background-color, #f0f0f0);
-  transform: scale(1.05);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.zoomButton:active {
-  transform: scale(0.95);
-}
+/* Ovládací tlačítka zoomu byla odstraněna */
